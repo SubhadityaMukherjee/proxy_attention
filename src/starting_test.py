@@ -200,3 +200,4 @@ trainer.fit(model)
 # metrics.set_index("epoch", inplace=True)
 # display(metrics.dropna(axis=1, how="all").head())
 # sn.relplot(data=metrics, kind="line")
+#%%
