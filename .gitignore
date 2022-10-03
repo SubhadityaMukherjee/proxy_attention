@@ -131,3 +131,4 @@ logs/
 *.tar.gz
 *.gz
 cifar-10*
+*.pth
