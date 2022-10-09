@@ -81,12 +81,15 @@ print(f"[LOG] Training rounds scheme : {training_rounds}")
 # Start the loop
 total_epochs_passed = 0
 
+
+
+
 for i, step in tqdm(enumerate(training_rounds), total=len(training_rounds)):
     if i == 0:
         # Initialize everything with new or old data
         dls = fields.dataloaders(path, bs=ds_meta["batch_size"])
         learn = vision_learner(
-            dls, ds_meta["network"], cbs=cbs, metrics=metrics
+            dls, ds_meta["network"], cbs=cbs, metrics=metrics, pretrained=ds_meta["pretrained"]
         ).to_fp16()
         fname_training = f'{ds_meta["ds_name"]}_{args.name}_{datetime.now().strftime("%d%m%Y_%H:%M:%S")}'  # unique_name
         learn.fine_tune(step)
@@ -100,7 +103,7 @@ for i, step in tqdm(enumerate(training_rounds), total=len(training_rounds)):
         # Initialize everything with new or old data
         dls = fields.dataloaders(path, bs=ds_meta["batch_size"])
         learn = vision_learner(
-            dls, ds_meta["network"], cbs=cbs, metrics=metrics
+            dls, ds_meta["network"], cbs=cbs, metrics=metrics, pretrained=ds_meta["pretrained"]
         ).to_fp16()
 
         learn.load("temp_model")  # load model since augment has been done already
@@ -120,7 +123,7 @@ for i, step in tqdm(enumerate(training_rounds), total=len(training_rounds)):
             # PROXY ATTENTION LOOP
             dls = fields.dataloaders(path, bs=ds_meta["batch_size"])
             learn = vision_learner(
-                dls, ds_meta["network"], cbs=cbs, metrics=metrics
+                dls, ds_meta["network"], cbs=cbs, metrics=metrics, pretrained=ds_meta["pretrained"]
             ).to_fp16()
 
             learn.load("temp_model")  # load model since augment has been done already
@@ -154,7 +157,8 @@ for i, step in tqdm(enumerate(training_rounds), total=len(training_rounds)):
             # RUN PROXY ATTENTION
             print(f"[INFO] : Creating maps")
             # TODO : Is this possible to parallelize?? Its too slow
-            for im in tqdm(index_wrongs, total=len(index_wrongs)):
+            # for im in tqdm(index_wrongs, total=len(index_wrongs)):
+            def create_im(im):
                 img = PILImage.create(items[im])
 
                 (x,) = first(dls.test_dl([img]))
@@ -197,10 +201,13 @@ for i, step in tqdm(enumerate(training_rounds), total=len(training_rounds)):
                 plt.imshow(x_dec)
                 plt.axis("off")
                 plt.savefig(rename_for_aug(items[im]))
+
+            parallel(create_im, index_wrongs, progress=True, n_workers=8)
+
             clear_learner(learn, dls)
             del bspred
             del items
-            del t_resized
+            # del t_resized
             gc.collect()
 
     # Save model every n epochs
