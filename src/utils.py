@@ -5,6 +5,7 @@ from fastai.vision.widgets import *
 import os
 import matplotlib.pyplot as plt
 from IPython.display import Image
+import gc
 
 os.environ["TORCH_HOME"] = "/media/hdd/Datasets/"
 os.environ["FASTAI_HOME"] = "/media/hdd/Datasets/"
@@ -63,3 +64,18 @@ def rename_for_aug(fpath):
     Add the word 'augmented_' before the file path so it's easy to identify them from the modified dataset
     """
     return fpath.parent / Path("augmented_" + fpath.name)
+
+
+#%%
+def clear_learner(learn, dls):
+    del learn
+    del dls
+    gc.collect()
+    torch.cuda.empty_cache()
+#%%
+def get_image_files_exclude_augment(path, recurse=True, folders=None):
+    "Get image files in `path` recursively, only in `folders`, if specified."
+    all_files = list(get_files(path, extensions=image_extensions, recurse=recurse, folders=folders))
+    aug_files = [x for x in all_files if "aug" in x.name]
+    [all_files.remove(element) for element in [x.parent/x.name.replace("augmented_", "") for x in aug_files]]
+    return all_files
