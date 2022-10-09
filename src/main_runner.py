@@ -14,13 +14,14 @@ import argparse as ap
 import datetime
 import gc
 from tqdm import tqdm
+from multiprocessing import set_start_method
 
 from utils import *  # import utils at the end after fastai because the Hook function is a monkey-patch
 
 os.environ["TORCH_HOME"] = "/media/hdd/Datasets/"
 os.environ["FASTAI_HOME"] = "/media/hdd/Datasets/"
 
-
+# set_start_method('spawn')
 # Monkey patch batch prediction (fastai does not have this by default)
 Learner.predict_batch = predict_batch
 # %%
@@ -52,7 +53,7 @@ print("[INFO] : Removed Old augmented files")
 batch_tfms = aug_transforms() if ds_meta["enable_default_augments"] == True else None
 fields = DataBlock(
     blocks=(ImageBlock, CategoryBlock),
-    get_items=get_image_files_exclude_augment,
+    get_items=get_image_files,
     get_y=ds_meta["name_fn"],
     splitter=RandomSplitter(valid_pct=0.2, seed=42),
     item_tfms=RandomResizedCrop(ds_meta["image_size"], min_scale=0.5),
@@ -61,12 +62,6 @@ fields = DataBlock(
 # Metrics
 metrics = [accuracy, error_rate]
 # Callbacks
-cbs = [
-    TensorBoardCallback(
-        log_dir=f"tb_runs/{fname_start}", projector=False, trace_model=False
-    ),
-    CSVLogger(fname=f"csv_logs/{fname_start}.csv"),
-]
 
 #%%
 # MAIN LOOP
@@ -88,6 +83,13 @@ for i, step in tqdm(enumerate(training_rounds), total=len(training_rounds)):
     if i == 0:
         # Initialize everything with new or old data
         dls = fields.dataloaders(path, bs=ds_meta["batch_size"])
+        cbs = [
+            TensorBoardCallback(
+                log_dir=f"tb_runs/{fname_start}", projector=False, trace_model=False
+            ),
+            CSVLogger(fname=f"csv_logs/{fname_start}.csv"),
+        ]
+
         learn = vision_learner(
             dls, ds_meta["network"], cbs=cbs, metrics=metrics, pretrained=ds_meta["pretrained"]
         ).to_fp16()
@@ -102,6 +104,13 @@ for i, step in tqdm(enumerate(training_rounds), total=len(training_rounds)):
     if step != "aug" and i > 0:
         # Initialize everything with new or old data
         dls = fields.dataloaders(path, bs=ds_meta["batch_size"])
+        cbs = [
+            TensorBoardCallback(
+                log_dir=f"tb_runs/{fname_start}", projector=False, trace_model=False
+            ),
+            CSVLogger(fname=f"csv_logs/{fname_start}.csv"),
+        ]
+
         learn = vision_learner(
             dls, ds_meta["network"], cbs=cbs, metrics=metrics, pretrained=ds_meta["pretrained"]
         ).to_fp16()
@@ -121,12 +130,21 @@ for i, step in tqdm(enumerate(training_rounds), total=len(training_rounds)):
             print("[INFO]: Running Proxy Attention")
 
             # PROXY ATTENTION LOOP
+
             dls = fields.dataloaders(path, bs=ds_meta["batch_size"])
+            cbs = [
+                TensorBoardCallback(
+                    log_dir=f"tb_runs/{fname_start}", projector=False, trace_model=False
+                ),
+                CSVLogger(fname=f"csv_logs/{fname_start}.csv"),
+            ]
+
             learn = vision_learner(
                 dls, ds_meta["network"], cbs=cbs, metrics=metrics, pretrained=ds_meta["pretrained"]
             ).to_fp16()
 
             learn.load("temp_model")  # load model since augment has been done already
+            learn.to('cpu')
 
             # Get the classes
             print("[INFO] : Starting Attention Loop")
@@ -134,8 +152,8 @@ for i, step in tqdm(enumerate(training_rounds), total=len(training_rounds)):
                 learn.dls.vocab[x]: x for x in range(len(learn.dls.vocab))
             }  # Get class names
             # Get images, shuffle, pick a subset
-            items = get_image_files(ds_meta["ds_path"])
-            items = items.shuffle()
+            items = get_image_files_exclude_augment(ds_meta["ds_path"])
+            # items = items.shuffle()
             subset = int(ds_meta["change_subset_attention"] * len(items))
             items = items[:subset]
             # Get preds from the network for all the chosen images with "num_workers" threads
@@ -151,14 +169,62 @@ for i, step in tqdm(enumerate(training_rounds), total=len(training_rounds)):
                 x for x in range(subset) if bspred[2][x] != TensorBase(item_names)[x]
             ]
             print(
-                f"[INFO] : Pct wrong for step {total_epochs_passed} = {1-len(index_wrongs)/len(bspred[2])}"
+                f"[INFO] : Pct wrong for step {total_epochs_passed} = {len(index_wrongs)/len(bspred[2])}"
             )
 
             # RUN PROXY ATTENTION
             print(f"[INFO] : Creating maps")
-            # TODO : Is this possible to parallelize?? Its too slow
-            # for im in tqdm(index_wrongs, total=len(index_wrongs)):
-            def create_im(im):
+            # def create_im(im):
+            #     img = PILImage.create(items[im])
+
+            #     (x,) = first(dls.test_dl([img]))
+
+            #     x_dec = TensorImage(dls.train.decode((x,))[0][0])
+
+            #     # Get attention maps
+
+            #     # -----
+            #     # Grad CAM Attention map
+            #     cls = 1
+            #     try:
+            #         with HookBwd(learn.model[-2][4][-1]) as hookg:  # for other layers
+            #             with Hook(learn.model[-2][4][-1]) as hook:
+            #                 output = learn.model.eval()(x.cuda())
+            #                 act = hook.stored
+            #             output[0, cls].backward()
+            #             grad = hookg.stored
+            #         w = grad[0].mean(dim=[1, 2], keepdim=True)
+            #         cam_map = (w * act[0]).sum(0)
+            #         # print(x.shape,x_dec.shape, w.shape, cam_map.shape)
+
+            #     except Exception as e:
+            #         print(e)
+            #     # -----
+
+            #     # test_cam_map = cam_map.detach().cpu()
+            #     # Resize cam map so it's the same size as the image, as the output is much smaller
+            #     t_resized = transformF.resize(
+            #         torch.unsqueeze(cam_map, 0), ds_meta["image_size"]
+            #     )
+            #     t_resized = (
+            #         torch.cat([t_resized, t_resized, t_resized], dim=0).detach().cpu()
+            #     )
+
+            #     # IMPORTANT : Change the pixels that are of higher intensity to 0 because they did not help the network get the right answer
+            #     x_dec[t_resized >= 0.009] = 0.0
+
+            #     x_dec = torch.einsum("ijk->jki", x_dec)
+            #     plt.imshow(x_dec)
+            #     plt.axis("off")
+            #     plt.spines['top'].set_visible(False)
+            #     plt.spines['right'].set_visible(False)
+            #     plt.spines['bottom'].set_visible(False)
+            #     plt.spines['left'].set_visible(False)
+            #     plt.box(False)
+            #     plt.savefig(rename_for_aug(items[im]), transparent = True)
+
+            # parallel(create_im, index_wrongs, progress=True, n_workers=8)
+            for im in tqdm(index_wrongs, total = len(index_wrongs)):
                 img = PILImage.create(items[im])
 
                 (x,) = first(dls.test_dl([img]))
@@ -195,14 +261,14 @@ for i, step in tqdm(enumerate(training_rounds), total=len(training_rounds)):
                 )
 
                 # IMPORTANT : Change the pixels that are of higher intensity to 0 because they did not help the network get the right answer
-                x_dec[t_resized >= 0.004] = 0.0
+                x_dec[t_resized >= 0.008] = 0.0
 
                 x_dec = torch.einsum("ijk->jki", x_dec)
                 plt.imshow(x_dec)
                 plt.axis("off")
-                plt.savefig(rename_for_aug(items[im]))
+                plt.box(False)
+                plt.savefig(rename_for_aug(items[im]), transparent = True)
 
-            parallel(create_im, index_wrongs, progress=True, n_workers=8)
 
             clear_learner(learn, dls)
             del bspred
