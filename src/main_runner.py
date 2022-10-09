@@ -22,7 +22,7 @@ os.environ["FASTAI_HOME"] = "/media/hdd/Datasets/"
 Learner.predict_batch = predict_batch
 # %%
 ags = ap.ArgumentParser("Additional Arguments for CLI")
-ags.add_argument("--config", help="Name of config from dictionary", default="fish_test")
+ags.add_argument("--config", help="Name of config from dictionary", default="fish_test_proxy")
 ags.add_argument("--name", help="Name of the experiment", required=True)
 args = ags.parse_args()
 ds_meta = ds_config[args.config]  # get info about dataset from the config file
@@ -30,7 +30,7 @@ ds_meta = ds_config[args.config]  # get info about dataset from the config file
 # %%
 # Training Part 1
 path = Path(ds_meta["ds_path"])
-fname_start = f'{ds_meta["ds_name"]}_{args.name}_{datetime.datetime.now().strftime("%d/%m/%Y_%H:%M:%S")}'  # unique_name
+fname_start = f'{ds_meta["ds_name"]}_{args.name}_{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}'  # unique_name
 print(f"[INFO] : File name = {fname_start}")
 
 # Check if directories all present
@@ -52,9 +52,9 @@ metrics = [accuracy, error_rate]
 # Callbacks
 cbs = [
     TensorBoardCallback(
-        log_dir=f"tb_runs/{fname_start}", projector=True, trace_model=True
+        log_dir=f"tb_runs/{fname_start}", projector=True, trace_model=False
     ),
-    CSVLogger(fname=f"csv_logs/{fname_start}"),
+    CSVLogger(fname=f"csv_logs/{fname_start}.csv"),
 ]
 
 #%%
@@ -76,7 +76,7 @@ for i, step in tqdm(enumerate(training_rounds), total=len(training_rounds)):
         learn = vision_learner(
             dls, ds_meta["network"], cbs=cbs, metrics=metrics
         ).to_fp16()
-        fname_training = f'{ds_meta["ds_name"]}_{args.name}_{datetime.datetime.now().strftime("%d/%m/%Y_%H:%M:%S")}'  # unique_name
+        fname_training = f'{ds_meta["ds_name"]}_{args.name}_{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}'  # unique_name
         learn.fine_tune(step)
         learn.save("temp_model")  # saving so can be reloaded
         # Since training is in batches, keep track of total no of epochs trained for
@@ -91,7 +91,7 @@ for i, step in tqdm(enumerate(training_rounds), total=len(training_rounds)):
 
         learn.load("temp_model")  # load model since augment has been done already
         # Continue training
-        fname_training = f'{ds_meta["ds_name"]}_{args.name}_{datetime.datetime.now().strftime("%d/%m/%Y_%H:%M:%S")}'  # unique_name
+        fname_training = f'{ds_meta["ds_name"]}_{args.name}_{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}'  # unique_name
         learn.fine_tune(step)
         learn.save("temp_model")
         # Since training is in batches, keep track of total no of epochs trained for

@@ -24,7 +24,7 @@ def create_if_not_exists(fpath):
     Create folder if its not there already
     """
     if not Path.exists(Path(fpath)):
-        Path.mkdir(fpath, parents=True)
+        Path.mkdir(Path(fpath), parents=True)
 
 
 #%%
