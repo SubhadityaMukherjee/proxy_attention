@@ -48,5 +48,19 @@ ds_config = {
         "change_subset_attention": 0.1,  # What % of data should be augmented with proxy attention
         "save_model_every_n_epoch": 3,
     },
+    "fish_test_proxy_no_train": {
+        "ds_path": "/media/hdd/Datasets/Fish_Dataset/Fish_Dataset/",
+        "ds_name": "fish",
+        "name_fn": fish_name_fn,
+        "image_size": 224,
+        "batch_size": 128,
+        "network": resnet18,
+        "pretrained": False,
+        "epoch_steps": [0, 1],  # n0 epochs -> augment -> n1 epochs ...
+        "enable_default_augments": False,
+        "enable_proxy_attention": True,
+        "change_subset_attention": 0.1,  # What % of data should be augmented with proxy attention
+        "save_model_every_n_epoch": 3,
+    },
 
 }
