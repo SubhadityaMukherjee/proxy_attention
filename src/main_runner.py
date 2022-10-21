@@ -1,5 +1,6 @@
 # %%
 # Imports
+from base64 import decode
 from config import ds_config
 from fastai.vision.all import *
 from fastai.callback.tensorboard import TensorBoardCallback
@@ -149,6 +150,7 @@ if __name__ == "__main__":
                     ),
                     CSVLogger(fname=f"csv_logs/{fname_start}.csv"),
                 ]
+                
 
                 learn = vision_learner(
                     dls, ds_meta["network"], cbs=cbs, metrics=metrics, pretrained=ds_meta["pretrained"]
@@ -156,6 +158,22 @@ if __name__ == "__main__":
 
                 learn.load("temp_model")  # load model since augment has been done already
                 learn.to('cpu')
+                class Hook():
+                    def __init__(self, m):
+                        self.hook = m.register_forward_hook(self.hook_func)   
+                    def hook_func(self, m, i, o): self.stored = o.detach().clone()
+                    # Automatically register the hook when entering it
+                    def __enter__(self, *args): return self
+                    # Automatically remove the hook when exiting it
+                    def __exit__(self, *args): self.hook.remove()
+                
+                class HookBwd():
+                    def __init__(self, m):
+                        self.hook = m.register_backward_hook(self.hook_func)   
+                    def hook_func(self, m, gi, go): self.stored = go[0].detach().clone()
+                    def __enter__(self, *args): return self
+                    def __exit__(self, *args): self.hook.remove()
+
                 # dls.to('cpu')
 
                 # Get the classes
@@ -234,53 +252,97 @@ if __name__ == "__main__":
                 #     plt.savefig(rename_for_aug(items[im]), transparent = True, bbox_inches='tight',pad_inches = 0)
 
                 # parallel(create_im, index_wrongs, progress=True, n_workers=8)
-                for im in tqdm(index_wrongs, total = len(index_wrongs)):
-                    img = PILImage.create(items[im])
 
-                    (x,) = first(dls.test_dl([img]))
 
-                    x_dec = TensorImage(dls.train.decode((x,))[0][0])
+                
+                # for im in tqdm(index_wrongs, total = len(index_wrongs)):
+                #     img = PILImage.create(items[im])
 
-                    # Get attention maps
+                #     (x,) = first(dls.test_dl([img]))
 
-                    # -----
-                    # Grad CAM Attention map
-                    cls = 1
-                    try:
-                        with HookBwd(learn.model[-2][4][-1]) as hookg:  # for other layers
-                            with Hook(learn.model[-2][4][-1]) as hook:
-                                output = learn.model.eval()(x.cuda())
-                                act = hook.stored
-                            output[0, cls].backward()
-                            grad = hookg.stored
-                        w = grad[0].mean(dim=[1, 2], keepdim=True)
-                        cam_map = (w * act[0]).sum(0)
-                        # print(x.shape,x_dec.shape, w.shape, cam_map.shape)
+                #     x_dec = TensorImage(dls.train.decode((x,))[0][0])
 
-                    except Exception as e:
-                        print(e)
-                    # -----
+                #     # Get attention maps
 
-                    # test_cam_map = cam_map.detach().cpu()
-                    # Resize cam map so it's the same size as the image, as the output is much smaller
-                    t_resized = transformF.resize(
-                        torch.unsqueeze(cam_map, 0), ds_meta["image_size"]
-                    )
-                    t_resized = (
-                        torch.cat([t_resized, t_resized, t_resized], dim=0).detach().cpu()
-                    )
+                #     # -----
+                #     # Grad CAM Attention map
+                #     cls = 1
+                #     try:
+                #         with HookBwd(learn.model[-2][4][-1]) as hookg:  # for other layers
+                #             with Hook(learn.model[-2][4][-1]) as hook:
+                #                 output = learn.model.eval()(x.cuda())
+                #                 act = hook.stored
+                #             output[0, cls].backward()
+                #             grad = hookg.stored
+                #         w = grad[0].mean(dim=[1, 2], keepdim=True)
+                #         cam_map = (w * act[0]).sum(0)
+                #         # print(x.shape,x_dec.shape, w.shape, cam_map.shape)
 
-                    # IMPORTANT : Change the pixels that are of higher intensity to 0 because they did not help the network get the right answer
-                    x_dec[t_resized >= 0.008] = 0.0
+                #     except Exception as e:
+                #         print(e)
+                #     # -----
 
-                    x_dec = torch.einsum("ijk->jki", x_dec)
-                    plt.imshow(x_dec)
+                #     # test_cam_map = cam_map.detach().cpu()
+                #     # Resize cam map so it's the same size as the image, as the output is much smaller
+                #     t_resized = transformF.resize(
+                #         torch.unsqueeze(cam_map, 0), ds_meta["image_size"]
+                #     )
+                #     t_resized = (
+                #         torch.cat([t_resized, t_resized, t_resized], dim=0).detach().cpu()
+                #     )
+
+                #     # IMPORTANT : Change the pixels that are of higher intensity to 0 because they did not help the network get the right answer
+                #     x_dec[t_resized >= 0.008] = 0.0
+
+                #     x_dec = torch.einsum("ijk->jki", x_dec)
+                #     plt.imshow(x_dec)
+                #     plt.axis("off")
+                #     ax=plt.gca()
+                #     ax.get_xaxis().set_visible(False)
+                #     plt.box(False)
+                #     plt.savefig(rename_for_aug(items[im]), transparent = True, bbox_inches='tight',pad_inches = 0)
+
+                ims = [PILImage.create(items[x]) for x in tqdm(index_wrongs, total = len(index_wrongs))]
+                im_names = [items[x] for x in index_wrongs]
+                test_ds_new_ims = dls.test_dl(ims, shuffle = False)
+                decoded = [dls.train.decode(x)[0].float() for x in tqdm(test_ds_new_ims, total = len(test_ds_new_ims))]
+                eval_model =learn.model.eval() 
+                # eval_model_results = [eval_model(first(x).float().cuda()) for x in test_ds_new_ims]
+                # eval_model_results = learn.predict_batch(ims)[0]
+                # print(eval_model_results)
+                # Hook
+                cls = 1
+                cam_maps = []
+
+                print("Creating map")
+                for im in tqdm(decoded, total = len(decoded)):
+                    with HookBwd(learn.model[-2][4][-1]) as hookg:  # for other layers
+                        with Hook(learn.model[-2][4][-1]) as hook:
+                            output = eval_model(im.cuda())
+                            # output = learn.predict(im)
+                            act = hook.stored
+                        output[0, cls].backward()
+                        grad = hookg.stored
+                    w = grad[0].mean(dim=[1, 2], keepdim=True)
+                    cam_map = (w * act[0]).sum(0)
+                    cam_maps.append(cam_map)
+
+                print("Resizing")
+                t_resized = [transformF.resize(torch.unsqueeze(cam_map, 0), ds_meta["image_size"]) for cam_map in cam_maps]
+                t_resized = [torch.cat([x, x, x], dim=0).detach().cpu() for x in t_resized]
+                decoded_tensor_images = [dls.train.decode(x)[0][0].float() for x in tqdm(test_ds_new_ims, total = len(test_ds_new_ims))]
+
+                for ind in tqdm(range(len(t_resized))):
+                    decoded_tensor_images[ind][t_resized[ind] >=0.009] = 0.0
+                    decoded_tensor_images[ind] = torch.einsum("ijk->jki", decoded_tensor_images[ind])
+                
+                for ind in tqdm(range(len(decoded_tensor_images))):
+                    plt.imshow(decoded_tensor_images[ind])
                     plt.axis("off")
                     ax=plt.gca()
                     ax.get_xaxis().set_visible(False)
                     plt.box(False)
-                    plt.savefig(rename_for_aug(items[im]), transparent = True, bbox_inches='tight',pad_inches = 0)
-
+                    plt.savefig(rename_for_aug(im_names[ind]), transparent = True, bbox_inches='tight',pad_inches = 0)
                 clear_learner(learn, dls)
                 del bspred
                 del items
