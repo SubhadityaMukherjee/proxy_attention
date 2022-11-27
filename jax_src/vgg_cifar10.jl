@@ -8,6 +8,10 @@ using CUDA
 using MLDatasets: CIFAR10
 using MLUtils: splitobs
 using ProgressMeter: @showprogress
+using ExplainableAI
+using HTTP, FileIO, ImageMagick  
+using ImageShow
+
 
 if CUDA.has_cuda()
     @info "CUDA is on"
@@ -36,8 +40,8 @@ function get_test_data()
     return test_x, test_y
 end
 
-# VGG16 and VGG19 models
-function vgg16()
+# # VGG16 and VGG19 models
+function vgg16(nclasses::Int)
     Chain([
         Conv((3, 3), 3 => 64, relu, pad=(1, 1), stride=(1, 1)),
         Conv((3, 3), 64 => 64, relu, pad=(1, 1), stride=(1, 1)),
@@ -60,7 +64,7 @@ function vgg16()
         flatten,
         Dense(512, 4096, relu),
         Dense(4096, 4096, relu),
-        Dense(4096, 10)
+        Dense(4096, nclasses)
     ])
 end
 
@@ -69,6 +73,7 @@ end
     lr::Float64 = 3e-4
     epochs::Int = 3
     valsplit::Float64 = 0.1
+    nclasses::Int = 10
 end
 
 function train(; kws...)
@@ -82,7 +87,7 @@ function train(; kws...)
     val_loader = DataLoader(val_data, batchsize=args.batchsize)
 
     @info("Constructing Model")	
-    m = vgg16() |> gpu
+    m = vgg16(args.nclasses) |> gpu
 
     loss(x, y) = logitcrossentropy(m(x), y)
 
@@ -135,34 +140,47 @@ end
 m = train()
 test(m)
 
+# XAI Bit
+convert_model(m) = strip_softmax(flatten_chain(m)) |> cpu
+load_and_preprocess_imagenet(image) = reshape(preprocess_imagenet(load(image)), 224, 224, 3, :)
 
+function extend_dims(A,which_dim)
+       s = [size(A)...]
+       insert!(s,which_dim,1)
+       return reshape(A, s...)
+       end
 
-using ExplainableAI
-using HTTP, FileIO, ImageMagick  
+cd("/media/hdd/github/improving_robotics_datasets/jax_src/")
+ims_all = readdir("./data_testing/",join= true )
 
-model = strip_softmax(flatten_chain(m))
-# model = canonize(model) |> cpu
-model = model |> cpu
-input = preprocess_imagenet(load("castle.jpg"))
-input = reshape(input, 224, 224, 3, :)
+ims = load_and_preprocess_imagenet.(ims_all)
+
+model = convert_model(m[1:end-5])
 analyzer = LRP(model)
-expl = heatmap(input, analyzer,)
+# expl = heatmap(input, analyzer,)
+heat = heatmap(ims[2], analyzer);
+heat
+test_im = load_and_preprocess_imagenet(ims_all[2])
 
-model = VGG(16, pretrain=true).layers
-model = strip_softmax(flatten_chain(model))
+# Add proxy attention here. Not multiply but convert in image based on value.
 
-# Load input
-img = load("dog.jpg");
-input = preprocess_imagenet(img)
-input = reshape(input, 224, 224, 3, :)  # reshape to WHCN format
+im_converted = test_im .* heat
 
-# Run XAI method
-# analyzer = Gradient(model)
-analyzer = LRP(model)
-# expl = analyze(input, analyzer)         # or: expl = analyzer(input)
+# im_converted = permutedims(im_converted, (3, 1, 2))
 
-# Show heatmap
-# heatmap(expl)
+# im_converted = extend_dims(im_converted, 1)
 
-# Or analyze & show heatmap directly
-heatmap(input, analyzer, 2)
+im_converted = colorview(RGB, im_converted/ 255)
+im_converted = map(clamp01nan, im_converted)
+
+
+# im_converted = extend_dims(im_converted, 1)
+
+# im_converted = colorview(RGB, im_converted);
+
+save("est.png",im_converted[:,:,:]);
+
+# im_converted = extend_dims(im_converted, 4)
+
+
+# im_converted[:,:,:]
