@@ -71,7 +71,7 @@ end
 @with_kw mutable struct Args
     batchsize::Int = 128
     lr::Float64 = 3e-4
-    epochs::Int = 3
+    epochs::Int = 1
     valsplit::Float64 = 0.1
     nclasses::Int = 10
 end
@@ -141,8 +141,35 @@ m = train()
 test(m)
 
 # XAI Bit
+# Coefficients taken from PyTorch's ImageNet normalization code
+const PYTORCH_MEAN = [0.485f0, 0.456f0, 0.406f0]
+const PYTORCH_STD = [0.229f0, 0.224f0, 0.225f0]
+const IMGSIZE = (224, 224)
+
+# Take rectangle of pixels of shape `outsize` at the center of image `im`
+adjust(i::Integer) = ifelse(iszero(i % 2), 1, 0)
+function center_crop_view(im::AbstractMatrix, outsize=IMGSIZE)
+    im = imresize(im; ratio=maximum(outsize .// size(im)))
+    h2, w2 = div.(outsize, 2) # half height, half width of view
+    h_adjust, w_adjust = adjust.(outsize)
+    return @view im[
+        ((div(end, 2) - h2):(div(end, 2) + h2 - h_adjust)) .+ 1,
+        ((div(end, 2) - w2):(div(end, 2) + w2 - w_adjust)) .+ 1,
+    ]
+end
+
+function preprocess_resize(im::AbstractMatrix{<:AbstractRGB}, T=Float32::Type{<:Real})
+    im =  center_crop_view(im)
+    # im = (channelview(im) .- PYTORCH_MEAN) ./ PYTORCH_STD
+    im = channelview(im)
+    return convert.(T, PermutedDimsArray(im, (3, 2, 1))) # Convert Image.jl's CHW to WHC
+end
+
 convert_model(m) = strip_softmax(flatten_chain(m)) |> cpu
 load_and_preprocess_imagenet(image) = reshape(preprocess_imagenet(load(image)), 224, 224, 3, :)
+load_and_resize(image) = reshape(preprocess_resize(load(image)), 224, 224, 3, :)
+
+# load_and_resize(image) = reshape(load(image), 224, 224, 3, :)
 
 function extend_dims(A,which_dim)
        s = [size(A)...]
@@ -153,19 +180,54 @@ function extend_dims(A,which_dim)
 cd("/media/hdd/github/improving_robotics_datasets/jax_src/")
 ims_all = readdir("./data_testing/",join= true )
 
-ims = load_and_preprocess_imagenet.(ims_all)
+ims = load_and_resize.(ims_all)
 
-model = convert_model(m[1:end-5])
-analyzer = LRP(model)
+model = convert_model(m[1:end-5]);
+analyzer = LRP(model);
 # expl = heatmap(input, analyzer,)
-heat = heatmap(ims[2], analyzer);
+heatmap_with_analyzer(x) = heatmap(x, analyzer)
+heat = heatmap_with_analyzer.(ims)
 heat
-test_im = load_and_preprocess_imagenet(ims_all[2])
-
+test_im = load_and_resize(ims_all[2])
 # Add proxy attention here. Not multiply but convert in image based on value.
+using Colors
+using ColorTypes
+test_heat = heat[1]
+test_heat = Float32.(Gray.(test_heat))
+test_heat = ifelse.(test_heat .> 0.8, 1.0, 0.0)
+# extend_dims(test_heat,)
 
-im_converted = test_im .* heat
+# test_im
 
+# Gray.(test_heat)
+# size(heat[1])
+# size(test_im)
+im_converted = test_im .* test_heat
+
+# temp_test = reduce(+,im_converted;dims = 4)[:,:,:]
+# temp_test
+# ExplainableAI.ColorSchemes.seismic(temp_test)
+# heatmap(temp_test)
+# RGB(im_converted)[:,:,1]
+# im_converted[:,:,1]
+im_converted
+# Matrix(temp_test)
+# RGB.(Float32.(temp_test)[:,:,1])
+# temp_test = convert.(Normed{UInt8,8}, temp_test)
+im_converted = permutedims(im_converted[:,:,:], (3,1, 2))
+colorview(RGB,im_converted)
+# temp_test[:,:,2]
+# summary(temp_test)
+# RGB.(im_converted)
+# im_converted
+#  RGB.(channelview(im_converted))[:,:, 1]
+# im = RGB.(Float32.(ifelse.(im_converted .< -1.0 , 0.0, 1.0)[:,:,:]))
+using Images
+# (im)
+# Gray.(im_converted[:,:,:])
+# im_converted[:,:,1]
+
+# test_im[test_heat .>0.5]
 # im_converted = permutedims(im_converted, (3, 1, 2))
 
 # im_converted = extend_dims(im_converted, 1)
