@@ -1,6 +1,5 @@
 # %%
 # Imports
-from base64 import decode
 from config import ds_config
 from fastai.vision.all import *
 from fastai.callback.tensorboard import TensorBoardCallback
