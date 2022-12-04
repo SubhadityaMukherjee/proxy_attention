@@ -132,3 +132,6 @@ logs/
 *.gz
 cifar-10*
 *.pth
+events.out*
+*.tfrecord
+runs/
