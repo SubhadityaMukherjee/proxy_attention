@@ -1,4 +1,5 @@
 # Proxy Attention : Masters Thesis Project
+- ![im](./report/images/thesis_report.drawio.png)
 - Using outputs of XAI algorithms as part of the training process in order to simulate the effects of Attention for a NN.
 - This is a work in progress and this README will reflect changes in code or methodology.
 - Implemented using Pytorch (no training frameworks used although an implementation using fast.ai was also created as a prototype.)
