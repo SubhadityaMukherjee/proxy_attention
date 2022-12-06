@@ -11,7 +11,7 @@ import seaborn as sns
 sns.set()
 import os
 
-# from fastai
+# from fast.ai source code
 image_extensions = set(k for k,v in mimetypes.types_map.items() if v.startswith('image/'))
 
 def is_iter(o):
@@ -53,6 +53,7 @@ def _get_files(p, fs, extensions=None):
     res = [p/f for f in fs if not f.startswith('.')
            and ((not extensions) or f'.{f.split(".")[-1].lower()}' in extensions)]
     return res
+
 def get_files(path, extensions=None, recurse=True, folders=None, followlinks=True):
     "Get all the files in `path` with optional `extensions`, optionally with `recurse`, only in `folders`, if specified."
     path = Path(path)
@@ -71,6 +72,7 @@ def get_files(path, extensions=None, recurse=True, folders=None, followlinks=Tru
         res = _get_files(path, f, extensions)
     return res
 
+# Custom implementation
 def imshow(inp, title=None): # TODO
     """Imshow for Tensor."""
     inp = inp.numpy().transpose((1, 2, 0))
