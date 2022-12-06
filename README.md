@@ -27,6 +27,8 @@
 - threshold is 0.008 for now
 
 ## Directory Structure
+### Proposal
+- In the report folder as main.pdf
 ### Main folder
 - pure_pytorch_src is the main folder. It will be renamed later on.
 - main.ipynb has all the runner code that is being refactored to make it a script. It will eventually just have a demo.
