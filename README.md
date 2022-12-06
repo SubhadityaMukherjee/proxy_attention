@@ -13,6 +13,19 @@
 - Since all the scripts have not been written yet, for now it is just possible to open pure_pytorch_src/main.ipynb 
 - src/main_runner.py can also be looked at although the implementation in EXTREMELY slow.
 
+## Main code flow
+- Select network architecture, dataset
+- All the preprocessing
+- Run n1 epochs of training
+- Find worst performing examples -> Run XAI algorithm on them -> Apply Proxy Attention -> Save these to disk
+- Run n2 epochs of training with old +- new examples
+
+## Proxy Attention Defined
+- $$Original Image[mean of XAI output along channels > threshold] = new value$$
+- XAI output is the heatmap obtained by CAM/GradCAM etc
+- new value can either be 0.0 or an average of pixels or max/min of pixels (needs to be tested)
+- threshold is 0.008 for now
+
 ## Directory Structure
 ### Main folder
 - pure_pytorch_src is the main folder. It will be renamed later on.
@@ -48,8 +61,11 @@
 	- [] Checkpoints
 	- [] Number of epochs in between loops (Epochs -> Proxy -> Epochs ...)
 	- [] More optimizations
-
 - [] Full proxy attention loop as a function
+- [] Select if modified images will be used as an augmentation or completely replace original images
 - [] Support for config.py
 - [] Support for more XAI algorithms
 - [] Batch runner script
+- [] Refactor properly
+- [] More XAI Algorithms and networks
+- [] Vision Transformer
