@@ -186,3 +186,142 @@ type: article},
   pages={770--778},
   year={2016}
 }
+
+@inproceedings{oquab_is_2015,
+	address = {Boston, MA, USA},
+	title = {Is object localization for free? - {Weakly}-supervised learning with convolutional neural networks},
+	isbn = {978-1-4673-6964-0},
+	shorttitle = {Is object localization for free?},
+	url = {http://ieeexplore.ieee.org/document/7298668/},
+	doi = {10.1109/CVPR.2015.7298668},
+	abstract = {Successful methods for visual object recognition typically rely on training datasets containing lots of richly annotated images. Detailed image annotation, e.g. by object bounding boxes, however, is both expensive and often subjective. We describe a weakly supervised convolutional neural network (CNN) for object classiﬁcation that relies only on image-level labels, yet can learn from cluttered scenes containing multiple objects. We quantify its object classiﬁcation and object location prediction performance on the Pascal VOC 2012 (20 object classes) and the much larger Microsoft COCO (80 object classes) datasets. We ﬁnd that the network (i) outputs accurate image-level labels, (ii) predicts approximate locations (but not extents) of objects, and (iii) performs comparably to its fully-supervised counterparts using object bounding box annotation for training.},
+	language = {en},
+	urldate = {2022-10-21},
+	booktitle = {2015 {IEEE} {Conference} on {Computer} {Vision} and {Pattern} {Recognition} ({CVPR})},
+	publisher = {IEEE},
+	author = {Oquab, Maxime and Bottou, Leon and Laptev, Ivan and Sivic, Josef},
+	month = jun,
+	year = {2015},
+	pages = {685--694},
+	file = {Oquab et al. - 2015 - Is object localization for free - Weakly-supervis.pdf:/Users/eragon/Zotero/storage/G38P7ZRA/Oquab et al. - 2015 - Is object localization for free - Weakly-supervis.pdf:application/pdf},
+}
+
+@misc{lin_network_2014,
+	title = {Network {In} {Network}},
+	url = {http://arxiv.org/abs/1312.4400},
+	abstract = {We propose a novel deep network structure called "Network In Network" (NIN) to enhance model discriminability for local patches within the receptive field. The conventional convolutional layer uses linear filters followed by a nonlinear activation function to scan the input. Instead, we build micro neural networks with more complex structures to abstract the data within the receptive field. We instantiate the micro neural network with a multilayer perceptron, which is a potent function approximator. The feature maps are obtained by sliding the micro networks over the input in a similar manner as CNN; they are then fed into the next layer. Deep NIN can be implemented by stacking mutiple of the above described structure. With enhanced local modeling via the micro network, we are able to utilize global average pooling over feature maps in the classification layer, which is easier to interpret and less prone to overfitting than traditional fully connected layers. We demonstrated the state-of-the-art classification performances with NIN on CIFAR-10 and CIFAR-100, and reasonable performances on SVHN and MNIST datasets.},
+	urldate = {2022-10-21},
+	publisher = {arXiv},
+	author = {Lin, Min and Chen, Qiang and Yan, Shuicheng},
+	month = mar,
+	year = {2014},
+	note = {arXiv:1312.4400 [cs]
+version: 3},
+	keywords = {Computer Science - Computer Vision and Pattern Recognition, Computer Science - Machine Learning, Computer Science - Neural and Evolutionary Computing},
+	annote = {Comment: 10 pages, 4 figures, for iclr2014},
+}
+
+@article{perez2017effectiveness,
+  title={The effectiveness of data augmentation in image classification using deep learning},
+  author={Perez, Luis and Wang, Jason},
+  journal={arXiv preprint arXiv:1712.04621},
+  year={2017}
+}
+
+@inproceedings{zhong2020random,
+  title={Random erasing data augmentation},
+  author={Zhong, Zhun and Zheng, Liang and Kang, Guoliang and Li, Shaozi and Yang, Yi},
+  booktitle={Proceedings of the AAAI conference on artificial intelligence},
+  volume={34},
+  number={07},
+  pages={13001--13008},
+  year={2020}
+}
+
+@inproceedings{dvornik2018modeling,
+  title={Modeling visual context is key to augmenting object detection datasets},
+  author={Dvornik, Nikita and Mairal, Julien and Schmid, Cordelia},
+  booktitle={Proceedings of the European Conference on Computer Vision (ECCV)},
+  pages={364--380},
+  year={2018}
+}
+
+@misc{dosovitskiy_image_2021,
+	title = {An {Image} is {Worth} 16x16 {Words}: {Transformers} for {Image} {Recognition} at {Scale}},
+	shorttitle = {An {Image} is {Worth} 16x16 {Words}},
+	url = {http://arxiv.org/abs/2010.11929},
+	doi = {10.48550/arXiv.2010.11929},
+	abstract = {While the Transformer architecture has become the de-facto standard for natural language processing tasks, its applications to computer vision remain limited. In vision, attention is either applied in conjunction with convolutional networks, or used to replace certain components of convolutional networks while keeping their overall structure in place. We show that this reliance on CNNs is not necessary and a pure transformer applied directly to sequences of image patches can perform very well on image classification tasks. When pre-trained on large amounts of data and transferred to multiple mid-sized or small image recognition benchmarks (ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent results compared to state-of-the-art convolutional networks while requiring substantially fewer computational resources to train.},
+	urldate = {2022-10-21},
+	publisher = {arXiv},
+	author = {Dosovitskiy, Alexey and Beyer, Lucas and Kolesnikov, Alexander and Weissenborn, Dirk and Zhai, Xiaohua and Unterthiner, Thomas and Dehghani, Mostafa and Minderer, Matthias and Heigold, Georg and Gelly, Sylvain and Uszkoreit, Jakob and Houlsby, Neil},
+	month = jun,
+	year = {2021},
+	note = {arXiv:2010.11929 [cs]},
+	keywords = {Computer Science - Artificial Intelligence, Computer Science - Computer Vision and Pattern Recognition, Computer Science - Machine Learning},
+	annote = {Comment: Fine-tuning code and pre-trained models are available at https://github.com/google-research/vision\_transformer. ICLR camera-ready version with 2 small modifications: 1) Added a discussion of CLS vs GAP classifier in the appendix, 2) Fixed an error in exaFLOPs computation in Figure 5 and Table 6 (relative performance of models is basically not affected)},
+}
+
+@misc{brown_language_2020,
+	title = {Language {Models} are {Few}-{Shot} {Learners}},
+	url = {http://arxiv.org/abs/2005.14165},
+	doi = {10.48550/arXiv.2005.14165},
+	abstract = {Recent work has demonstrated substantial gains on many NLP tasks and benchmarks by pre-training on a large corpus of text followed by fine-tuning on a specific task. While typically task-agnostic in architecture, this method still requires task-specific fine-tuning datasets of thousands or tens of thousands of examples. By contrast, humans can generally perform a new language task from only a few examples or from simple instructions - something which current NLP systems still largely struggle to do. Here we show that scaling up language models greatly improves task-agnostic, few-shot performance, sometimes even reaching competitiveness with prior state-of-the-art fine-tuning approaches. Specifically, we train GPT-3, an autoregressive language model with 175 billion parameters, 10x more than any previous non-sparse language model, and test its performance in the few-shot setting. For all tasks, GPT-3 is applied without any gradient updates or fine-tuning, with tasks and few-shot demonstrations specified purely via text interaction with the model. GPT-3 achieves strong performance on many NLP datasets, including translation, question-answering, and cloze tasks, as well as several tasks that require on-the-fly reasoning or domain adaptation, such as unscrambling words, using a novel word in a sentence, or performing 3-digit arithmetic. At the same time, we also identify some datasets where GPT-3's few-shot learning still struggles, as well as some datasets where GPT-3 faces methodological issues related to training on large web corpora. Finally, we find that GPT-3 can generate samples of news articles which human evaluators have difficulty distinguishing from articles written by humans. We discuss broader societal impacts of this finding and of GPT-3 in general.},
+	urldate = {2022-10-21},
+	publisher = {arXiv},
+	author = {Brown, Tom B. and Mann, Benjamin and Ryder, Nick and Subbiah, Melanie and Kaplan, Jared and Dhariwal, Prafulla and Neelakantan, Arvind and Shyam, Pranav and Sastry, Girish and Askell, Amanda and Agarwal, Sandhini and Herbert-Voss, Ariel and Krueger, Gretchen and Henighan, Tom and Child, Rewon and Ramesh, Aditya and Ziegler, Daniel M. and Wu, Jeffrey and Winter, Clemens and Hesse, Christopher and Chen, Mark and Sigler, Eric and Litwin, Mateusz and Gray, Scott and Chess, Benjamin and Clark, Jack and Berner, Christopher and McCandlish, Sam and Radford, Alec and Sutskever, Ilya and Amodei, Dario},
+	month = jul,
+	year = {2020},
+	note = {arXiv:2005.14165 [cs]},
+	keywords = {Computer Science - Computation and Language},
+	annote = {Comment: 40+32 pages},
+}
+
+
+@misc{vaswani_attention_2017,
+	title = {Attention {Is} {All} {You} {Need}},
+	url = {http://arxiv.org/abs/1706.03762},
+	doi = {10.48550/arXiv.1706.03762},
+	abstract = {The dominant sequence transduction models are based on complex recurrent or convolutional neural networks in an encoder-decoder configuration. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely. Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-to-German translation task, improving over the existing best results, including ensembles by over 2 BLEU. On the WMT 2014 English-to-French translation task, our model establishes a new single-model state-of-the-art BLEU score of 41.8 after training for 3.5 days on eight GPUs, a small fraction of the training costs of the best models from the literature. We show that the Transformer generalizes well to other tasks by applying it successfully to English constituency parsing both with large and limited training data.},
+	urldate = {2022-10-21},
+	publisher = {arXiv},
+	author = {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N. and Kaiser, Lukasz and Polosukhin, Illia},
+	month = dec,
+	year = {2017},
+	note = {arXiv:1706.03762 [cs]},
+	keywords = {Computer Science - Computation and Language, Computer Science - Machine Learning},
+	annote = {Comment: 15 pages, 5 figures},
+	file = {arXiv Fulltext PDF:/Users/eragon/Zotero/storage/WIMZKX6P/Vaswani et al. - 2017 - Attention Is All You Need.pdf:application/pdf},
+}
+
+@misc{devlin_bert_2019,
+	title = {{BERT}: {Pre}-training of {Deep} {Bidirectional} {Transformers} for {Language} {Understanding}},
+	shorttitle = {{BERT}},
+	url = {http://arxiv.org/abs/1810.04805},
+	doi = {10.48550/arXiv.1810.04805},
+	abstract = {We introduce a new language representation model called BERT, which stands for Bidirectional Encoder Representations from Transformers. Unlike recent language representation models, BERT is designed to pre-train deep bidirectional representations from unlabeled text by jointly conditioning on both left and right context in all layers. As a result, the pre-trained BERT model can be fine-tuned with just one additional output layer to create state-of-the-art models for a wide range of tasks, such as question answering and language inference, without substantial task-specific architecture modifications. BERT is conceptually simple and empirically powerful. It obtains new state-of-the-art results on eleven natural language processing tasks, including pushing the GLUE score to 80.5\% (7.7\% point absolute improvement), MultiNLI accuracy to 86.7\% (4.6\% absolute improvement), SQuAD v1.1 question answering Test F1 to 93.2 (1.5 point absolute improvement) and SQuAD v2.0 Test F1 to 83.1 (5.1 point absolute improvement).},
+	urldate = {2022-10-21},
+	publisher = {arXiv},
+	author = {Devlin, Jacob and Chang, Ming-Wei and Lee, Kenton and Toutanova, Kristina},
+	month = may,
+	year = {2019},
+	note = {arXiv:1810.04805 [cs]},
+	keywords = {Computer Science - Computation and Language},
+	file = {arXiv Fulltext PDF:/Users/eragon/Zotero/storage/UKB798MK/Devlin et al. - 2019 - BERT Pre-training of Deep Bidirectional Transform.pdf:application/pdf},
+}
+
+
+@misc{liu_swin_2022,
+	title = {Swin {Transformer} {V2}: {Scaling} {Up} {Capacity} and {Resolution}},
+	shorttitle = {Swin {Transformer} {V2}},
+	url = {http://arxiv.org/abs/2111.09883},
+	abstract = {Large-scale NLP models have been shown to significantly improve the performance on language tasks with no signs of saturation. They also demonstrate amazing few-shot capabilities like that of human beings. This paper aims to explore large-scale models in computer vision. We tackle three major issues in training and application of large vision models, including training instability, resolution gaps between pre-training and fine-tuning, and hunger on labelled data. Three main techniques are proposed: 1) a residual-post-norm method combined with cosine attention to improve training stability; 2) A log-spaced continuous position bias method to effectively transfer models pre-trained using low-resolution images to downstream tasks with high-resolution inputs; 3) A self-supervised pre-training method, SimMIM, to reduce the needs of vast labeled images. Through these techniques, this paper successfully trained a 3 billion-parameter Swin Transformer V2 model, which is the largest dense vision model to date, and makes it capable of training with images of up to 1,536\${\textbackslash}times\$1,536 resolution. It set new performance records on 4 rep\textbf{}resentative vision tasks, including ImageNet-V2 image classification, COCO object detection, ADE20K semantic segmentation, and Kinetics-400 video action classification. Also note our training is much more efficient than that in Google's billion-level visual models, which consumes 40 times less labelled data and 40 times less training time. Code is available at {\textbackslash}url\{https://github.com/microsoft/Swin-Transformer\}.},
+	urldate = {2022-10-21},
+	publisher = {arXiv},
+	author = {Liu, Ze and Hu, Han and Lin, Yutong and Yao, Zhuliang and Xie, Zhenda and Wei, Yixuan and Ning, Jia and Cao, Yue and Zhang, Zheng and Dong, Li and Wei, Furu and Guo, Baining},
+	month = apr,
+	year = {2022},
+	note = {arXiv:2111.09883 [cs]
+version: 2},
+	keywords = {Computer Science - Computer Vision and Pattern Recognition},
+}
