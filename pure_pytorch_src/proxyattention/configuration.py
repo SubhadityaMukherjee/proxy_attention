@@ -14,5 +14,4 @@ class Experiment:
         self.num_gpu = params["num_gpu"]
         self.transfer_imagenet = params["transfer_imagenet"]
         self.subset_images = params["subset_images"]
-        self.criterion = params["criterion"]
-        self.optimizer_ft = params["optimizer_ft"]
+        self.proxy_steps = params["proxy_steps"]

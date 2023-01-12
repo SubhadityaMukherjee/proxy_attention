@@ -72,6 +72,7 @@ experiment_params = {
     "num_gpu": 1,
     "transfer_imagenet": False,
     "subset_images": 5000,
+    "proxy_steps" : 2,
 
 }
 config = proxyattention.configuration.Experiment(params=experiment_params)
@@ -123,14 +124,146 @@ exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=7, gamma=0.1)
 #%%
 # TODO Proxy loop function, custom schedule
 # TODO Proxy attention tabular support
-model_ft = proxyattention.training.train_model(
-    model_ft,
-    config.criterion,
-    config.optimizer_ft(model_ft.parameters(), lr=config.lr),
-    config.exp_lr_scheduler,
+
+def train_model(
+    model,
+    criterion,
+    optimizer,
+    scheduler,
     dataloaders,
     dataset_sizes,
-    num_epochs=1,
+    num_epochs=25,
+    config=None,
+):
+    writer = SummaryWriter(log_dir=config.fname_start, comment=config.fname_start)
+    since = time.time()
+
+    best_model_wts = copy.deepcopy(model.state_dict())
+    best_acc = 0.0
+    pbar = tqdm(range(num_epochs), total=num_epochs)
+    for epoch in pbar:
+        # print(f'Epoch {epoch}/{num_epochs - 1}')
+        # print('-' * 10)
+
+        # Each epoch has a training and validation phase
+        for phase in ["train", "val"]:
+            if phase == "train":
+                model.train()  # Set model to training mode
+            else:
+                model.eval()  # Set model to evaluate mode
+
+            running_loss = 0.0
+            running_corrects = 0
+
+            # Iterate over data.
+
+            optimizer.zero_grad(set_to_none=True)
+            scaler = torch.cuda.amp.GradScaler()
+            for inps in tqdm(
+                dataloaders[phase], total=len(dataloaders[phase]), leave=False
+            ):
+                inputs = inps["x"].to(config.device, non_blocking=True)
+                labels = inps["y"].to(config.device, non_blocking=True)
+
+                # zero the parameter gradients
+
+                # forward
+                # track history if only in train
+                with torch.set_grad_enabled(phase == "train"):
+                    with torch.cuda.amp.autocast():
+                        if phase == "train":
+                            outputs = model(inputs)
+                        else:
+                            with torch.no_grad():
+                                outputs = model(inputs)
+                        _, preds = torch.max(outputs, 1)
+                        loss = criterion(outputs, labels)
+                        # TODO Save images pipeline
+                        # TODO Config to choose what to save
+                        # TODO Proxy getting called randomly??
+                        if epoch % config.proxy_steps ==0 and phase == "train":
+                            print("[INFO] : Proxy")
+                            logging.info("Proxy")
+                            wrong_indices = (labels != preds).nonzero()
+                            saliency = Saliency(model_ft)
+                            # print(labels[wrong_indices].repeat(1,2).shape)
+                            # TODO Other methods
+                            grads = saliency.attribute(inputs, labels)[wrong_indices]
+                            grads = np.transpose(grads.squeeze().cpu().detach().numpy(), (0,2,3,1))
+
+                    # backward + optimize only if in training phase
+                    if phase == "train":
+                        scaler.scale(loss).backward()
+                        # optimizer.step()
+
+                        scaler.step(optimizer)
+                        scaler.update()
+                        optimizer.zero_grad(set_to_none=True)
+
+                # statistics
+                running_loss += loss.item() * inputs.size(0)
+                running_corrects += torch.sum(preds == labels.data)
+                pbar.set_postfix(
+                    {
+                        "Phase": "running",
+                        "Loss": running_loss / dataset_sizes[phase],
+                        # 'Acc' : running_corrects.double() / dataset_sizes[phase],
+                    }
+                )
+
+            if phase == "train":
+                scheduler.step()
+
+            epoch_loss = running_loss / dataset_sizes[phase]
+            epoch_acc = running_corrects.double() / dataset_sizes[phase]
+
+            pbar.set_postfix({"Phase": phase, "Loss": epoch_loss, "Acc": epoch_acc})
+
+            # TODO Add more loss functions
+            if phase == "train":
+                writer.add_scalar("Loss/Train", epoch_loss, epoch)
+                writer.add_scalar("Acc/Train", epoch_acc, epoch)
+            if phase == "val":
+                writer.add_scalar("Loss/Val", epoch_loss, epoch)
+                writer.add_scalar("Acc/Val", epoch_acc, epoch)
+
+            # deep copy the model
+            if phase == "val" and epoch_acc > best_acc:
+                best_acc = epoch_acc
+                best_model_wts = copy.deepcopy(model.state_dict())
+
+            # TODO Save best model
+
+        # print()
+
+    time_elapsed = time.time() - since
+    print(f"Training complete in {time_elapsed // 60:.0f}m {time_elapsed % 60:.0f}s")
+    print(f"Best val Acc: {best_acc:4f}")
+
+    # load best model weights
+    model.load_state_dict(best_model_wts)
+    return model, grads, inputs, labels[wrong_indices]
+
+model_ft, grads, inps, labels = train_model(
+    model_ft,
+    criterion,
+    optimizer_ft,
+    exp_lr_scheduler,
+    dataloaders,
+    dataset_sizes,
+    num_epochs=2,
     config=config,
 )
 #%%
+grads.shape, labels.shape, inps.shape
+#%%
+var = 0.008
+ind = 2
+original_image = inps[ind].permute(1,2,0).cpu().detach()
+original_image[grads[ind].mean(axis = 2) > 0.008] = 0.0
+plt.imshow(original_image)
+plt.axis('off')
+plt.gca().set_axis_off()
+plt.margins(x=0)
+plt.autoscale(False)
+plt.savefig("test.png", bbox_inches = 'tight',pad_inches=0)
