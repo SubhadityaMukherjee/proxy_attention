@@ -181,6 +181,7 @@ def train_model(
                         # TODO Save images pipeline
                         # TODO Config to choose what to save
                         # TODO Proxy getting called randomly??
+                        # TODO Save Classwise fraction 
                         if epoch % config.proxy_steps ==0 and phase == "train":
                             print("[INFO] : Proxy")
                             logging.info("Proxy")
