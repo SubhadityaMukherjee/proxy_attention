@@ -52,14 +52,14 @@ import proxyattention
 
 sns.set()
 
-os.environ["TORCH_HOME"] = "/media/hdd/Datasets/"
+os.environ["TORCH_HOME"] = "/mnt/e/Datasets/"
 cudnn.benchmark = True
 #%%
 # Config
 # TODO Refactor this into a JSON with options
 experiment_params = {
     "experiment_name": "test_asl_starter",
-    "ds_path": Path("/media/hdd/Datasets/asl/"),
+    "ds_path": Path("/mnt/e/Datasets/asl/asl_alphabet_train/asl_alphabet_train"),
     "ds_name": "asl",
     "name_fn": proxyattention.data_utils.asl_name_fn,
     "image_size": 224,
@@ -181,16 +181,34 @@ def train_model(
                         # TODO Save images pipeline
                         # TODO Config to choose what to save
                         # TODO Proxy getting called randomly??
-                        # TODO Save Classwise fraction 
                         if epoch % config.proxy_steps ==0 and phase == "train":
                             print("[INFO] : Proxy")
                             logging.info("Proxy")
                             wrong_indices = (labels != preds).nonzero()
                             saliency = Saliency(model_ft)
-                            # print(labels[wrong_indices].repeat(1,2).shape)
                             # TODO Other methods
                             grads = saliency.attribute(inputs, labels)[wrong_indices]
                             grads = np.transpose(grads.squeeze().cpu().detach().numpy(), (0,2,3,1))
+
+                            # TODO make these hyperparams
+                            var = 0.008
+                            ind = 8
+                            # TODO Save Classwise fraction 
+                            frac_choose = .25
+                            # TODO options 0.0 to other methods
+                            chosen_inds = range(int(np.ceil(frac_choose *len(labels))))
+                            original_images = [inputs[ind].permute(1,2,0).cpu().detach() for ind in chosen_inds]
+                            # original_image = inps[ind].permute(1,2,0).cpu().detach()
+                            for ind in tqdm(chosen_inds, total= len(chosen_inds)):
+                                original_images[ind][grads[ind].mean(axis = 2) > var] = 0.0
+                                plt.imshow(original_images[ind])
+                                plt.axis('off')
+                                plt.gca().set_axis_off()
+                                plt.margins(x=0)
+                                plt.autoscale(False)
+                                # TODO proper save pipeline
+                                # Fix clipping warning
+                                plt.savefig(f"test-{ind}-{epoch}.png", bbox_inches = 'tight',pad_inches=0)
 
                     # backward + optimize only if in training phase
                     if phase == "train":
@@ -221,6 +239,7 @@ def train_model(
             pbar.set_postfix({"Phase": phase, "Loss": epoch_loss, "Acc": epoch_acc})
 
             # TODO Add more loss functions
+            # TODO Classwise accuracy
             if phase == "train":
                 writer.add_scalar("Loss/Train", epoch_loss, epoch)
                 writer.add_scalar("Acc/Train", epoch_acc, epoch)
@@ -243,6 +262,7 @@ def train_model(
 
     # load best model weights
     model.load_state_dict(best_model_wts)
+    # TODO Change returns to normal
     return model, grads, inputs, labels[wrong_indices]
 
 model_ft, grads, inps, labels = train_model(
@@ -259,7 +279,7 @@ model_ft, grads, inps, labels = train_model(
 grads.shape, labels.shape, inps.shape
 #%%
 var = 0.008
-ind = 2
+ind = 8
 original_image = inps[ind].permute(1,2,0).cpu().detach()
 original_image[grads[ind].mean(axis = 2) > 0.008] = 0.0
 plt.imshow(original_image)
@@ -268,3 +288,4 @@ plt.gca().set_axis_off()
 plt.margins(x=0)
 plt.autoscale(False)
 plt.savefig("test.png", bbox_inches = 'tight',pad_inches=0)
+# %%

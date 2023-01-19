@@ -100,7 +100,7 @@ class ImageClassDs(Dataset):
 
 def create_folds(config):
     # TODO Allow options for Proxy data
-    all_files = get_files(config.ds_path / "train")
+    all_files = get_files(config.ds_path)
     if config.subset_images != None:
         all_files = all_files[: config.subset_images]
 
@@ -108,6 +108,7 @@ def create_folds(config):
     df = pd.DataFrame.from_dict(
         {x: config.name_fn(x) for x in all_files}, orient="index"
     ).reset_index()
+    print(df.head(5))
     df.columns = ["image_id", "label"]
     # Convert labels to integers
     temp = preprocessing.LabelEncoder()
