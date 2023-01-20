@@ -816,12 +816,12 @@ INPUT ./images/banner.png
 INPUT images/banner.png
 INPUT ./images/banner.png
 INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/vf/adobe/times/ptmr8c.vf
+INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/vf/adobe/times/ptmb7t.vf
+INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/tfm/adobe/times/ptmb8r.tfm
 INPUT ./images/banner.png
 INPUT ./images/banner.png
 INPUT images/banner.png
 INPUT ./images/banner.png
-INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/vf/adobe/times/ptmb7t.vf
-INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/tfm/adobe/times/ptmb8r.tfm
 INPUT ./chapters/relevance.tex
 INPUT ./chapters/relevance.tex
 INPUT ./chapters/relevance.tex

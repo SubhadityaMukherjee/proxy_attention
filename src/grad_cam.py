@@ -9,14 +9,14 @@ import numpy as np
 import torch
 # noinspection PyPep8Naming
 import torch.nn.functional as F
-from torch.autograd import Function
-from matplotlib.colors import Colormap
 from matplotlib import cm
+from matplotlib.colors import Colormap
+from torch.autograd import Function
 
 
 class FeatureExtractor(object):
-    """ Class for extracting activations and 
-    registering gradients from targetted intermediate layers """
+    """Class for extracting activations and
+    registering gradients from targetted intermediate layers"""
 
     def __init__(self, model, target_layers):
         self.model = model
@@ -40,10 +40,10 @@ class FeatureExtractor(object):
 
 
 class ModelOutputs(object):
-    """ Class for making a forward pass, and getting:
+    """Class for making a forward pass, and getting:
     1. The network output.
     2. Activations from intermeddiate targetted layers.
-    3. Gradients from intermeddiate targetted layers. """
+    3. Gradients from intermeddiate targetted layers."""
 
     def __init__(self, model, target_layers):
         self.model = model
@@ -71,18 +71,19 @@ def preprocess_image(img):
     for i in range(3):
         preprocessed_img[:, :, i] = preprocessed_img[:, :, i] - means[i]
         preprocessed_img[:, :, i] = preprocessed_img[:, :, i] / stds[i]
-    preprocessed_img = \
-        np.ascontiguousarray(np.transpose(preprocessed_img, (2, 0, 1)))
+    preprocessed_img = np.ascontiguousarray(np.transpose(preprocessed_img, (2, 0, 1)))
     preprocessed_img = torch.from_numpy(preprocessed_img)
     preprocessed_img.unsqueeze_(0)
     input = preprocessed_img.requires_grad_(True)
     return input
 
 
-def show_cam_on_image(img: np.ndarray,
-                      mask: np.ndarray,
-                      color_map: Colormap = cm.coolwarm,
-                      name: str = None):
+def show_cam_on_image(
+    img: np.ndarray,
+    mask: np.ndarray,
+    color_map: Colormap = cm.coolwarm,
+    name: str = None,
+):
     """
     Reshape Overlay the GradCam output (mask) to the input img given color map.
     Args:
@@ -95,12 +96,12 @@ def show_cam_on_image(img: np.ndarray,
 
     """
     if img.dtype == np.uint8:
-        img = img / 255.
+        img = img / 255.0
 
     # BGR order
     heatmap = color_map(mask)[:, :, 0:3]
     heatmap = cv2.resize(heatmap, (img.shape[1], img.shape[0]))
-    print('hm_max', heatmap.max())
+    print("hm_max", heatmap.max())
     # norm to [0,1]
 
     cam = heatmap + np.float32(img)
@@ -124,7 +125,11 @@ class GradCam:
     def __init__(self, model, target_layer_names, cuda_id):
         self.model = model
         self.model.eval()
-        self.device = torch.device(f'cuda:{cuda_id}' if cuda_id is not None and torch.cuda.is_available() else 'cpu')
+        self.device = torch.device(
+            f"cuda:{cuda_id}"
+            if cuda_id is not None and torch.cuda.is_available()
+            else "cpu"
+        )
         self.model = model.to(self.device)
         self.extractor = ModelOutputs(self.model, target_layer_names)
 
@@ -161,7 +166,9 @@ class GradCam:
         # cam = cam / (np.max(cam,axis=(1,2),keepdims=True)
         cam[np.isnan(cam)] = 0
         if resize is not None:
-            cam = np.moveaxis(cam, 0, -1)  # cv2.resize only support batches if with dimension H*W*Batch
+            cam = np.moveaxis(
+                cam, 0, -1
+            )  # cv2.resize only support batches if with dimension H*W*Batch
             cam = cv2.resize(cam, resize)
             cam = np.moveaxis(cam, -1, 0)
         # cam = np.uint8(255*cam)
@@ -169,10 +176,13 @@ class GradCam:
 
 
 class GuidedBackpropReLU(Function):
-
     def forward(self, input_data, **kwargs):
         positive_mask = (input_data > 0).type_as(input_data)
-        output = torch.addcmul(torch.zeros(input_data.size()).type_as(input_data), input_data, positive_mask)
+        output = torch.addcmul(
+            torch.zeros(input_data.size()).type_as(input_data),
+            input_data,
+            positive_mask,
+        )
         # noinspection PyUnresolvedReferences
         self.save_for_backward(input_data, output)
         return output
@@ -181,9 +191,15 @@ class GuidedBackpropReLU(Function):
         input_data, output = self.saved_tensors
         positive_mask_1 = (input_data > 0).type_as(grad_output)
         positive_mask_2 = (grad_output > 0).type_as(grad_output)
-        grad_input = torch.addcmul(torch.zeros(input_data.size()).type_as(input_data),
-                                   torch.addcmul(torch.zeros(input_data.size()).type_as(input_data), grad_output,
-                                                 positive_mask_1), positive_mask_2)
+        grad_input = torch.addcmul(
+            torch.zeros(input_data.size()).type_as(input_data),
+            torch.addcmul(
+                torch.zeros(input_data.size()).type_as(input_data),
+                grad_output,
+                positive_mask_1,
+            ),
+            positive_mask_2,
+        )
 
         return grad_input
 
@@ -198,7 +214,7 @@ class GuidedBackpropReLUModel:
 
         # replace ReLU with GuidedBackpropReLU
         for idx, module in self.model.features._modules.items():
-            if module.__class__.__name__ == 'ReLU':
+            if module.__class__.__name__ == "ReLU":
                 self.model.features._modules[idx] = GuidedBackpropReLU()
 
     def forward(self, x):

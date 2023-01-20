@@ -1,19 +1,22 @@
 # %%
 # Imports
-from config import ds_config
-from fastai.vision.all import *
-from fastai.callback.tensorboard import TensorBoardCallback
-import torchvision.transforms.functional as transformF
-
-# from fastai.callback.tracker import
-from fastai.vision.widgets import *
-import os
-import matplotlib.pyplot as plt
-from IPython.display import Image
 import argparse as ap
 import datetime
 import gc
+import os
+
+import matplotlib.pyplot as plt
+import torchvision.transforms.functional as transformF
+from fastai.callback.tensorboard import TensorBoardCallback
+from fastai.vision.all import *
+# from fastai.callback.tracker import
+from fastai.vision.widgets import *
+from IPython.display import Image
 from tqdm import tqdm
+
+from config import ds_config
+from utils import *  # import utils at the end after fastai because the Hook function is a monkey-patch
+
 # from torch.multiprocessing import set_start_method
 # set_start_method('forkserver')
 
@@ -23,7 +26,6 @@ from tqdm import tqdm
 # except RuntimeError:
 #     pass
 
-from utils import *  # import utils at the end after fastai because the Hook function is a monkey-patch
 
 os.environ["TORCH_HOME"] = "/media/hdd/Datasets/"
 os.environ["FASTAI_HOME"] = "/media/hdd/Datasets/"
@@ -59,7 +61,9 @@ if __name__ == "__main__":
 
     # TODO : Add reset folder
     #%%
-    batch_tfms = aug_transforms() if ds_meta["enable_default_augments"] == True else None
+    batch_tfms = (
+        aug_transforms() if ds_meta["enable_default_augments"] == True else None
+    )
     fields = DataBlock(
         blocks=(ImageBlock, CategoryBlock),
         get_items=get_image_files,
@@ -85,9 +89,6 @@ if __name__ == "__main__":
     # Start the loop
     total_epochs_passed = 0
 
-
-
-
     for i, step in tqdm(enumerate(training_rounds), total=len(training_rounds)):
         if i == 0:
             # Initialize everything with new or old data
@@ -100,7 +101,11 @@ if __name__ == "__main__":
             ]
 
             learn = vision_learner(
-                dls, ds_meta["network"], cbs=cbs, metrics=metrics, pretrained=ds_meta["pretrained"]
+                dls,
+                ds_meta["network"],
+                cbs=cbs,
+                metrics=metrics,
+                pretrained=ds_meta["pretrained"],
             ).to_fp16()
             fname_training = f'{ds_meta["ds_name"]}_{args.name}_{datetime.now().strftime("%d%m%Y_%H:%M:%S")}'  # unique_name
             if step > 0:
@@ -122,7 +127,11 @@ if __name__ == "__main__":
             ]
 
             learn = vision_learner(
-                dls, ds_meta["network"], cbs=cbs, metrics=metrics, pretrained=ds_meta["pretrained"]
+                dls,
+                ds_meta["network"],
+                cbs=cbs,
+                metrics=metrics,
+                pretrained=ds_meta["pretrained"],
             ).to_fp16()
 
             learn.load("temp_model")  # load model since augment has been done already
@@ -145,33 +154,53 @@ if __name__ == "__main__":
                 dls = fields.dataloaders(path, bs=ds_meta["batch_size"])
                 cbs = [
                     TensorBoardCallback(
-                        log_dir=f"tb_runs/{fname_start}", projector=False, trace_model=False
+                        log_dir=f"tb_runs/{fname_start}",
+                        projector=False,
+                        trace_model=False,
                     ),
                     CSVLogger(fname=f"csv_logs/{fname_start}.csv"),
                 ]
-                
 
                 learn = vision_learner(
-                    dls, ds_meta["network"], cbs=cbs, metrics=metrics, pretrained=ds_meta["pretrained"]
+                    dls,
+                    ds_meta["network"],
+                    cbs=cbs,
+                    metrics=metrics,
+                    pretrained=ds_meta["pretrained"],
                 ).to_fp16()
 
-                learn.load("temp_model")  # load model since augment has been done already
-                learn.to('cpu')
-                class Hook():
+                learn.load(
+                    "temp_model"
+                )  # load model since augment has been done already
+                learn.to("cpu")
+
+                class Hook:
                     def __init__(self, m):
-                        self.hook = m.register_forward_hook(self.hook_func)   
-                    def hook_func(self, m, i, o): self.stored = o.detach().clone()
+                        self.hook = m.register_forward_hook(self.hook_func)
+
+                    def hook_func(self, m, i, o):
+                        self.stored = o.detach().clone()
+
                     # Automatically register the hook when entering it
-                    def __enter__(self, *args): return self
+                    def __enter__(self, *args):
+                        return self
+
                     # Automatically remove the hook when exiting it
-                    def __exit__(self, *args): self.hook.remove()
-                
-                class HookBwd():
+                    def __exit__(self, *args):
+                        self.hook.remove()
+
+                class HookBwd:
                     def __init__(self, m):
-                        self.hook = m.register_backward_hook(self.hook_func)   
-                    def hook_func(self, m, gi, go): self.stored = go[0].detach().clone()
-                    def __enter__(self, *args): return self
-                    def __exit__(self, *args): self.hook.remove()
+                        self.hook = m.register_backward_hook(self.hook_func)
+
+                    def hook_func(self, m, gi, go):
+                        self.stored = go[0].detach().clone()
+
+                    def __enter__(self, *args):
+                        return self
+
+                    def __exit__(self, *args):
+                        self.hook.remove()
 
                 # dls.to('cpu')
 
@@ -195,7 +224,9 @@ if __name__ == "__main__":
                 # Get the index of all the images that the network predicted wrong
                 # TODO : Check for confidence
                 index_wrongs = [
-                    x for x in range(subset) if bspred[2][x] != TensorBase(item_names)[x]
+                    x
+                    for x in range(subset)
+                    if bspred[2][x] != TensorBase(item_names)[x]
                 ]
                 print(
                     f"[INFO] : Pct wrong for step {total_epochs_passed} = {len(index_wrongs)/len(bspred[2])}"
@@ -252,8 +283,6 @@ if __name__ == "__main__":
 
                 # parallel(create_im, index_wrongs, progress=True, n_workers=8)
 
-
-                
                 # for im in tqdm(index_wrongs, total = len(index_wrongs)):
                 #     img = PILImage.create(items[im])
 
@@ -301,11 +330,17 @@ if __name__ == "__main__":
                 #     plt.box(False)
                 #     plt.savefig(rename_for_aug(items[im]), transparent = True, bbox_inches='tight',pad_inches = 0)
 
-                ims = [PILImage.create(items[x]) for x in tqdm(index_wrongs, total = len(index_wrongs))]
+                ims = [
+                    PILImage.create(items[x])
+                    for x in tqdm(index_wrongs, total=len(index_wrongs))
+                ]
                 im_names = [items[x] for x in index_wrongs]
-                test_ds_new_ims = dls.test_dl(ims, shuffle = False)
-                decoded = [dls.train.decode(x)[0].float() for x in tqdm(test_ds_new_ims, total = len(test_ds_new_ims))]
-                eval_model =learn.model.eval() 
+                test_ds_new_ims = dls.test_dl(ims, shuffle=False)
+                decoded = [
+                    dls.train.decode(x)[0].float()
+                    for x in tqdm(test_ds_new_ims, total=len(test_ds_new_ims))
+                ]
+                eval_model = learn.model.eval()
                 # eval_model_results = [eval_model(first(x).float().cuda()) for x in test_ds_new_ims]
                 # eval_model_results = learn.predict_batch(ims)[0]
                 # print(eval_model_results)
@@ -314,7 +349,7 @@ if __name__ == "__main__":
                 cam_maps = []
 
                 print("Creating map")
-                for im in tqdm(decoded, total = len(decoded)):
+                for im in tqdm(decoded, total=len(decoded)):
                     with HookBwd(learn.model[-2][4][-1]) as hookg:  # for other layers
                         with Hook(learn.model[-2][4][-1]) as hook:
                             output = eval_model(im.cuda())
@@ -327,21 +362,38 @@ if __name__ == "__main__":
                     cam_maps.append(cam_map)
 
                 print("Resizing")
-                t_resized = [transformF.resize(torch.unsqueeze(cam_map, 0), ds_meta["image_size"]) for cam_map in cam_maps]
-                t_resized = [torch.cat([x, x, x], dim=0).detach().cpu() for x in t_resized]
-                decoded_tensor_images = [dls.train.decode(x)[0][0].float() for x in tqdm(test_ds_new_ims, total = len(test_ds_new_ims))]
+                t_resized = [
+                    transformF.resize(
+                        torch.unsqueeze(cam_map, 0), ds_meta["image_size"]
+                    )
+                    for cam_map in cam_maps
+                ]
+                t_resized = [
+                    torch.cat([x, x, x], dim=0).detach().cpu() for x in t_resized
+                ]
+                decoded_tensor_images = [
+                    dls.train.decode(x)[0][0].float()
+                    for x in tqdm(test_ds_new_ims, total=len(test_ds_new_ims))
+                ]
 
                 for ind in tqdm(range(len(t_resized))):
-                    decoded_tensor_images[ind][t_resized[ind] >=0.009] = 0.0
-                    decoded_tensor_images[ind] = torch.einsum("ijk->jki", decoded_tensor_images[ind])
-                
+                    decoded_tensor_images[ind][t_resized[ind] >= 0.009] = 0.0
+                    decoded_tensor_images[ind] = torch.einsum(
+                        "ijk->jki", decoded_tensor_images[ind]
+                    )
+
                 for ind in tqdm(range(len(decoded_tensor_images))):
                     plt.imshow(decoded_tensor_images[ind])
                     plt.axis("off")
-                    ax=plt.gca()
+                    ax = plt.gca()
                     ax.get_xaxis().set_visible(False)
                     plt.box(False)
-                    plt.savefig(rename_for_aug(im_names[ind]), transparent = True, bbox_inches='tight',pad_inches = 0)
+                    plt.savefig(
+                        rename_for_aug(im_names[ind]),
+                        transparent=True,
+                        bbox_inches="tight",
+                        pad_inches=0,
+                    )
                 clear_learner(learn, dls)
                 del bspred
                 del items

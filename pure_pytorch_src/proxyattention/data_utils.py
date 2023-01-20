@@ -1,4 +1,4 @@
-#%%
+# %%
 # Imports
 
 import copy
@@ -10,18 +10,8 @@ import mimetypes
 import os
 import time
 from pathlib import Path
-from typing import (
-    Dict,
-    Generator,
-    Iterable,
-    Iterator,
-    List,
-    Optional,
-    Sequence,
-    Set,
-    Tuple,
-    Union,
-)
+from typing import (Dict, Generator, Iterable, Iterator, List, Optional,
+                    Sequence, Set, Tuple, Union)
 
 import albumentations as A
 import cv2
@@ -55,7 +45,9 @@ sns.set()
 os.environ["TORCH_HOME"] = "/media/hdd/Datasets/"
 cudnn.benchmark = True
 
-#%%
+# %%
+
+
 def fish_name_fn(x):
     return str(x).split("/")[-2]
 
@@ -64,9 +56,9 @@ def asl_name_fn(x):
     return str(x).split("/")[-2]
 
 
-#%%
+# %%
 # TODO Create dataset loader for tabular
-#%%
+# %%
 class ImageClassDs(Dataset):
     def __init__(
         self, df: pd.DataFrame, imfolder: str, train: bool = True, transforms=None
@@ -95,7 +87,7 @@ class ImageClassDs(Dataset):
         return len(self.df)
 
 
-#%%
+# %%
 
 
 def create_folds(config):
@@ -116,6 +108,10 @@ def create_folds(config):
 
     # Save label map
     label_map = {i: l for i, l in enumerate(temp.classes_)}
+    rev_label_map = {l: i for i, l in enumerate(temp.classes_)}
+
+    config.label_map = label_map
+    config.rev_label_map = rev_label_map
 
     # Kfold splits
     df["kfold"] = -1
@@ -134,10 +130,10 @@ def create_folds(config):
     # TODO Check if logging works
     logging.info("Train and val data created")
 
-    return train, val, label_map
+    return train, val
 
 
-#%%
+# %%
 def create_dls(train, val, config):
     # TODO Options for more config
     data_transforms = {

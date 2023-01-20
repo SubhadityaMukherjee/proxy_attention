@@ -15,3 +15,7 @@ class Experiment:
         self.transfer_imagenet = params["transfer_imagenet"]
         self.subset_images = params["subset_images"]
         self.proxy_steps = params["proxy_steps"]
+        self.proxy_threshold = params["proxy_threshold"]
+        self.pixel_replacement_method = params["pixel_replacement_method"]
+        self.model = params["model"]
+        self.proxy_steps = params["proxy_steps"]

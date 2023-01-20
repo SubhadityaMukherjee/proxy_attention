@@ -1,11 +1,12 @@
 #%%
+import gc
+import os
+
+import matplotlib.pyplot as plt
 import timm
 from fastai.vision.all import *
 from fastai.vision.widgets import *
-import os
-import matplotlib.pyplot as plt
 from IPython.display import Image
-import gc
 
 os.environ["TORCH_HOME"] = "/media/hdd/Datasets/"
 os.environ["FASTAI_HOME"] = "/media/hdd/Datasets/"
@@ -72,10 +73,17 @@ def clear_learner(learn, dls):
     del dls
     gc.collect()
     torch.cuda.empty_cache()
+
+
 #%%
 def get_image_files_exclude_augment(path, recurse=True, folders=None):
     "Get image files in `path` recursively, only in `folders`, if specified."
-    all_files = get_files(path, extensions=image_extensions, recurse=recurse, folders=folders)
+    all_files = get_files(
+        path, extensions=image_extensions, recurse=recurse, folders=folders
+    )
     aug_files = [x for x in all_files if "aug" in x.name]
-    [all_files.remove(element) for element in [x.parent/x.name.replace("augmented_", "") for x in aug_files]]
+    [
+        all_files.remove(element)
+        for element in [x.parent / x.name.replace("augmented_", "") for x in aug_files]
+    ]
     return all_files
