@@ -56,11 +56,11 @@ def reset_params(model):
 
 def choose_network(config):
     # vit_tiny_patch16_224.augreg_in21k_ft_in1k
-    if config.name == "vision_transformer":
-        config.name = "vit_tiny_patch16_224.augreg_in21k_ft_in1k"
+    if config.model == "vision_transformer":
+        config.model = "vit_tiny_patch16_224.augreg_in21k_ft_in1k"
     # Define the number of classes
     model = timm.create_model(
-        config.name, pretrained=config.transfer_imagenet, num_classes=config.num_classes
+        config.model, pretrained=config.transfer_imagenet, num_classes=config.num_classes
     ).to(config.device)
     model.train()
     return model

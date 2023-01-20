@@ -18,7 +18,6 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import proxyattention
 import seaborn as sns
 import timm
 import torch
@@ -40,6 +39,7 @@ from torch.utils.tensorboard import SummaryWriter
 from torchvision import datasets, models, transforms
 from tqdm import tqdm
 
+import proxyattention
 sns.set()
 
 os.environ["TORCH_HOME"] = "/mnt/e/Datasets/"
@@ -180,6 +180,7 @@ def train_model(
                             ]
 
                             for ind in tqdm(chosen_inds, total=len(chosen_inds)):
+                                # TODO Split these into individual comprehensions for speed
                                 original_images[ind][
                                     grads[ind].mean(axis=2) > config.proxy_threshold
                                 ] = decide_pixel_replacement(
@@ -187,13 +188,14 @@ def train_model(
                                     method=config.pixel_replacement_method,
                                 )
 
+                            for ind in tqdm(chosen_inds, total=len(chosen_inds)):
                                 plt.imshow(original_images[ind])
                                 plt.axis("off")
                                 plt.gca().set_axis_off()
                                 plt.margins(x=0)
                                 plt.autoscale(False)
                                 #TODO Fix clipping warning
-                                label = config.rev_label_map[labels[ind]]
+                                label = config.label_map[labels[ind].item()]
                                 save_name = (
                                     config.ds_path / label / f"proxy-{ind}-{epoch}.png"
                                 )
@@ -267,7 +269,7 @@ def setup_train_round(config, proxy_step=False, num_epochs=1):
         train, val, config
     )
     class_names = image_datasets["train"].classes
-    num_classes = len(config.label_map.keys())
+    config.num_classes = len(config.label_map.keys())
 
     model_ft = proxyattention.training.choose_network(config)
     criterion = nn.CrossEntropyLoss()
