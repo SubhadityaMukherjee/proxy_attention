@@ -91,17 +91,19 @@ config = {
     "proxy_threshold": tune.loguniform(0.008, 0.01),
     "pixel_replacement_method": tune.choice(["mean", "max", "min", "black", "white"]),
     "model": "resnet18",
-    "proxy_steps": tune.choice([[1, "p", 1], [3, "p", 1], [1, 1], [3,1]]),
+    # "proxy_steps": tune.choice([[1, "p", 1], [3, "p", 1], [1, 1], [3,1]]),
+    "proxy_steps": tune.choice([[1, "p", 1],[1, 1]]),
 }   
 
 # Make dirs
 logging.info("Directories made/checked")
 os.makedirs("runs/", exist_ok=True)
-# unique_name
+# TODO unique_name
 fname_start = f'runs/{config["ds_name"]}_{config["experiment_name"]}+{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}_subset-{config["subset_images"]}'
 
 config["fname_start"]= fname_start
 
+# TODO logging
 logging.basicConfig(filename=fname_start, encoding="utf-8", level=logging.DEBUG)
 logging.info(f"[INFO] : File name = {fname_start}")
 print(f"[INFO] : File name = {fname_start}")
@@ -217,7 +219,6 @@ def train_model(
                                 plt.gca().set_axis_off()
                                 plt.margins(x=0)
                                 plt.autoscale(False)
-                                #TODO Fix clipping warning
                                 label = config["label_map"][labels[ind].item()]
                                 save_name = (
                                     config["ds_path"]/ label / f"proxy-{ind}-{epoch}.png"
@@ -263,7 +264,7 @@ def train_model(
                 writer.add_scalar("Loss/Val", epoch_loss, epoch)
                 writer.add_scalar("Acc/Val", epoch_acc, epoch)
                 with tune.checkpoint_dir(epoch) as checkpoint_dir:
-                    path = config["fname_start"]/"checkpoint"
+                    path = Path(config["fname_start"])/"checkpoint"
                     torch.save((model.state_dict(), optimizer.state_dict()), path)
 
                 tune.report(loss= epoch_loss, accuracy=epoch_acc)
@@ -328,7 +329,7 @@ def train_proxy_steps(config):
         if step == "p":
             setup_train_round(config=config, proxy_step=True, num_epochs=1)
         else:
-            setup_train_round(config=config, proxy_step=True, num_epochs=step)
+            setup_train_round(config=config, proxy_step=False, num_epochs=step)
 
 def hyperparam_tune(config):
     ray.init(num_gpus=1, num_cpus=12)
@@ -349,6 +350,7 @@ def hyperparam_tune(config):
         progress_reporter=reporter,
         checkpoint_at_end= True,
         max_failures=100,
+        num_samples=50,
         resources_per_trial={
             "gpu":1,
             "cpu":4,
@@ -361,6 +363,8 @@ def hyperparam_tune(config):
         best_trial.last_result["loss"]))
     print("Best trial final validation accuracy: {}".format(
         best_trial.last_result["accuracy"]))
+    
+    print(result)
     
 
 # %%
