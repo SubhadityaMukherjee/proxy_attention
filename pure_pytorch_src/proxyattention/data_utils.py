@@ -92,13 +92,13 @@ class ImageClassDs(Dataset):
 
 def create_folds(config):
     # TODO Allow options for Proxy data
-    all_files = get_files(config.ds_path)
-    if config.subset_images != None:
-        all_files = all_files[: config.subset_images]
+    all_files = get_files(config["ds_path"])
+    if config["subset_images"]!= None:
+        all_files = all_files[: config["subset_images"]]
 
     # Put them in a data frame for encoding
     df = pd.DataFrame.from_dict(
-        {x: config.name_fn(x) for x in all_files}, orient="index"
+        {x: config["name_fn"](x) for x in all_files}, orient="index"
     ).reset_index()
     print(df.head(5))
     df.columns = ["image_id", "label"]
@@ -110,8 +110,8 @@ def create_folds(config):
     label_map = {i: l for i, l in enumerate(temp.classes_)}
     rev_label_map = {l: i for i, l in enumerate(temp.classes_)}
 
-    config.label_map = label_map
-    config.rev_label_map = rev_label_map
+    config["label_map"]= label_map
+    config["rev_label_map"]= rev_label_map
 
     # Kfold splits
     df["kfold"] = -1
@@ -139,7 +139,7 @@ def create_dls(train, val, config):
     data_transforms = {
         "train": A.Compose(
             [
-                A.RandomResizedCrop(config.image_size, config.image_size, p=1.0),
+                A.RandomResizedCrop(config["image_size"], config["image_size"], p=1.0),
                 A.Normalize(
                     mean=[0.485, 0.456, 0.406],
                     std=[0.229, 0.224, 0.225],
@@ -152,8 +152,8 @@ def create_dls(train, val, config):
         ),
         "val": A.Compose(
             [
-                A.Resize(config.image_size, config.image_size),
-                A.CenterCrop(config.image_size, config.image_size, p=1.0),
+                A.Resize(config["image_size"], config["image_size"]),
+                A.CenterCrop(config["image_size"], config["image_size"], p=1.0),
                 A.Normalize(
                     mean=[0.485, 0.456, 0.406],
                     std=[0.229, 0.224, 0.225],
@@ -168,26 +168,26 @@ def create_dls(train, val, config):
 
     image_datasets = {
         "train": ImageClassDs(
-            train, config.ds_path, train=True, transforms=data_transforms["train"]
+            train, config["ds_path"], train=True, transforms=data_transforms["train"]
         ),
         "val": ImageClassDs(
-            val, config.ds_path, train=False, transforms=data_transforms["val"]
+            val, config["ds_path"], train=False, transforms=data_transforms["val"]
         ),
     }
 
     dataloaders = {
         "train": torch.utils.data.DataLoader(
             image_datasets["train"],
-            batch_size=config.batch_size,
+            batch_size=config["batch_size"],
             shuffle=True,
-            num_workers=4 * config.num_gpu,
+            num_workers=4 * config["num_gpu"],
             pin_memory=True,
         ),
         "val": torch.utils.data.DataLoader(
             image_datasets["val"],
-            batch_size=config.batch_size,
+            batch_size=config["batch_size"],
             shuffle=False,
-            num_workers=4 * config.num_gpu,
+            num_workers=4 * config["num_gpu"],
             pin_memory=True,
         ),
     }

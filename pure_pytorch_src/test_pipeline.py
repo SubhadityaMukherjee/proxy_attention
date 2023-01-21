@@ -38,12 +38,15 @@ from torch.utils.data import DataLoader, Dataset, TensorDataset, random_split
 from torch.utils.tensorboard import SummaryWriter
 from torchvision import datasets, models, transforms
 from tqdm import tqdm
-
+from ray import tune
+import ray
+from ray.tune import CLIReporter
+from ray.tune.schedulers import ASHAScheduler
+from functools import partial
 import proxyattention
 sns.set()
 
 os.environ["TORCH_HOME"] = "/mnt/e/Datasets/"
-cudnn.benchmark = True
 # %%
 # Config
 # TODO Refactor this into a JSON with options
@@ -68,21 +71,42 @@ experiment_params = {
     "model": "resnet18",
     "proxy_steps": [2, "p", 2],
 }
-config = proxyattention.configuration.Experiment(params=experiment_params)
+# config = proxyattention.configuration.Experiment(params=experiment_params)
+
+config = {
+    "experiment_name": "test_asl_starter",
+    "ds_path": Path("/mnt/e/Datasets/asl/asl_alphabet_train/asl_alphabet_train"),
+    "ds_name": "asl",
+    "name_fn": proxyattention.data_utils.asl_name_fn,
+    "image_size": 224,
+    "batch_size": 128,
+    "epoch_steps": [1, 2],
+    "enable_proxy_attention": True,
+    "change_subset_attention": tune.loguniform(0.1,0.8),
+    "validation_split": 0.3,
+    "shuffle_dataset": tune.choice([True, False]),
+    "num_gpu": 1,
+    "transfer_imagenet": False,
+    "subset_images": 5000,
+    "proxy_threshold": tune.loguniform(0.008, 0.01),
+    "pixel_replacement_method": tune.choice(["mean", "max", "min", "black", "white"]),
+    "model": "resnet18",
+    "proxy_steps": tune.choice([[1, "p", 1], [3, "p", 1], [1, 1], [3,1]]),
+}   
 
 # Make dirs
 logging.info("Directories made/checked")
 os.makedirs("runs/", exist_ok=True)
 # unique_name
-fname_start = f'runs/{config.ds_name}_{config.experiment_name}+{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}_subset-{config.subset_images}'
+fname_start = f'runs/{config["ds_name"]}_{config["experiment_name"]}+{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}_subset-{config["subset_images"]}'
 
-config.fname_start = fname_start
+config["fname_start"]= fname_start
 
 logging.basicConfig(filename=fname_start, encoding="utf-8", level=logging.DEBUG)
 logging.info(f"[INFO] : File name = {fname_start}")
 print(f"[INFO] : File name = {fname_start}")
 
-config.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+config["device"]= torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 # %%
 
 
@@ -115,7 +139,7 @@ def train_model(
     proxy_step=False,
     config=None,
 ):
-    writer = SummaryWriter(log_dir=config.fname_start, comment=config.fname_start)
+    writer = SummaryWriter(log_dir=config["fname_start"], comment=config["fname_start"])
     since = time.time()
 
     best_model_wts = copy.deepcopy(model.state_dict())
@@ -142,8 +166,8 @@ def train_model(
             for inps in tqdm(
                 dataloaders[phase], total=len(dataloaders[phase]), leave=False
             ):
-                inputs = inps["x"].to(config.device, non_blocking=True)
-                labels = inps["y"].to(config.device, non_blocking=True)
+                inputs = inps["x"].to(config["device"], non_blocking=True)
+                labels = inps["y"].to(config["device"], non_blocking=True)
 
                 # forward
                 # track history if only in train
@@ -182,22 +206,21 @@ def train_model(
                             for ind in tqdm(chosen_inds, total=len(chosen_inds)):
                                 # TODO Split these into individual comprehensions for speed
                                 original_images[ind][
-                                    grads[ind].mean(axis=2) > config.proxy_threshold
-                                ] = decide_pixel_replacement(
+                                    grads[ind].mean(axis=2) > config["proxy_threshold"]] = decide_pixel_replacement(
                                     original_image=original_images[ind],
-                                    method=config.pixel_replacement_method,
+                                    method=config["pixel_replacement_method"],
                                 )
 
                             for ind in tqdm(chosen_inds, total=len(chosen_inds)):
-                                plt.imshow(original_images[ind])
+                                plt.imshow(np.uint8(original_images[ind]))
                                 plt.axis("off")
                                 plt.gca().set_axis_off()
                                 plt.margins(x=0)
                                 plt.autoscale(False)
                                 #TODO Fix clipping warning
-                                label = config.label_map[labels[ind].item()]
+                                label = config["label_map"][labels[ind].item()]
                                 save_name = (
-                                    config.ds_path / label / f"proxy-{ind}-{epoch}.png"
+                                    config["ds_path"]/ label / f"proxy-{ind}-{epoch}.png"
                                 )
                                 plt.savefig(
                                     save_name, bbox_inches="tight", pad_inches=0
@@ -239,12 +262,19 @@ def train_model(
             if phase == "val":
                 writer.add_scalar("Loss/Val", epoch_loss, epoch)
                 writer.add_scalar("Acc/Val", epoch_acc, epoch)
+                with tune.checkpoint_dir(epoch) as checkpoint_dir:
+                    path = config["fname_start"]/"checkpoint"
+                    torch.save((model.state_dict(), optimizer.state_dict()), path)
+
+                tune.report(loss= epoch_loss, accuracy=epoch_acc)
+
 
             # deep copy the model
             if phase == "val" and epoch_acc > best_acc:
                 best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
-
+            
+            
             # TODO Save best model
 
         # print()
@@ -269,7 +299,7 @@ def setup_train_round(config, proxy_step=False, num_epochs=1):
         train, val, config
     )
     class_names = image_datasets["train"].classes
-    config.num_classes = len(config.label_map.keys())
+    config["num_classes"]= len(config["label_map"].keys())
 
     model_ft = proxyattention.training.choose_network(config)
     criterion = nn.CrossEntropyLoss()
@@ -293,12 +323,46 @@ def setup_train_round(config, proxy_step=False, num_epochs=1):
 
 
 def train_proxy_steps(config):
-    for step in config.proxy_steps:
+    assert torch.cuda.is_available()
+    for step in config["proxy_steps"]:
         if step == "p":
             setup_train_round(config=config, proxy_step=True, num_epochs=1)
         else:
             setup_train_round(config=config, proxy_step=True, num_epochs=step)
 
+def hyperparam_tune(config):
+    ray.init(num_gpus=1, num_cpus=12)
+    scheduler = ASHAScheduler(
+        metric="loss",
+        mode="min",
+        max_t=30,
+        grace_period=1,
+        reduction_factor=2)
+
+    reporter = CLIReporter(
+        metric_columns=["loss", "accuracy", "training_iteration"])
+
+    result = tune.run(
+        train_proxy_steps,
+        config=config,
+        scheduler=scheduler,
+        progress_reporter=reporter,
+        checkpoint_at_end= True,
+        max_failures=100,
+        resources_per_trial={
+            "gpu":1,
+            "cpu":4,
+        }
+        )
+
+    best_trial = result.get_best_trial("loss", "min", "last")
+    print("Best trial config: {}".format(best_trial.config))
+    print("Best trial final validation loss: {}".format(
+        best_trial.last_result["loss"]))
+    print("Best trial final validation accuracy: {}".format(
+        best_trial.last_result["accuracy"]))
+    
 
 # %%
-train_proxy_steps(config=config)
+# train_proxy_steps(config=config)
+hyperparam_tune(config=config)
