@@ -100,7 +100,7 @@ def create_folds(config):
     df = pd.DataFrame.from_dict(
         {x: config["name_fn"](x) for x in all_files}, orient="index"
     ).reset_index()
-    print(df.head(5))
+    # print(df.head(5))
     df.columns = ["image_id", "label"]
     # Convert labels to integers
     temp = preprocessing.LabelEncoder()
@@ -166,6 +166,7 @@ def create_dls(train, val, config):
         ),
     }
 
+    #TODO :FFCCV
     image_datasets = {
         "train": ImageClassDs(
             train, config["ds_path"], train=True, transforms=data_transforms["train"]

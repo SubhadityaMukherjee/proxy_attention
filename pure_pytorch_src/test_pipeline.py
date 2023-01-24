@@ -1,6 +1,9 @@
 # %%
 # Imports
 
+import matplotlib
+import matplotlib.pyplot as plt
+matplotlib.use('Agg')
 import copy
 import datetime
 import glob
@@ -10,12 +13,21 @@ import mimetypes
 import os
 import time
 from pathlib import Path
-from typing import (Dict, Generator, Iterable, Iterator, List, Optional,
-                    Sequence, Set, Tuple, Union)
+from typing import (
+    Dict,
+    Generator,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Sequence,
+    Set,
+    Tuple,
+    Union,
+)
 
 import albumentations as A
 import cv2
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -44,9 +56,14 @@ from ray.tune import CLIReporter
 from ray.tune.schedulers import ASHAScheduler
 from functools import partial
 import proxyattention
+from PIL import Image
+from torchvision.utils import save_image
+
+
 sns.set()
 
 os.environ["TORCH_HOME"] = "/mnt/e/Datasets/"
+
 # %%
 # Config
 # TODO Refactor this into a JSON with options
@@ -82,33 +99,34 @@ config = {
     "batch_size": 128,
     "epoch_steps": [1, 2],
     "enable_proxy_attention": True,
-    "change_subset_attention": tune.loguniform(0.1,0.8),
+    "change_subset_attention": tune.loguniform(0.1, 0.8),
     "validation_split": 0.3,
     "shuffle_dataset": tune.choice([True, False]),
     "num_gpu": 1,
     "transfer_imagenet": False,
-    "subset_images": 5000,
+    "subset_images": 8000,
     "proxy_threshold": tune.loguniform(0.008, 0.01),
     "pixel_replacement_method": tune.choice(["mean", "max", "min", "black", "white"]),
     "model": "resnet18",
     # "proxy_steps": tune.choice([[1, "p", 1], [3, "p", 1], [1, 1], [3,1]]),
-    "proxy_steps": tune.choice([[1, "p", 1],[1, 1]]),
-}   
+    "proxy_steps": tune.choice([["p", 1],[1, 1], ["p",1], [1, "p"], [1, "p",1], [1,1,1]]),
+    # "proxy_steps": tune.choice([["p"]]),
+}
 
 # Make dirs
 logging.info("Directories made/checked")
-os.makedirs("runs/", exist_ok=True)
+os.makedirs(config["ds_path"] / "runs", exist_ok=True)
 # TODO unique_name
-fname_start = f'runs/{config["ds_name"]}_{config["experiment_name"]}+{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}_subset-{config["subset_images"]}'
+fname_start = f'/mnt/e/CODE/Github/improving_robotics_datasets/pure_pytorch_src/runs/{config["ds_name"]}_{config["experiment_name"]}+{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}_subset-{config["subset_images"]}'
 
-config["fname_start"]= fname_start
+config["fname_start"] = fname_start
 
 # TODO logging
 logging.basicConfig(filename=fname_start, encoding="utf-8", level=logging.DEBUG)
 logging.info(f"[INFO] : File name = {fname_start}")
 print(f"[INFO] : File name = {fname_start}")
 
-config["device"]= torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+config["device"] = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 # %%
 
 
@@ -128,6 +146,14 @@ def decide_pixel_replacement(original_image, method="mean"):
         return 0.0
     elif method == "white":
         return 255.0
+
+
+def calc_grad_threshold(obj):
+    return obj.mean(axis=2) > config["proxy_threshold"].sample()
+
+
+def permute_and_detach(obj):
+    return obj.permute(1, 2, 0).cpu().detach()
 
 
 def train_model(
@@ -152,6 +178,8 @@ def train_model(
         # print('-' * 10)
 
         # Each epoch has a training and validation phase
+        input_wrong = []
+        label_wrong = []
         for phase in ["train", "val"]:
             if phase == "train":
                 model.train()  # Set model to training mode
@@ -189,43 +217,9 @@ def train_model(
                             print("[INFO] : Proxy")
                             logging.info("Proxy")
                             wrong_indices = (labels != preds).nonzero()
-                            saliency = Saliency(model)
-                            # TODO Other methods
-                            grads = saliency.attribute(inputs, labels)[wrong_indices]
-                            grads = np.transpose(
-                                grads.squeeze().cpu().detach().numpy(), (0, 2, 3, 1)
-                            )
-
-                            # TODO Save Classwise fraction
-                            frac_choose = 0.25
-                            chosen_inds = range(int(np.ceil(frac_choose * len(labels))))
-
-                            original_images = [
-                                inputs[ind].permute(1, 2, 0).cpu().detach()
-                                for ind in chosen_inds
-                            ]
-
-                            for ind in tqdm(chosen_inds, total=len(chosen_inds)):
-                                # TODO Split these into individual comprehensions for speed
-                                original_images[ind][
-                                    grads[ind].mean(axis=2) > config["proxy_threshold"]] = decide_pixel_replacement(
-                                    original_image=original_images[ind],
-                                    method=config["pixel_replacement_method"],
-                                )
-
-                            for ind in tqdm(chosen_inds, total=len(chosen_inds)):
-                                plt.imshow(np.uint8(original_images[ind]))
-                                plt.axis("off")
-                                plt.gca().set_axis_off()
-                                plt.margins(x=0)
-                                plt.autoscale(False)
-                                label = config["label_map"][labels[ind].item()]
-                                save_name = (
-                                    config["ds_path"]/ label / f"proxy-{ind}-{epoch}.png"
-                                )
-                                plt.savefig(
-                                    save_name, bbox_inches="tight", pad_inches=0
-                                )
+                            # input_wrong = input_wrong.stack(inputs[wrong_indices])
+                            input_wrong.extend(inputs[wrong_indices])
+                            label_wrong.extend(labels[wrong_indices])
 
                     # backward + optimize only if in training phase
                     if phase == "train":
@@ -250,6 +244,87 @@ def train_model(
             if phase == "train":
                 scheduler.step()
 
+            if phase == "train" and proxy_step == True:
+                print("Performing Proxy step")
+                # TODO Save Classwise fraction
+                frac_choose = 0.25
+                chosen_inds = int(np.ceil(frac_choose * len(label_wrong)))
+                #TODO Change for real
+                #TODO some sort of decay?
+                chosen_inds = max(50, chosen_inds)
+                print(f"{chosen_inds} images chosen to run proxy on")
+
+                #TODO Fix this mess
+                input_wrong = input_wrong[:chosen_inds]
+                input_wrong = torch.squeeze(torch.stack(input_wrong, dim=0))
+                label_wrong = label_wrong[:chosen_inds]
+                label_wrong = torch.squeeze(torch.stack(label_wrong, dim=1))
+                # label_wrong = label_wrong.expand(-1, 2)
+                # print(len(label_wrong), label_wrong[0].size(), torch.cat(input_wrong,axis = 0).size())
+
+                saliency = Saliency(model)
+                # TODO Other methods
+                # print(torch.cat(tuple(input_wrong)).shape)
+                # print(torch.cat(tuple(label_wrong)).shape)
+                # print(torch.cat(input_wrong, dim = 1).shape)
+                grads = saliency.attribute(
+                    input_wrong, label_wrong
+                )
+                grads = np.transpose(
+                    grads.squeeze().cpu().detach().numpy(), (0, 2, 3, 1)
+                )
+
+                print("Calculating permutes and sending to CPU")
+                # TODO replace these with direct array operations?
+                # original_images = [
+                # permute_and_detach(ind)
+                # for ind in tqdm(input_wrong, total=len(input_wrong))
+                # ]
+                print(input_wrong.size())
+                original_images = [
+                    ind.permute(1, 2, 0).cpu().detach() for ind in input_wrong
+                ]
+
+                print("Calculating pixel replacement method")
+                # pixel_replacement = [
+                #     decide_pixel_replacement(x, config["pixel_replacement_method"])
+                #     for x in tqdm(original_images, total=len(original_images))
+                # ]
+
+                print("Calculating gradient thresholds")
+                # grad_thresholds = [
+                #     calc_grad_threshold(grad) for grad in tqdm(grads, total=len(grads))
+                # ]
+
+                for ind in tqdm(range(len(label_wrong)), total=len(label_wrong)):
+                    # original_images[ind][grad_thresholds[ind]] = pixel_replacement[ind]
+                    # TODO Split these into individual comprehensions for speed
+                    original_images[ind][
+                        grads[ind].mean(axis=2) > config["proxy_threshold"]
+                    ] = decide_pixel_replacement(
+                        original_image=original_images[ind],
+                        method=config["pixel_replacement_method"],
+                    )
+
+                print("Saving the images")
+                cm = plt.get_cmap("viridis")
+
+                # TODO Fix image colors xD
+                for ind in tqdm(range(len(label_wrong)), total=len(label_wrong)):
+                    plt.imshow(np.uint8(original_images[ind]))
+                    plt.axis("off")
+                    plt.gca().set_axis_off()
+                    plt.margins(x=0)
+                    plt.autoscale(False)
+                    label = config["label_map"][label_wrong[ind].item()]
+                    save_name = config["ds_path"] / label / f"proxy-{ind}-{epoch}.png"
+
+                    # data = cm(np.uint8(original_images[ind])*255)
+                    # # Image.fromarray(data).save(save_name)
+                    # save_image(original_images[ind], save_name)
+                    # Image.fromarray(cm(((original_images[ind]) * 255).astype(np.uint8))).save(save_name)
+                    plt.savefig(save_name, bbox_inches="tight", pad_inches=0)
+
             epoch_loss = running_loss / dataset_sizes[phase]
             epoch_acc = running_corrects.double() / dataset_sizes[phase]
 
@@ -264,18 +339,16 @@ def train_model(
                 writer.add_scalar("Loss/Val", epoch_loss, epoch)
                 writer.add_scalar("Acc/Val", epoch_acc, epoch)
                 with tune.checkpoint_dir(epoch) as checkpoint_dir:
-                    path = Path(config["fname_start"])/"checkpoint"
-                    torch.save((model.state_dict(), optimizer.state_dict()), path)
+                    save_path = Path(config["fname_start"]) / "checkpoint"
+                    torch.save((model.state_dict(), optimizer.state_dict()), save_path)
 
-                tune.report(loss= epoch_loss, accuracy=epoch_acc)
-
+                tune.report(loss=epoch_loss, accuracy=epoch_acc)
 
             # deep copy the model
             if phase == "val" and epoch_acc > best_acc:
                 best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
-            
-            
+
             # TODO Save best model
 
         # print()
@@ -300,7 +373,7 @@ def setup_train_round(config, proxy_step=False, num_epochs=1):
         train, val, config
     )
     class_names = image_datasets["train"].classes
-    config["num_classes"]= len(config["label_map"].keys())
+    config["num_classes"] = len(config["label_map"].keys())
 
     model_ft = proxyattention.training.choose_network(config)
     criterion = nn.CrossEntropyLoss()
@@ -331,41 +404,43 @@ def train_proxy_steps(config):
         else:
             setup_train_round(config=config, proxy_step=False, num_epochs=step)
 
+
 def hyperparam_tune(config):
     ray.init(num_gpus=1, num_cpus=12)
     scheduler = ASHAScheduler(
-        metric="loss",
-        mode="min",
-        max_t=30,
-        grace_period=1,
-        reduction_factor=2)
+        metric="loss", mode="min", max_t=30, grace_period=1, reduction_factor=2
+    )
 
-    reporter = CLIReporter(
-        metric_columns=["loss", "accuracy", "training_iteration"])
+    reporter = CLIReporter(metric_columns=["loss", "accuracy", "training_iteration"])
 
     result = tune.run(
         train_proxy_steps,
         config=config,
         scheduler=scheduler,
         progress_reporter=reporter,
-        checkpoint_at_end= True,
+        checkpoint_at_end=True,
         max_failures=100,
         num_samples=50,
         resources_per_trial={
-            "gpu":1,
-            "cpu":4,
-        }
-        )
+            "gpu": 1,
+            "cpu": 4,
+        },
+        local_dir=config["fname_start"],
+    )
 
+    df_res = result.get_dataframe()
+    df_res.to_csv(Path(config["fname_start"]) / "result_log.csv")
     best_trial = result.get_best_trial("loss", "min", "last")
     print("Best trial config: {}".format(best_trial.config))
-    print("Best trial final validation loss: {}".format(
-        best_trial.last_result["loss"]))
-    print("Best trial final validation accuracy: {}".format(
-        best_trial.last_result["accuracy"]))
-    
+    print("Best trial final validation loss: {}".format(best_trial.last_result["loss"]))
+    print(
+        "Best trial final validation accuracy: {}".format(
+            best_trial.last_result["accuracy"]
+        )
+    )
+
     print(result)
-    
+
 
 # %%
 # train_proxy_steps(config=config)
