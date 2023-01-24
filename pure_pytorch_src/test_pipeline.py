@@ -66,7 +66,6 @@ os.environ["TORCH_HOME"] = "/mnt/e/Datasets/"
 
 # %%
 # Config
-# TODO Refactor this into a JSON with options
 experiment_params = {
     "experiment_name": "test_asl_starter",
     "ds_path": Path("/mnt/e/Datasets/asl/asl_alphabet_train/asl_alphabet_train"),
@@ -96,7 +95,7 @@ config = {
     "ds_name": "asl",
     "name_fn": proxyattention.data_utils.asl_name_fn,
     "image_size": 224,
-    "batch_size": 128,
+    "batch_size": 64,
     "epoch_steps": [1, 2],
     "enable_proxy_attention": True,
     "change_subset_attention": tune.loguniform(0.1, 0.8),
@@ -116,7 +115,6 @@ config = {
 # Make dirs
 logging.info("Directories made/checked")
 os.makedirs(config["ds_path"] / "runs", exist_ok=True)
-# TODO unique_name
 fname_start = f'/mnt/e/CODE/Github/improving_robotics_datasets/pure_pytorch_src/runs/{config["ds_name"]}_{config["experiment_name"]}+{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}_subset-{config["subset_images"]}'
 
 config["fname_start"] = fname_start
@@ -131,7 +129,6 @@ config["device"] = torch.device("cuda:0" if torch.cuda.is_available() else "cpu"
 
 
 # %%
-# TODO Proxy loop function, custom schedule
 # TODO Proxy attention tabular support
 
 
@@ -210,9 +207,6 @@ def train_model(
                                 outputs = model(inputs)
                         _, preds = torch.max(outputs, 1)
                         loss = criterion(outputs, labels)
-                        # TODO Save images pipeline
-                        # TODO Config to choose what to save
-                        # TODO Proxy getting called randomly??
                         if proxy_step == True and phase == "train":
                             print("[INFO] : Proxy")
                             logging.info("Proxy")
@@ -254,7 +248,6 @@ def train_model(
                 chosen_inds = max(50, chosen_inds)
                 print(f"{chosen_inds} images chosen to run proxy on")
 
-                #TODO Fix this mess
                 input_wrong = input_wrong[:chosen_inds]
                 input_wrong = torch.squeeze(torch.stack(input_wrong, dim=0))
                 label_wrong = label_wrong[:chosen_inds]
@@ -349,8 +342,6 @@ def train_model(
                 best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
 
-            # TODO Save best model
-
         # print()
 
     time_elapsed = time.time() - since
@@ -359,7 +350,6 @@ def train_model(
 
     # load best model weights
     model.load_state_dict(best_model_wts)
-    # TODO Change returns to normal
     return model
 
 
@@ -368,6 +358,7 @@ def train_model(
 
 def setup_train_round(config, proxy_step=False, num_epochs=1):
     # Data part
+    #TODO Configure data for proxy attention
     train, val = proxyattention.data_utils.create_folds(config)
     image_datasets, dataloaders, dataset_sizes = proxyattention.data_utils.create_dls(
         train, val, config
