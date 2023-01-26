@@ -19,3 +19,4 @@ class Experiment:
         self.pixel_replacement_method = params["pixel_replacement_method"]
         self.model = params["model"]
         self.proxy_steps = params["proxy_steps"]
+        self.load_proxy_data = params["load_proxy_data"]

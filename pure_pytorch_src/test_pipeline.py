@@ -108,8 +108,9 @@ config = {
     "pixel_replacement_method": tune.choice(["mean", "max", "min", "black", "white"]),
     "model": "resnet18",
     # "proxy_steps": tune.choice([[1, "p", 1], [3, "p", 1], [1, 1], [3,1]]),
-    "proxy_steps": tune.choice([["p", 1],[1, 1], ["p",1], [1, "p"], [1, "p",1], [1,1,1]]),
-    # "proxy_steps": tune.choice([["p"]]),
+    # "proxy_steps": tune.choice([["p", 1],[1, 1], ["p",1], [1, "p",1], [1,1,1]]),
+    "proxy_steps": tune.choice([["p",1]]),
+    "load_proxy_data": False,
 }
 
 # Make dirs
@@ -243,11 +244,12 @@ def train_model(
                 # TODO Save Classwise fraction
                 frac_choose = 0.25
                 chosen_inds = int(np.ceil(frac_choose * len(label_wrong)))
-                #TODO Change for real
                 #TODO some sort of decay?
-                chosen_inds = max(50, chosen_inds)
+                #TODO Conver to batches to run over more
+                chosen_inds = min(50, chosen_inds)
                 print(f"{chosen_inds} images chosen to run proxy on")
 
+                print(len(input_wrong) , len(label_wrong))
                 input_wrong = input_wrong[:chosen_inds]
                 input_wrong = torch.squeeze(torch.stack(input_wrong, dim=0))
                 label_wrong = label_wrong[:chosen_inds]
@@ -260,6 +262,7 @@ def train_model(
                 # print(torch.cat(tuple(input_wrong)).shape)
                 # print(torch.cat(tuple(label_wrong)).shape)
                 # print(torch.cat(input_wrong, dim = 1).shape)
+                print(input_wrong.size() , label_wrong.size())
                 grads = saliency.attribute(
                     input_wrong, label_wrong
                 )
@@ -292,6 +295,7 @@ def train_model(
                 for ind in tqdm(range(len(label_wrong)), total=len(label_wrong)):
                     # original_images[ind][grad_thresholds[ind]] = pixel_replacement[ind]
                     # TODO Split these into individual comprehensions for speed
+                    # TODO Check if % of image is gone or not
                     original_images[ind][
                         grads[ind].mean(axis=2) > config["proxy_threshold"]
                     ] = decide_pixel_replacement(
@@ -392,20 +396,25 @@ def train_proxy_steps(config):
     for step in config["proxy_steps"]:
         if step == "p":
             setup_train_round(config=config, proxy_step=True, num_epochs=1)
+            config["load_proxy_data"] = True
         else:
             setup_train_round(config=config, proxy_step=False, num_epochs=step)
+            config["load_proxy_data"] = False
 
+def tune_func(config):
+    tune.utils.wait_for_gpu(target_util = .1)
+    train_proxy_steps(config=config)
 
 def hyperparam_tune(config):
     ray.init(num_gpus=1, num_cpus=12)
     scheduler = ASHAScheduler(
-        metric="loss", mode="min", max_t=30, grace_period=1, reduction_factor=2
+        metric="loss", mode="min", max_t=30, grace_period=1, reduction_factor=2,
     )
 
     reporter = CLIReporter(metric_columns=["loss", "accuracy", "training_iteration"])
 
     result = tune.run(
-        train_proxy_steps,
+        tune_func,
         config=config,
         scheduler=scheduler,
         progress_reporter=reporter,
@@ -414,7 +423,7 @@ def hyperparam_tune(config):
         num_samples=50,
         resources_per_trial={
             "gpu": 1,
-            "cpu": 4,
+            "cpu": 8,
         },
         local_dir=config["fname_start"],
     )

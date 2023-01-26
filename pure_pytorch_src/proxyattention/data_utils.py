@@ -95,6 +95,8 @@ def create_folds(config):
     all_files = get_files(config["ds_path"])
     if config["subset_images"]!= None:
         all_files = all_files[: config["subset_images"]]
+    if config["load_proxy_data"] == False:
+        all_files = [x for x in all_files if "proxy" not in str(x)]
 
     # Put them in a data frame for encoding
     df = pd.DataFrame.from_dict(
@@ -181,15 +183,17 @@ def create_dls(train, val, config):
             image_datasets["train"],
             batch_size=config["batch_size"],
             shuffle=True,
-            num_workers=4 * config["num_gpu"],
-            pin_memory=True,
+            # num_workers=4 * config["num_gpu"],
+            # pin_memory=True,
+            num_workers = 8,
         ),
         "val": torch.utils.data.DataLoader(
             image_datasets["val"],
             batch_size=config["batch_size"],
             shuffle=False,
-            num_workers=4 * config["num_gpu"],
-            pin_memory=True,
+            # num_workers=4 * config["num_gpu"],
+            # pin_memory=True,
+            num_workers = 8,
         ),
     }
 
