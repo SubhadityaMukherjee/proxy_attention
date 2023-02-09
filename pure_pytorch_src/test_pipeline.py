@@ -108,8 +108,8 @@ config = {
     "pixel_replacement_method": tune.choice(["mean", "max", "min", "black", "white"]),
     "model": "resnet18",
     # "proxy_steps": tune.choice([[1, "p", 1], [3, "p", 1], [1, 1], [3,1]]),
-    # "proxy_steps": tune.choice([["p", 1],[1, 1], ["p",1], [1, "p",1], [1,1,1]]),
-    "proxy_steps": tune.choice([["p",1]]),
+    "proxy_steps": tune.choice([["p", 1],[1, 1], ["p",1], [1, "p",1], [1,1,1]]),
+    # "proxy_steps": tune.choice([["p",1]]),
     "load_proxy_data": False,
 }
 
