@@ -66,28 +66,6 @@ os.environ["TORCH_HOME"] = "/mnt/e/Datasets/"
 
 # %%
 # Config
-experiment_params = {
-    "experiment_name": "test_asl_starter",
-    "ds_path": Path("/mnt/e/Datasets/asl/asl_alphabet_train/asl_alphabet_train"),
-    "ds_name": "asl",
-    "name_fn": proxyattention.data_utils.asl_name_fn,
-    "image_size": 224,
-    "batch_size": 128,
-    "epoch_steps": [1, 2],
-    "enable_proxy_attention": True,
-    "change_subset_attention": 0.01,
-    "validation_split": 0.3,
-    "shuffle_dataset": True,
-    "num_gpu": 1,
-    "transfer_imagenet": False,
-    "subset_images": 5000,
-    "proxy_steps": 2,
-    "proxy_threshold": 0.008,
-    "pixel_replacement_method": "mean",
-    "model": "resnet18",
-    "proxy_steps": [2, "p", 2],
-}
-# config = proxyattention.configuration.Experiment(params=experiment_params)
 
 config = {
     "experiment_name": "test_asl_starter",
@@ -247,6 +225,8 @@ def train_model(
                 #TODO some sort of decay?
                 #TODO Conver to batches to run over more
                 chosen_inds = min(50, chosen_inds)
+
+                writer.add_scalar("Number_Chosen", chosen_inds, epoch)
                 print(f"{chosen_inds} images chosen to run proxy on")
 
                 print(len(input_wrong) , len(label_wrong))
