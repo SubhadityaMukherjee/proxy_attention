@@ -37,12 +37,7 @@ from torch.utils.data import DataLoader, Dataset, TensorDataset, random_split
 from torch.utils.tensorboard import SummaryWriter
 from torchvision import datasets, models, transforms
 from tqdm import tqdm
-
-from ffcv.writer import DatasetWriter
-from ffcv.fields import RGBImageField, IntField
-from ffcv.loader import Loader, OrderOption
-from ffcv.transforms import ToTensor, ToDevice, ToTorchImage, Cutout
-from ffcv.fields.decoders import IntDecoder, RandomResizedCropRGBImageDecoder
+import random
 
 from .meta_utils import *
 
@@ -97,8 +92,10 @@ class ImageClassDs(Dataset):
 
 
 def create_folds(config):
+    # TODO Allow options for Proxy data
     all_files = get_files(config["ds_path"])
-    if config["subset_images"] != None:
+    random.shuffle(all_files)
+    if config["subset_images"]!= None:
         all_files = all_files[: config["subset_images"]]
     if config["load_proxy_data"] == False:
         all_files = [x for x in all_files if "proxy" not in str(x)]
@@ -117,8 +114,8 @@ def create_folds(config):
     label_map = {i: l for i, l in enumerate(temp.classes_)}
     rev_label_map = {l: i for i, l in enumerate(temp.classes_)}
 
-    config["label_map"] = label_map
-    config["rev_label_map"] = rev_label_map
+    config["label_map"]= label_map
+    config["rev_label_map"]= rev_label_map
 
     # Kfold splits
     df["kfold"] = -1
@@ -146,8 +143,7 @@ def create_dls(train, val, config):
     data_transforms = {
         "train": A.Compose(
             [
-                A.RandomResizedCrop(
-                    config["image_size"], config["image_size"], p=1.0),
+                A.RandomResizedCrop(config["image_size"], config["image_size"], p=1.0),
                 A.Normalize(
                     mean=[0.485, 0.456, 0.406],
                     std=[0.229, 0.224, 0.225],
@@ -161,8 +157,7 @@ def create_dls(train, val, config):
         "val": A.Compose(
             [
                 A.Resize(config["image_size"], config["image_size"]),
-                A.CenterCrop(config["image_size"],
-                             config["image_size"], p=1.0),
+                A.CenterCrop(config["image_size"], config["image_size"], p=1.0),
                 A.Normalize(
                     mean=[0.485, 0.456, 0.406],
                     std=[0.229, 0.224, 0.225],
@@ -185,61 +180,24 @@ def create_dls(train, val, config):
         ),
     }
 
-    # write_path = config["ds_path"]/"data_compressed.beton"
-
-    writer = DatasetWriter(config["ds_path"]/"train_compress.beton", {
-        "image": RGBImageField(
-            max_resolution=config["image_size"],
-            jpeg_quality=90
-        ),
-        "label": IntField()
-    })
-
-    writer.from_indexed_dataset(image_datasets["train"])
-
-    writer = DatasetWriter(config["ds_path"]/"val_compress.beton", {
-        "image": RGBImageField(
-            max_resolution=config["image_size"],
-            jpeg_quality=90
-        ),
-        "label": IntField()
-    })
-
-    writer.from_indexed_dataset(image_datasets["val"])
-
-    decoder = RandomResizedCropRGBImageDecoder((224, 224))
-    image_pipeline = [decoder, Cutout(), ToTensor(), ToTorchImage(), ToDevice(0)]
-    label_pipeline = [IntDecoder(), ToTensor(), ToDevice(0)]
-
-    pipelines = {
-    'image': image_pipeline,
-    'label': label_pipeline
-    }
-
     dataloaders = {
-        "train": Loader(config["d_path"]/"train_compress.beton", batch_size = config["batch_size"], num_workers = 8, order = OrderOption.RANDOM, pipelines=pipelines),
-
-        "val": Loader(config["d_path"]/"val_compress.beton", batch_size = config["batch_size"], num_workers = 8, order = OrderOption.RANDOM, pipelines=pipelines),
+        "train": torch.utils.data.DataLoader(
+            image_datasets["train"],
+            batch_size=config["batch_size"],
+            shuffle=True,
+            # num_workers=4 * config["num_gpu"],
+            # pin_memory=True,
+            num_workers = 8,
+        ),
+        "val": torch.utils.data.DataLoader(
+            image_datasets["val"],
+            batch_size=config["batch_size"],
+            shuffle=False,
+            # num_workers=4 * config["num_gpu"],
+            # pin_memory=True,
+            num_workers = 8,
+        ),
     }
-
-    # dataloaders = {
-    #     "train": torch.utils.data.DataLoader(
-    #         image_datasets["train"],
-    #         batch_size=config["batch_size"],
-    #         shuffle=True,
-    #         # num_workers=4 * config["num_gpu"],
-    #         # pin_memory=True,
-    #         num_workers = 8,
-    #     ),
-    #     "val": torch.utils.data.DataLoader(
-    #         image_datasets["val"],
-    #         batch_size=config["batch_size"],
-    #         shuffle=False,
-    #         # num_workers=4 * config["num_gpu"],
-    #         # pin_memory=True,
-    #         num_workers = 8,
-    #     ),
-    # }
 
     dataset_sizes = {x: len(image_datasets[x]) for x in ["train", "val"]}
 
