@@ -350,7 +350,7 @@ def train_proxy_steps(config):
         else:
             setup_train_round(config=config, proxy_step=False, num_epochs=step)
             config["load_proxy_data"] = False
-        config.global_run_count += 1
+        config["global_run_count"] += 1
 
 def tune_func(config):
     # tune.utils.wait_for_gpu(target_util = .1)
