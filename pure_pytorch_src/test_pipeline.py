@@ -85,13 +85,13 @@ config = {
     "transfer_imagenet": False,
     "subset_images": 8000,
     # "proxy_threshold": tune.loguniform(0.008, 0.01),
-    "proxy_threshold":  0.01,
+    "proxy_threshold":  0.005,
     # "pixel_replacement_method": tune.choice(["mean", "max", "min", "black", "white"]),
-    "pixel_replacement_method": "mean",
+    "pixel_replacement_method": "half",
     "model": "resnet18",
     # "proxy_steps": tune.choice([[1, "p", 1], [3, "p", 1], [1, 1], [3,1]]),
     # "proxy_steps": tune.choice([["p", 1],[1, 1], ["p",1], [1, "p",1], [1,1,1]]),
-    "proxy_steps": tune.choice([["p",3], [3]]),
+    "proxy_steps": tune.choice([["p",1]]),
     "load_proxy_data": False,
     "global_run_count" : 0,
 }
@@ -110,4 +110,6 @@ print(f"[INFO] : File name = {fname_start}")
 
 config["device"] = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 #%%
+
+proxyattention.data_utils.clear_proxy_images(config=config)
 proxyattention.training.hyperparam_tune(config=config)

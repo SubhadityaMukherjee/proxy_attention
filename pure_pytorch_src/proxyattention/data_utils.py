@@ -89,7 +89,10 @@ class ImageClassDs(Dataset):
 
 
 # %%
-
+def clear_proxy_images(config):
+    all_files = get_files(config["ds_path"])
+    _ = [Path.unlink(x) for x in all_files if "proxy" in str(x)]
+    print("[INFO] Cleared all existing proxy images")
 
 def create_folds(config):
     # TODO Allow options for Proxy data

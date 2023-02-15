@@ -43,8 +43,6 @@ import ray
 from ray.tune import CLIReporter
 from ray.tune.schedulers import ASHAScheduler
 
-from .data_utils import create_folds, create_dls, clear_proxy_images
-from .meta_utils import *
 import pickle
 
 sns.set()
@@ -76,19 +74,15 @@ def choose_network(config):
 
 def decide_pixel_replacement(original_image, method="mean"):
     if method == "mean":
-        val =  original_image.mean()
+        return original_image.mean()
     elif method == "max":
-        val =  original_image.max()
+        return original_image.max()
     elif method == "min":
-        val =  original_image.min()
+        return original_image.min()
     elif method == "black":
-        val =  0.0
+        return 0.0
     elif method == "white":
-        val = 255.0
-    elif method == "half":
-        val = 127.5
-   
-    return val
+        return 255.0
 
 
 # def calc_grad_threshold(obj):
@@ -111,10 +105,6 @@ def train_model(
     config=None,
 ):
     writer = SummaryWriter(log_dir=config["fname_start"]+str(config["global_run_count"]), comment=config["fname_start"])
-    inv_normalize = transforms.Normalize(
-        mean=[-0.485/0.229, -0.485/0.229, -0.485/0.229],
-        std=[1/0.229, 1/0.229, 1/0.229]
-    )
     since = time.time()
 
     best_model_wts = copy.deepcopy(model.state_dict())
@@ -188,7 +178,7 @@ def train_model(
             if phase == "train":
                 scheduler.step()
 
-            if proxy_step == True:
+            if phase == "train" and proxy_step == True:
                 print("Performing Proxy step")
                 # TODO Save Classwise fraction
                 frac_choose = 0.25
@@ -202,18 +192,9 @@ def train_model(
 
                 print(len(input_wrong) , len(label_wrong))
                 input_wrong = input_wrong[:chosen_inds]
-                # print(input_wrong.shape)
-                try:
-                    input_wrong = torch.squeeze(torch.stack(input_wrong, dim=0))
-                except:
-                    input_wrong = torch.squeeze(input_wrong)
-                
-                writer.add_images('original_images', inv_normalize(input_wrong), global_step=0)
+                input_wrong = torch.squeeze(torch.stack(input_wrong, dim=0))
                 label_wrong = label_wrong[:chosen_inds]
-                try:
-                    label_wrong = torch.squeeze(torch.stack(label_wrong, dim=1))
-                except:
-                    label_wrong = torch.squeeze(label_wrong)
+                label_wrong = torch.squeeze(torch.stack(label_wrong, dim=1))
                 # label_wrong = label_wrong.expand(-1, 2)
                 # print(len(label_wrong), label_wrong[0].size(), torch.cat(input_wrong,axis = 0).size())
 
@@ -252,44 +233,30 @@ def train_model(
                 #     calc_grad_threshold(grad) for grad in tqdm(grads, total=len(grads))
                 # ]
 
-
-                # TODO : Dont save this everytime I guess??
-                # orig2 = np.array(original_images).transpose(0, 3, 2 ,1)  # reshape to (50, 3, 224, 224)
-                # writer.add_images('original_images', orig2, global_step=0)
-
-
                 for ind in tqdm(range(len(label_wrong)), total=len(label_wrong)):
                     # original_images[ind][grad_thresholds[ind]] = pixel_replacement[ind]
                     # TODO Split these into individual comprehensions for speed
                     # TODO Check if % of image is gone or not
                     original_images[ind][
-                        grads[ind] > config["proxy_threshold"]
+                        grads[ind].mean(axis=2) > config["proxy_threshold"]
                     ] = decide_pixel_replacement(
                         original_image=original_images[ind],
                         method=config["pixel_replacement_method"],
                     )
+                original_images = [np.uint8(x) for x in original_images]
 
-                with open("./testorig.pkl", "wb") as f:
-                    pickle.dump([saliency, grads, input_wrong, label_wrong, original_images], f)
-                    print("saved pickle")
-                
-                # TODO : Dont save this everytime I guess??
-                # original_images = [x for x in original_images]
-                # orig2 = np.array(original_images).transpose(0, 3, 2 ,1)
-
-                orig2 = torch.Tensor(np.stack(original_images)).permute(0, 3,1,2)
-
-                orig2 = inv_normalize(orig2)
-                # orig2 = np.stack(original_images)
-                # orig2 *= 255.0/orig2.max()
-                writer.add_images('converted_proxy', orig2, global_step=0,  dataformats='NCHW')
+                with open("testorig.pkl", "wb+") as f:
+                    pickle.dump(original_images, f)
+                # original_images_tensor = torch.from_numpy(original_images)
+                # img_grid = torchvision.utils.make_grid(original_images_tensor[:max(16, len(original_images))])
+                # writer.add_image('batch_vis', img_grid)
 
                 print("Saving the images")
                 cm = plt.get_cmap("viridis")
 
                 # TODO Fix image colors xD
                 for ind in tqdm(range(len(label_wrong)), total=len(label_wrong)):
-                    plt.imshow(np.uint8(original_images[ind]))
+                    plt.imshow(original_images[ind])
                     plt.axis("off")
                     plt.gca().set_axis_off()
                     plt.margins(x=0)
@@ -381,17 +348,15 @@ def train_proxy_steps(config):
     for step in config["proxy_steps"]:
         if step == "p":
             setup_train_round(config=config, proxy_step=True, num_epochs=1)
-            # config["load_proxy_data"] = True
+            config["load_proxy_data"] = True
         else:
             setup_train_round(config=config, proxy_step=False, num_epochs=step)
-            # config["load_proxy_data"] = False
-        
-        clear_proxy_images(config=config) # Clean directory
+            config["load_proxy_data"] = False
         config["global_run_count"] += 1
 
-# def tune_func(config):
-#     # tune.utils.wait_for_gpu(target_util = .1)
-#     train_proxy_steps(config=config)
+def tune_func(config):
+    # tune.utils.wait_for_gpu(target_util = .1)
+    train_proxy_steps(config=config)
 
 def hyperparam_tune(config):
     ray.init(num_gpus=1, num_cpus=12)
@@ -402,7 +367,7 @@ def hyperparam_tune(config):
     reporter = CLIReporter(metric_columns=["loss", "accuracy", "training_iteration"])
 
     result = tune.run(
-        train_proxy_steps,
+        tune_func,
         config=config,
         scheduler=scheduler,
         progress_reporter=reporter,
@@ -429,3 +394,85 @@ def hyperparam_tune(config):
 
     print(result)
 
+#%%
+with open("/mnt/e/CODE/Github/improving_robotics_datasets/pure_pytorch_src/runs/asl_test_asl_starter+15022023_13:56:59_subset-8000/train_proxy_steps_2023-02-15_13-57-04/train_proxy_steps_3ed6f_00000_0_proxy_steps=p_1_2023-02-15_13-57-04/testorig.pkl", "rb+") as f:
+    orig = pickle.load(f)
+    saliency, grads, input_wrong, label_wrong, original_images = orig
+#%%
+grads_test = saliency.attribute(
+                    input_wrong, label_wrong
+                )
+#%%
+grads_test.shape
+#%%
+grads_test.max(), grads_test.min(), grads_test.mean()
+#%%
+grads_test[2].mean(axis=0).shape
+#%%
+part_orig = original_images.copy()
+#%%
+for ind in tqdm(range(len(label_wrong)), total=len(label_wrong)):
+    # original_images[ind][grad_thresholds[ind]] = pixel_replacement[ind]
+    # TODO Split these into individual comprehensions for speed
+    # TODO Check if % of image is gone or not
+    part_orig[ind][
+        grads[ind] > 0.008
+    ] = 255.0
+
+#%%
+inv_normalize = transforms.Normalize(
+        mean=[-0.485/0.229, -0.485/0.229, -0.485/0.229],
+        std=[1/0.229, 1/0.229, 1/0.229]
+    )
+
+orig2 = torch.Tensor(np.stack(part_orig)).permute(0, 3,1,2)
+orig2.shape
+#%%
+
+inv_normalize(orig2)
+#%%
+orig2[1] = inv_normalize(orig2[1])
+#%%
+orig2[1].shape
+#%%
+# orig2 = np.uint8(orig2[1])
+# orig2[1].min(), orig2[0].max()
+#%%
+# plt.imshow(orig2[1].transpose(1,2))
+# plt.axis("off")
+# plt.gca().set_axis_off()
+# plt.margins(x=0)
+# plt.autoscale(False)
+#%%
+def show(imgs):
+    import torchvision.transforms.functional as F
+    if not isinstance(imgs, list):
+        imgs = [imgs]
+    fig, axs = plt.subplots(ncols=len(imgs), squeeze=False)
+    for i, img in enumerate(imgs):
+        # img = img.detach()
+        img = F.to_pil_image(img)
+        axs[0, i].imshow(np.asarray(img))
+        axs[0, i].set(xticklabels=[], yticklabels=[], xticks=[], yticks=[])
+
+# %%
+import torch
+from torchvision.utils import make_grid
+from torch.utils.tensorboard import SummaryWriter
+#%%
+# np.stack(orig).shape
+#%%
+# resize the images to (3, 224, 224)
+# orig2 = np.stack(orig)  # reshape to (50, 3, 224, 224)
+# print(orig2.shape)
+# orig_grid = make_grid(orig2)  # create a grid of images with 10 columns
+# print(orig_grid.shape)
+# create a summary writer to log the images
+writer = SummaryWriter()
+
+# log the grid of images to TensorBoard
+writer.add_images('orig_images', orig2, global_step=0, dataformats='NCHW')
+
+# close the summary writer
+writer.close()
+# %%
