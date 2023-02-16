@@ -90,11 +90,6 @@ def decide_pixel_replacement(original_image, method="mean"):
    
     return val
 
-
-# def calc_grad_threshold(obj):
-#     return obj.mean(axis=2) > config["proxy_threshold"].sample()
-
-
 def permute_and_detach(obj):
     return obj.permute(1, 2, 0).cpu().detach()
 
@@ -121,9 +116,7 @@ def train_model(
     best_acc = 0.0
     pbar = tqdm(range(num_epochs), total=num_epochs)
     for epoch in pbar:
-        # print(f'Epoch {epoch}/{num_epochs - 1}')
-        # print('-' * 10)
-
+        
         # Each epoch has a training and validation phase
         input_wrong = []
         label_wrong = []
@@ -202,7 +195,6 @@ def train_model(
 
                 print(len(input_wrong) , len(label_wrong))
                 input_wrong = input_wrong[:chosen_inds]
-                # print(input_wrong.shape)
                 try:
                     input_wrong = torch.squeeze(torch.stack(input_wrong, dim=0))
                 except:
@@ -214,9 +206,7 @@ def train_model(
                     label_wrong = torch.squeeze(torch.stack(label_wrong, dim=1))
                 except:
                     label_wrong = torch.squeeze(label_wrong)
-                # label_wrong = label_wrong.expand(-1, 2)
-                # print(len(label_wrong), label_wrong[0].size(), torch.cat(input_wrong,axis = 0).size())
-
+                
                 saliency = Saliency(model)
                 # TODO Other methods
                 # print(torch.cat(tuple(input_wrong)).shape)
@@ -253,13 +243,9 @@ def train_model(
                 # ]
 
 
-                # TODO : Dont save this everytime I guess??
-                # orig2 = np.array(original_images).transpose(0, 3, 2 ,1)  # reshape to (50, 3, 224, 224)
-                # writer.add_images('original_images', orig2, global_step=0)
-
+                
 
                 for ind in tqdm(range(len(label_wrong)), total=len(label_wrong)):
-                    # original_images[ind][grad_thresholds[ind]] = pixel_replacement[ind]
                     # TODO Split these into individual comprehensions for speed
                     # TODO Check if % of image is gone or not
                     original_images[ind][
@@ -269,25 +255,16 @@ def train_model(
                         method=config["pixel_replacement_method"],
                     )
 
-                with open("./testorig.pkl", "wb") as f:
-                    pickle.dump([saliency, grads, input_wrong, label_wrong, original_images], f)
-                    print("saved pickle")
-                
                 # TODO : Dont save this everytime I guess??
-                # original_images = [x for x in original_images]
-                # orig2 = np.array(original_images).transpose(0, 3, 2 ,1)
-
                 orig2 = torch.Tensor(np.stack(original_images)).permute(0, 3,1,2)
 
                 orig2 = inv_normalize(orig2)
-                # orig2 = np.stack(original_images)
-                # orig2 *= 255.0/orig2.max()
                 writer.add_images('converted_proxy', orig2, global_step=0,  dataformats='NCHW')
 
                 print("Saving the images")
                 cm = plt.get_cmap("viridis")
 
-                # TODO Fix image colors xD
+                # TODO Prune least important weights/filters? Pruning by explaining
                 for ind in tqdm(range(len(label_wrong)), total=len(label_wrong)):
                     plt.imshow(np.uint8(original_images[ind]))
                     plt.axis("off")
@@ -297,12 +274,7 @@ def train_model(
                     label = config["label_map"][label_wrong[ind].item()]
                     save_name = config["ds_path"] / label / f"proxy-{ind}-{epoch}.png"
 
-                    # data = cm(np.uint8(original_images[ind])*255)
-                    # # Image.fromarray(data).save(save_name)
-                    # save_image(original_images[ind], save_name)
-                    # Image.fromarray(cm(((original_images[ind]) * 255).astype(np.uint8))).save(save_name)
                     plt.savefig(save_name, bbox_inches="tight", pad_inches=0)
-                    # TODO Copy a batch to the results
 
             epoch_loss = running_loss / dataset_sizes[phase]
             epoch_acc = running_corrects.double() / dataset_sizes[phase]
@@ -346,7 +318,6 @@ def train_model(
 # %%
 def setup_train_round(config, proxy_step=False, num_epochs=1):
     # Data part
-    #TODO Configure data for proxy attention
     train, val = create_folds(config)
     image_datasets, dataloaders, dataset_sizes = create_dls(
         train, val, config
@@ -381,17 +352,11 @@ def train_proxy_steps(config):
     for step in config["proxy_steps"]:
         if step == "p":
             setup_train_round(config=config, proxy_step=True, num_epochs=1)
-            # config["load_proxy_data"] = True
         else:
             setup_train_round(config=config, proxy_step=False, num_epochs=step)
-            # config["load_proxy_data"] = False
         
         clear_proxy_images(config=config) # Clean directory
         config["global_run_count"] += 1
-
-# def tune_func(config):
-#     # tune.utils.wait_for_gpu(target_util = .1)
-#     train_proxy_steps(config=config)
 
 def hyperparam_tune(config):
     ray.init(num_gpus=1, num_cpus=12)

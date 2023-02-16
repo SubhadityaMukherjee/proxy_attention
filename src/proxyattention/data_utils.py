@@ -47,8 +47,6 @@ os.environ["TORCH_HOME"] = "/media/hdd/Datasets/"
 cudnn.benchmark = True
 
 # %%
-
-
 def fish_name_fn(x):
     return str(x).split("/")[-2]
 
@@ -95,7 +93,6 @@ def clear_proxy_images(config):
     print("[INFO] Cleared all existing proxy images")
 
 def create_folds(config):
-    # TODO Allow options for Proxy data
     all_files = get_files(config["ds_path"])
     random.shuffle(all_files)
     if config["subset_images"]!= None:
@@ -134,7 +131,6 @@ def create_folds(config):
     train = df.loc[df["kfold"] != 1]
     val = df.loc[df["kfold"] == 1]
 
-    # TODO Check if logging works
     logging.info("Train and val data created")
 
     return train, val
@@ -142,7 +138,7 @@ def create_folds(config):
 
 # %%
 def create_dls(train, val, config):
-    # TODO Options for more config
+    # TODO Compare with other augmentation techniques
     data_transforms = {
         "train": A.Compose(
             [
@@ -173,7 +169,6 @@ def create_dls(train, val, config):
         ),
     }
 
-    #TODO :FFCCV
     image_datasets = {
         "train": ImageClassDs(
             train, config["ds_path"], train=True, transforms=data_transforms["train"]
@@ -188,16 +183,12 @@ def create_dls(train, val, config):
             image_datasets["train"],
             batch_size=config["batch_size"],
             shuffle=True,
-            # num_workers=4 * config["num_gpu"],
-            # pin_memory=True,
             num_workers = 8,
         ),
         "val": torch.utils.data.DataLoader(
             image_datasets["val"],
             batch_size=config["batch_size"],
             shuffle=False,
-            # num_workers=4 * config["num_gpu"],
-            # pin_memory=True,
             num_workers = 8,
         ),
     }
@@ -205,3 +196,28 @@ def create_dls(train, val, config):
     dataset_sizes = {x: len(image_datasets[x]) for x in ["train", "val"]}
 
     return image_datasets, dataloaders, dataset_sizes
+#%%
+def batchify(dataset, idxs):
+    'Return a list of items for the supplied dataset and idxs'
+    tss = [dataset[i][0] for i in idxs]
+    ys  = [dataset[i][1] for i in idxs]
+    return (tss, ys)
+
+def itemize(batch):
+    #take a batch and create a list of items. Each item represent a tuple of (tseries, y)
+    tss, ys = batch
+    b = [(ts, y) for ts,y in zip(tss, ys)]
+    return b
+
+def get_list_items(dataset, idxs):
+    'Return a list of items for the supplied dataset and idxs'
+    list = [dataset[i] for i in idxs]
+    return list
+
+def get_batch(dataset, idxs):
+    'Return a batch based on list of items from dataset at idxs'
+    # list_items = [(image2tensor(PILImage.create(dataset[i][0])), dataset[i][1]) for i in idxs]
+    # tdl = TfmdDL(list_items, bs=2, num_workers=0)
+    # tdl.to(default_device())
+    # return tdl.one_batch()
+    pass

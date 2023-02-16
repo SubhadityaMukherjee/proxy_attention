@@ -31,21 +31,16 @@
 ### Proposal
 - In the report folder as main.pdf
 ### Main folder
-- pure_pytorch_src is the main folder. It will be renamed later on.
-- main.ipynb has all the runner code that is being refactored to make it a script. It will eventually just have a demo.
+- src is the main folder. 
 - the runs folder has tensorboard logs. This will not be pushed to github for now to account for storage constraints.
+- main.py is the main file to be run. 
 - meta_utils.py has utility functions that are used multiple times and refactored in this file.
-- config.py will store configurations with their names for easier experiment running.
-
-### Test
-- src is a test folder that will be deleted after clean up. It was made as a quick and dirty prototype of the idea for the thesis
-- This has a working implementation of the entire loop but using fast.ai
-- Since it worked but proved to be too slow to use, the entire codebase will be re-written from scratch without fast.ai
+- training.py has the main training code.
+- data_utils.py has code related to data loading and processing.
 
 ### Other branches
 - A julia branch exists with most of the code also written in julia + flux
 - This was abandoned as it proved to be too much to implement from scratch
-
 
 ## Implementation Progress
 - [x] Data loader
@@ -56,19 +51,21 @@
 - [x] Data augmentation
 - [x] Implemented proxy attention using outputs from Captum
 - [x] Training loop with the following optimizations
-	- [x] Gradient scaling
-	- [x] Mixed precision training
-	- [x] Progress bars 
-	- [x] Tensorboard logging (mostly)
-	- [] Better logging and model saving
-	- [] Checkpoints
-	- [] Number of epochs in between loops (Epochs -> Proxy -> Epochs ...)
-	- [] More optimizations
-- [] Full proxy attention loop as a function
-- [] Select if modified images will be used as an augmentation or completely replace original images
-- [] Support for config.py
-- [] Support for more XAI algorithms
-- [] Batch runner script
-- [] Refactor properly
-- [] More XAI Algorithms and networks
-- [] Vision Transformer
+- [x] Gradient scaling
+- [x] Mixed precision training
+- [x] Progress bars 
+- [x] Tensorboard logging (mostly)
+- [x] Checkpoints
+- [x] Number of epochs in between loops (Epochs -> Proxy -> Epochs ...)
+- [x] Full proxy attention loop as a function
+- [x] Select if modified images will be used as an augmentation or completely replace original images
+- [x] Refactor properly
+- [x] Vision Transformer
+- [ ] More XAI Algorithms and networks
+- [ ] Pruning based on weights?
+- [ ] More datasets
+- [ ] More information as logs
+- [ ] Prevent overwriting logs
+- [ ] More optimizations
+- [ ] Support for more XAI algorithms
+- [ ] Batch runner script

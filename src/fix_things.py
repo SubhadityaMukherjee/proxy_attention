@@ -70,7 +70,6 @@ def choose_network(config):
 
 
 # %%
-# TODO Proxy attention tabular support
 
 def decide_pixel_replacement(original_image, method="mean"):
     if method == "mean":
@@ -180,11 +179,8 @@ def train_model(
 
             if phase == "train" and proxy_step == True:
                 print("Performing Proxy step")
-                # TODO Save Classwise fraction
                 frac_choose = 0.25
                 chosen_inds = int(np.ceil(frac_choose * len(label_wrong)))
-                #TODO some sort of decay?
-                #TODO Conver to batches to run over more
                 chosen_inds = min(50, chosen_inds)
 
                 writer.add_scalar("Number_Chosen", chosen_inds, epoch)
@@ -199,7 +195,6 @@ def train_model(
                 # print(len(label_wrong), label_wrong[0].size(), torch.cat(input_wrong,axis = 0).size())
 
                 saliency = Saliency(model)
-                # TODO Other methods
                 # print(torch.cat(tuple(input_wrong)).shape)
                 # print(torch.cat(tuple(label_wrong)).shape)
                 # print(torch.cat(input_wrong, dim = 1).shape)
@@ -212,7 +207,6 @@ def train_model(
                 )
 
                 print("Calculating permutes and sending to CPU")
-                # TODO replace these with direct array operations?
                 # original_images = [
                 # permute_and_detach(ind)
                 # for ind in tqdm(input_wrong, total=len(input_wrong))
@@ -235,8 +229,6 @@ def train_model(
 
                 for ind in tqdm(range(len(label_wrong)), total=len(label_wrong)):
                     # original_images[ind][grad_thresholds[ind]] = pixel_replacement[ind]
-                    # TODO Split these into individual comprehensions for speed
-                    # TODO Check if % of image is gone or not
                     original_images[ind][
                         grads[ind].mean(axis=2) > config["proxy_threshold"]
                     ] = decide_pixel_replacement(
@@ -254,7 +246,6 @@ def train_model(
                 print("Saving the images")
                 cm = plt.get_cmap("viridis")
 
-                # TODO Fix image colors xD
                 for ind in tqdm(range(len(label_wrong)), total=len(label_wrong)):
                     plt.imshow(original_images[ind])
                     plt.axis("off")
@@ -269,15 +260,12 @@ def train_model(
                     # save_image(original_images[ind], save_name)
                     # Image.fromarray(cm(((original_images[ind]) * 255).astype(np.uint8))).save(save_name)
                     plt.savefig(save_name, bbox_inches="tight", pad_inches=0)
-                    # TODO Copy a batch to the results
 
             epoch_loss = running_loss / dataset_sizes[phase]
             epoch_acc = running_corrects.double() / dataset_sizes[phase]
 
             pbar.set_postfix({"Phase": phase, "Loss": epoch_loss, "Acc": epoch_acc})
 
-            # TODO Add more loss functions
-            # TODO Classwise accuracy
             if proxy_step == True:
                 writer.add_scalar("proxy_step", True)
             else:
@@ -313,7 +301,6 @@ def train_model(
 # %%
 def setup_train_round(config, proxy_step=False, num_epochs=1):
     # Data part
-    #TODO Configure data for proxy attention
     train, val = create_folds(config)
     image_datasets, dataloaders, dataset_sizes = create_dls(
         train, val, config
@@ -413,8 +400,6 @@ part_orig = original_images.copy()
 #%%
 for ind in tqdm(range(len(label_wrong)), total=len(label_wrong)):
     # original_images[ind][grad_thresholds[ind]] = pixel_replacement[ind]
-    # TODO Split these into individual comprehensions for speed
-    # TODO Check if % of image is gone or not
     part_orig[ind][
         grads[ind] > 0.008
     ] = 255.0
