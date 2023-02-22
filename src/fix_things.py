@@ -27,7 +27,7 @@ import torch.optim as optim
 import torchvision
 from albumentations.core.composition import Compose
 from albumentations.pytorch import ToTensorV2
-from captum.attr import DeepLift, IntegratedGradients, NoiseTunnel, Saliency
+from captum.attr import DeepLift, IntegratedGradients, NoiseTunnel, Saliency, GuidedBackprop, GuidedGradCam
 from captum.attr import visualization as viz
 from sklearn import metrics, model_selection, preprocessing
 from sklearn.model_selection import StratifiedKFold
@@ -380,15 +380,44 @@ def hyperparam_tune(config):
     )
 
     print(result)
+#%%
+# print("OPENING")
+# with open("/mnt/e/CODE/Github/improving_robotics_datasets/src/runs/asl_test_asl_starter+20022023_11:42:03_subset-8000/train_proxy_steps_2023-02-20_11-42-08/train_proxy_steps_39809_00000_0_proxy_steps=p_1_2023-02-20_11-42-08/pickler.pkl", "rb+") as f:
+#     orig = pickle.load(f)
+# #%%
+# original_images, orig2 = orig
+# #%%
+# original_images[0].shape
+# plt.imshow(np.uint8(original_images[-1]))
+# plt.axis("off")
+# plt.gca().set_axis_off()
+# plt.margins(x=0)
+# plt.autoscale(False)
 
 #%%
-with open("/mnt/e/CODE/Github/improving_robotics_datasets/pure_pytorch_src/runs/asl_test_asl_starter+15022023_13:56:59_subset-8000/train_proxy_steps_2023-02-15_13-57-04/train_proxy_steps_3ed6f_00000_0_proxy_steps=p_1_2023-02-15_13-57-04/testorig.pkl", "rb+") as f:
+with open("./proxyattention/pickler.pkl", "rb+") as f:
     orig = pickle.load(f)
-    saliency, grads, input_wrong, label_wrong, original_images = orig
+    model, saliency, grads, input_wrong, label_wrong, original_images = orig
+
 #%%
+saliency = GuidedGradCam(model, model.layer3[-1].conv2)
 grads_test = saliency.attribute(
                     input_wrong, label_wrong
                 )
+
+#%%
+
+saliency = IntegratedGradients(model)
+nt = NoiseTunnel(saliency)
+#%%
+#%%
+grads_test = nt.attribute(input_wrong[:10], nt_type='smoothgrad', target=3)
+#%%
+grads_test
+#%%
+# grads_test = saliency.attribute(
+#                     input_wrong, label_wrong
+#                 )
 #%%
 grads_test.shape
 #%%
@@ -420,14 +449,14 @@ orig2[1] = inv_normalize(orig2[1])
 #%%
 orig2[1].shape
 #%%
-# orig2 = np.uint8(orig2[1])
-# orig2[1].min(), orig2[0].max()
+orig2 = np.uint8(orig2[1])
+orig2[1].min(), orig2[0].max()
 #%%
-# plt.imshow(orig2[1].transpose(1,2))
-# plt.axis("off")
-# plt.gca().set_axis_off()
-# plt.margins(x=0)
-# plt.autoscale(False)
+plt.imshow(orig2[1])
+plt.axis("off")
+plt.gca().set_axis_off()
+plt.margins(x=0)
+plt.autoscale(False)
 #%%
 def show(imgs):
     import torchvision.transforms.functional as F

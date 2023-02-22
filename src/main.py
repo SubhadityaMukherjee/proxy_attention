@@ -94,12 +94,13 @@ config = {
     "proxy_steps": tune.choice([["p",1]]),
     "load_proxy_data": False,
     "global_run_count" : 0,
+    "gradient_method" : "saliency", #guidedgradcam
 }
 
 # Make dirs
 logging.info("Directories made/checked")
-os.makedirs(config["ds_path"] / "runs", exist_ok=True)
-fname_start = f'/mnt/e/CODE/Github/improving_robotics_datasets/pure_pytorch_src/runs/{config["ds_name"]}_{config["experiment_name"]}+{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}_subset-{config["subset_images"]}'
+os.makedirs(f'/mnt/e/CODE/Github/improving_robotics_datasets/src/runs/', exist_ok=True)
+fname_start = f'/mnt/e/CODE/Github/improving_robotics_datasets/src/runs/{config["ds_name"]}_{config["experiment_name"]}+{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}_subset-{config["subset_images"]}'
 
 config["fname_start"] = fname_start
 

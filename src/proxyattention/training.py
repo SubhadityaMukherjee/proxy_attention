@@ -27,7 +27,7 @@ import torch.optim as optim
 import torchvision
 from albumentations.core.composition import Compose
 from albumentations.pytorch import ToTensorV2
-from captum.attr import DeepLift, IntegratedGradients, NoiseTunnel, Saliency
+from captum.attr import DeepLift, IntegratedGradients, NoiseTunnel, Saliency, GuidedGradCam
 from captum.attr import visualization as viz
 from sklearn import metrics, model_selection, preprocessing
 from sklearn.model_selection import StratifiedKFold
@@ -105,7 +105,7 @@ def train_model(
     proxy_step=False,
     config=None,
 ):
-    writer = SummaryWriter(log_dir=config["fname_start"]+str(config["global_run_count"]), comment=config["fname_start"])
+    writer = SummaryWriter(log_dir=config["fname_start"], comment=config["fname_start"])
     inv_normalize = transforms.Normalize(
         mean=[-0.485/0.229, -0.485/0.229, -0.485/0.229],
         std=[1/0.229, 1/0.229, 1/0.229]
@@ -116,6 +116,7 @@ def train_model(
     best_acc = 0.0
     pbar = tqdm(range(num_epochs), total=num_epochs)
     for epoch in pbar:
+        config["global_run_count"] += 1
         
         # Each epoch has a training and validation phase
         input_wrong = []
@@ -190,7 +191,7 @@ def train_model(
                 #TODO Conver to batches to run over more
                 chosen_inds = min(50, chosen_inds)
 
-                writer.add_scalar("Number_Chosen", chosen_inds, epoch)
+                writer.add_scalar("Number_Chosen", chosen_inds, config["global_run_count"])
                 print(f"{chosen_inds} images chosen to run proxy on")
 
                 print(len(input_wrong) , len(label_wrong))
@@ -200,18 +201,21 @@ def train_model(
                 except:
                     input_wrong = torch.squeeze(input_wrong)
                 
-                writer.add_images('original_images', inv_normalize(input_wrong), global_step=0)
+                writer.add_images('original_images', inv_normalize(input_wrong), config["global_run_count"])
                 label_wrong = label_wrong[:chosen_inds]
                 try:
                     label_wrong = torch.squeeze(torch.stack(label_wrong, dim=1))
                 except:
                     label_wrong = torch.squeeze(label_wrong)
                 
-                saliency = Saliency(model)
+                if config["gradient_method"] == "saliency":
+                    saliency = Saliency(model)
+                elif config["gradient_method"] == "guidedgradcam":
+                    if config["model"] == "resnet18":
+                        chosen_layer = model.layer3[-1].conv2
+                    saliency = GuidedGradCam(model, chosen_layer)
+
                 # TODO Other methods
-                # print(torch.cat(tuple(input_wrong)).shape)
-                # print(torch.cat(tuple(label_wrong)).shape)
-                # print(torch.cat(input_wrong, dim = 1).shape)
                 print(input_wrong.size() , label_wrong.size())
                 grads = saliency.attribute(
                     input_wrong, label_wrong
@@ -242,9 +246,6 @@ def train_model(
                 #     calc_grad_threshold(grad) for grad in tqdm(grads, total=len(grads))
                 # ]
 
-
-                
-
                 for ind in tqdm(range(len(label_wrong)), total=len(label_wrong)):
                     # TODO Split these into individual comprehensions for speed
                     # TODO Check if % of image is gone or not
@@ -259,21 +260,24 @@ def train_model(
                 orig2 = torch.Tensor(np.stack(original_images)).permute(0, 3,1,2)
 
                 orig2 = inv_normalize(orig2)
-                writer.add_images('converted_proxy', orig2, global_step=0,  dataformats='NCHW')
+                writer.add_images('converted_proxy', orig2, config["global_run_count"],  dataformats='NCHW')
 
                 print("Saving the images")
                 cm = plt.get_cmap("viridis")
 
+                with open("/mnt/e/CODE/Github/improving_robotics_datasets/src/proxyattention/pickler.pkl", "wb") as f:
+                    pickle.dump((model, saliency, grads, input_wrong, label_wrong, original_images), f)
+
                 # TODO Prune least important weights/filters? Pruning by explaining
                 for ind in tqdm(range(len(label_wrong)), total=len(label_wrong)):
+                    print(ind, original_images[ind])
                     plt.imshow(np.uint8(original_images[ind]))
                     plt.axis("off")
                     plt.gca().set_axis_off()
                     plt.margins(x=0)
                     plt.autoscale(False)
                     label = config["label_map"][label_wrong[ind].item()]
-                    save_name = config["ds_path"] / label / f"proxy-{ind}-{epoch}.png"
-
+                    save_name = config["ds_path"] / label / f"proxy-{ind}-{config['global_run_count']}.png"
                     plt.savefig(save_name, bbox_inches="tight", pad_inches=0)
 
             epoch_loss = running_loss / dataset_sizes[phase]
@@ -284,17 +288,17 @@ def train_model(
             # TODO Add more loss functions
             # TODO Classwise accuracy
             if proxy_step == True:
-                writer.add_scalar("proxy_step", True)
+                writer.add_scalar("proxy_step", True, config["global_run_count"])
             else:
-                writer.add_scalar("proxy_step", False)
+                writer.add_scalar("proxy_step", False, config["global_run_count"])
 
             if phase == "train":
-                writer.add_scalar("Loss/Train", epoch_loss, epoch)
-                writer.add_scalar("Acc/Train", epoch_acc, epoch)
+                writer.add_scalar("Loss/Train", epoch_loss, config["global_run_count"])
+                writer.add_scalar("Acc/Train", epoch_acc, config["global_run_count"])
             if phase == "val":
-                writer.add_scalar("Loss/Val", epoch_loss, epoch)
-                writer.add_scalar("Acc/Val", epoch_acc, epoch)
-                with tune.checkpoint_dir(epoch) as checkpoint_dir:
+                writer.add_scalar("Loss/Val", epoch_loss, config["global_run_count"])
+                writer.add_scalar("Acc/Val", epoch_acc, config["global_run_count"])
+                with tune.checkpoint_dir(config["global_run_count"]) as checkpoint_dir:
                     save_path = Path(config["fname_start"] + str(config["global_run_count"])) / "checkpoint"
                     torch.save((model.state_dict(), optimizer.state_dict()), save_path)
 
@@ -348,7 +352,7 @@ def setup_train_round(config, proxy_step=False, num_epochs=1):
 
 def train_proxy_steps(config):
     assert torch.cuda.is_available()
-    config["global_run_count"] = 0
+    # config["global_run_count"] = 0
     for step in config["proxy_steps"]:
         if step == "p":
             setup_train_round(config=config, proxy_step=True, num_epochs=1)
@@ -356,7 +360,7 @@ def train_proxy_steps(config):
             setup_train_round(config=config, proxy_step=False, num_epochs=step)
         
         clear_proxy_images(config=config) # Clean directory
-        config["global_run_count"] += 1
+        # config["global_run_count"] += 1
 
 def hyperparam_tune(config):
     ray.init(num_gpus=1, num_cpus=12)
