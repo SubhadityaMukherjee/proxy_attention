@@ -59,6 +59,9 @@ import proxyattention
 from PIL import Image
 from torchvision.utils import save_image
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 
 # sns.set()
 
@@ -91,8 +94,8 @@ config = {
     "model": "resnet18",
     # "proxy_steps": tune.choice([[1, "p", 1], [3, "p", 1], [1, 1], [3,1]]),
     # "proxy_steps": tune.choice([["p", 1],[1, 1], ["p",1], [1, "p",1], [1,1,1]]),
-    # "proxy_steps": tune.choice([[10, "p",10, "p", 30, "p", 20], [70], [70, "p"], [30, "p", 40], [30, "p", 40, "p"], [10, "p",10, "p", 30, "p", 20, "p"], ["p", 70]]),
-    "proxy_steps": tune.choice([[1,"p"], [2]]),
+    "proxy_steps": tune.choice([[10, "p",10, "p", 30, "p", 20], [70], [70, "p"], [30, "p", 40], [30, "p", 40, "p"], [10, "p",10, "p", 30, "p", 20, "p"], ["p", 70]]),
+    # "proxy_steps": tune.choice([[1,"p"], [2]]),
     "load_proxy_data": False,
     "global_run_count" : 0,
     "gradient_method" : "saliency", #guidedgradcam
@@ -101,7 +104,7 @@ config = {
 # Make dirs
 logging.info("Directories made/checked")
 os.makedirs(f'/mnt/e/CODE/Github/improving_robotics_datasets/src/runs/', exist_ok=True)
-fname_start = f'/mnt/e/CODE/Github/improving_robotics_datasets/src/runs/{config["ds_name"]}_{config["experiment_name"]}+{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}_subset-{config["subset_images"]}'
+fname_start = f'/mnt/e/CODE/Github/improving_robotics_datasets/src/runs/{config["ds_name"]}_{config["experiment_name"]}+{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}_ps-{str(config["proxy_steps"])}'
 
 config["fname_start"] = fname_start
 

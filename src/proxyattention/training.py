@@ -15,6 +15,9 @@ from typing import (Dict, Generator, Iterable, Iterator, List, Optional,
 
 import albumentations as A
 import cv2
+
+import matplotlib
+matplotlib.use('Agg') # no UI backend
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -268,7 +271,7 @@ def train_model(
                 writer.add_images('converted_proxy', orig2, config["global_run_count"],  dataformats='NCHW')
 
                 print("Saving the images")
-                cm = plt.get_cmap("viridis")
+                # cm = plt.get_cmap("viridis")
 
                 # with open("/mnt/e/CODE/Github/improving_robotics_datasets/src/proxyattention/pickler.pkl", "wb") as f:
                 #     pickle.dump((model, saliency, grads, input_wrong, label_wrong, original_images), f)
@@ -276,7 +279,9 @@ def train_model(
                 # TODO Prune least important weights/filters? Pruning by explaining
                 for ind in tqdm(range(len(label_wrong)), total=len(label_wrong)):
                     # print(ind, original_images[ind])
+                    # print("hi")
                     plt.imshow(np.uint8(original_images[ind]))
+                    # print("hi2")
                     plt.axis("off")
                     plt.gca().set_axis_off()
                     plt.margins(x=0)
@@ -358,7 +363,8 @@ def setup_train_round(config, proxy_step=False, num_epochs=1):
 def train_proxy_steps(config):
     assert torch.cuda.is_available()
     # config["global_run_count"] = 0
-    fname_start = f'/mnt/e/CODE/Github/improving_robotics_datasets/src/runs/{config["ds_name"]}_{config["experiment_name"]}+{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}_subset-{config["subset_images"]}'
+
+    fname_start = f'/mnt/e/CODE/Github/improving_robotics_datasets/src/runs/{config["ds_name"]}_{config["experiment_name"]}+{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}_ps-{str(config["proxy_steps"])}'
 
     config["fname_start"] = fname_start
 
