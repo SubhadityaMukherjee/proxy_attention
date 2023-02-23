@@ -367,6 +367,7 @@ def train_proxy_steps(config):
     fname_start = f'/mnt/e/CODE/Github/improving_robotics_datasets/src/runs/{config["ds_name"]}_{config["experiment_name"]}+{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}_ps-{str(config["proxy_steps"])}'
 
     config["fname_start"] = fname_start
+    config["global_run_count"] = 0
 
     for step in config["proxy_steps"]:
         if step == "p":
@@ -418,7 +419,7 @@ def hyperparam_tune(config):
     result = tuner.fit()
 
     df_res = result.get_dataframe()
-    df_res.to_csv(Path(config["fname_start"]+str(config["global_run_count"])) / "result_log.csv")
+    df_res.to_csv(Path(config["fname_start"]+"result_log.csv"))
     best_trial = result.get_best_trial("loss", "min", "last")
     print("Best trial config: {}".format(best_trial.config))
     print("Best trial final validation loss: {}".format(best_trial.last_result["loss"]))

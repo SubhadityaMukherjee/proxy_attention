@@ -90,14 +90,14 @@ config = {
     # "proxy_threshold": tune.loguniform(0.008, 0.01),
     "proxy_threshold":  0.005,
     # "pixel_replacement_method": tune.choice(["mean", "max", "min", "black", "white"]),
-    "pixel_replacement_method": "half",
+    # "pixel_replacement_method": "half",
     "model": "resnet18",
     # "proxy_steps": tune.choice([[1, "p", 1], [3, "p", 1], [1, 1], [3,1]]),
     # "proxy_steps": tune.choice([["p", 1],[1, 1], ["p",1], [1, "p",1], [1,1,1]]),
     "proxy_steps": tune.choice([[10, "p",10, "p", 30, "p", 20], [70], [70, "p"], [30, "p", 40], [30, "p", 40, "p"], [10, "p",10, "p", 30, "p", 20, "p"], ["p", 70]]),
     # "proxy_steps": tune.choice([[1,"p"], [2]]),
     "load_proxy_data": False,
-    "global_run_count" : 0,
+    # "global_run_count" : 0,
     "gradient_method" : "saliency", #guidedgradcam
 }
 
