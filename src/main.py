@@ -60,7 +60,7 @@ from PIL import Image
 from torchvision.utils import save_image
 
 
-sns.set()
+# sns.set()
 
 os.environ["TORCH_HOME"] = "/mnt/e/Datasets/"
 
@@ -91,7 +91,8 @@ config = {
     "model": "resnet18",
     # "proxy_steps": tune.choice([[1, "p", 1], [3, "p", 1], [1, 1], [3,1]]),
     # "proxy_steps": tune.choice([["p", 1],[1, 1], ["p",1], [1, "p",1], [1,1,1]]),
-    "proxy_steps": tune.choice([["p",1]]),
+    # "proxy_steps": tune.choice([[10, "p",10, "p", 30, "p", 20], [70], [70, "p"], [30, "p", 40], [30, "p", 40, "p"], [10, "p",10, "p", 30, "p", 20, "p"], ["p", 70]]),
+    "proxy_steps": tune.choice([[1,"p"], [2]]),
     "load_proxy_data": False,
     "global_run_count" : 0,
     "gradient_method" : "saliency", #guidedgradcam
@@ -114,3 +115,5 @@ config["device"] = torch.device("cuda:0" if torch.cuda.is_available() else "cpu"
 
 proxyattention.data_utils.clear_proxy_images(config=config)
 proxyattention.training.hyperparam_tune(config=config)
+
+# %%

@@ -41,7 +41,7 @@ import random
 
 from .meta_utils import *
 
-sns.set()
+# sns.set()
 
 os.environ["TORCH_HOME"] = "/media/hdd/Datasets/"
 cudnn.benchmark = True

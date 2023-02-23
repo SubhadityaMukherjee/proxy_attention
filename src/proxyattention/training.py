@@ -47,7 +47,7 @@ from .data_utils import create_folds, create_dls, clear_proxy_images
 from .meta_utils import *
 import pickle
 
-sns.set()
+# sns.set()
 
 os.environ["TORCH_HOME"] = "/media/hdd/Datasets/"
 cudnn.benchmark = True
@@ -106,6 +106,11 @@ def train_model(
     config=None,
 ):
     writer = SummaryWriter(log_dir=config["fname_start"], comment=config["fname_start"])
+
+    # Save config info to tensorboard
+    for key, value in config.items():
+        writer.add_text(key, str(value))
+
     inv_normalize = transforms.Normalize(
         mean=[-0.485/0.229, -0.485/0.229, -0.485/0.229],
         std=[1/0.229, 1/0.229, 1/0.229]
@@ -194,7 +199,7 @@ def train_model(
                 writer.add_scalar("Number_Chosen", chosen_inds, config["global_run_count"])
                 print(f"{chosen_inds} images chosen to run proxy on")
 
-                print(len(input_wrong) , len(label_wrong))
+                # print(len(input_wrong) , len(label_wrong))
                 input_wrong = input_wrong[:chosen_inds]
                 try:
                     input_wrong = torch.squeeze(torch.stack(input_wrong, dim=0))
@@ -216,7 +221,7 @@ def train_model(
                     saliency = GuidedGradCam(model, chosen_layer)
 
                 # TODO Other methods
-                print(input_wrong.size() , label_wrong.size())
+                # print(input_wrong.size() , label_wrong.size())
                 grads = saliency.attribute(
                     input_wrong, label_wrong
                 )
@@ -230,7 +235,7 @@ def train_model(
                 # permute_and_detach(ind)
                 # for ind in tqdm(input_wrong, total=len(input_wrong))
                 # ]
-                print(input_wrong.size())
+                # print(input_wrong.size())
                 original_images = [
                     ind.permute(1, 2, 0).cpu().detach() for ind in input_wrong
                 ]
@@ -265,12 +270,12 @@ def train_model(
                 print("Saving the images")
                 cm = plt.get_cmap("viridis")
 
-                with open("/mnt/e/CODE/Github/improving_robotics_datasets/src/proxyattention/pickler.pkl", "wb") as f:
-                    pickle.dump((model, saliency, grads, input_wrong, label_wrong, original_images), f)
+                # with open("/mnt/e/CODE/Github/improving_robotics_datasets/src/proxyattention/pickler.pkl", "wb") as f:
+                #     pickle.dump((model, saliency, grads, input_wrong, label_wrong, original_images), f)
 
                 # TODO Prune least important weights/filters? Pruning by explaining
                 for ind in tqdm(range(len(label_wrong)), total=len(label_wrong)):
-                    print(ind, original_images[ind])
+                    # print(ind, original_images[ind])
                     plt.imshow(np.uint8(original_images[ind]))
                     plt.axis("off")
                     plt.gca().set_axis_off()
@@ -299,7 +304,7 @@ def train_model(
                 writer.add_scalar("Loss/Val", epoch_loss, config["global_run_count"])
                 writer.add_scalar("Acc/Val", epoch_acc, config["global_run_count"])
                 with tune.checkpoint_dir(config["global_run_count"]) as checkpoint_dir:
-                    save_path = Path(config["fname_start"] + str(config["global_run_count"])) / "checkpoint"
+                    save_path = Path(config["fname_start"] )/ "checkpoint"
                     torch.save((model.state_dict(), optimizer.state_dict()), save_path)
 
                 tune.report(loss=epoch_loss, accuracy=epoch_acc)
@@ -353,6 +358,10 @@ def setup_train_round(config, proxy_step=False, num_epochs=1):
 def train_proxy_steps(config):
     assert torch.cuda.is_available()
     # config["global_run_count"] = 0
+    fname_start = f'/mnt/e/CODE/Github/improving_robotics_datasets/src/runs/{config["ds_name"]}_{config["experiment_name"]}+{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}_subset-{config["subset_images"]}'
+
+    config["fname_start"] = fname_start
+
     for step in config["proxy_steps"]:
         if step == "p":
             setup_train_round(config=config, proxy_step=True, num_epochs=1)
@@ -363,27 +372,44 @@ def train_proxy_steps(config):
         # config["global_run_count"] += 1
 
 def hyperparam_tune(config):
-    ray.init(num_gpus=1, num_cpus=12)
-    scheduler = ASHAScheduler(
-        metric="loss", mode="min", max_t=30, grace_period=1, reduction_factor=2,
+    # ray.init()
+    scheduler = ASHAScheduler(max_t=30, grace_period=1, reduction_factor=2,
     )
 
     reporter = CLIReporter(metric_columns=["loss", "accuracy", "training_iteration"])
 
-    result = tune.run(
-        train_proxy_steps,
-        config=config,
-        scheduler=scheduler,
-        progress_reporter=reporter,
-        checkpoint_at_end=True,
-        max_failures=100,
-        num_samples=50,
-        resources_per_trial={
-            "gpu": 1,
-            "cpu": 8,
-        },
-        local_dir=config["fname_start"],
+    # result = tune.run(
+    #     train_proxy_steps,
+    #     config=config,
+    #     scheduler=scheduler,
+    #     progress_reporter=reporter,
+    #     checkpoint_at_end=True,
+    #     # max_failures=100,
+    #     num_samples=10,
+    #     resources_per_trial={
+    #         "gpu": 1,
+    #         "cpu": 10,
+    #     },
+    #     local_dir=config["fname_start"],
+    # )
+
+    tuner = tune.Tuner(
+        tune.with_resources(
+            tune.with_parameters(train_proxy_steps),
+            resources={"cpu": 10, "gpu": 1},
+
+
+        ),
+        tune_config=tune.TuneConfig(
+            metric="loss",
+            mode="min",
+            scheduler=scheduler,
+            num_samples=10,
+        ),
+        run_config=ray.air.RunConfig(progress_reporter=reporter),
+        param_space=config,
     )
+    result = tuner.fit()
 
     df_res = result.get_dataframe()
     df_res.to_csv(Path(config["fname_start"]+str(config["global_run_count"])) / "result_log.csv")
