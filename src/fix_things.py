@@ -47,7 +47,7 @@ import pickle
 
 sns.set()
 
-os.environ["TORCH_HOME"] = "/media/hdd/Datasets/"
+os.environ["TORCH_HOME"] = "/mnt/e/Datasets"
 cudnn.benchmark = True
 
 # %%
@@ -400,10 +400,304 @@ with open("./proxyattention/pickler.pkl", "rb+") as f:
     model, saliency, grads, input_wrong, label_wrong, original_images = orig
 
 #%%
+from pytorch_grad_cam import GradCAM, HiResCAM, ScoreCAM, GradCAMPlusPlus, AblationCAM, XGradCAM, EigenCAM, FullGrad
+from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
+from pytorch_grad_cam.utils.image import show_cam_on_image, deprocess_image
+#%%
+from torchvision.models import resnet50
+model_2 = resnet50(pretrained=True)
+target_layers = [model_2.layer4[-1]]
+#%%
+cam = GradCAM(model=model_2, target_layers=target_layers, use_cuda=True)
+#%%
+from pytorch_grad_cam.utils.model_targets import ClassifierOutputSoftmaxTarget
+from pytorch_grad_cam.metrics.cam_mult_image import CamMultImageConfidenceChange
+
+from PIL import Image
+
+#%%
+targets = [ClassifierOutputTarget(29)]
+# You can also pass aug_smooth=True and eigen_smooth=True, to apply smoothing.
+grayscale_cam = cam(input_tensor=input_wrong, targets=targets)
+#%%
+input_wrong = np.array(input_wrong.cpu(), dtype= np.float32)/255.0
+#%%
+input_wrong = input_wrong.transpose(0, 2,3,1)
+#%%
+def show_cam_on_image(img: np.ndarray,
+                      mask: np.ndarray,
+                      use_rgb: bool = False,
+                      colormap: int = cv2.COLORMAP_JET,
+                      image_weight: float = 0.5) -> np.ndarray:
+    """ This function overlays the cam mask on the image as an heatmap.
+    By default the heatmap is in BGR format.
+
+    :param img: The base image in RGB or BGR format.
+    :param mask: The cam mask.
+    :param use_rgb: Whether to use an RGB or BGR heatmap, this should be set to True if 'img' is in RGB format.
+    :param colormap: The OpenCV colormap to be used.
+    :param image_weight: The final result is image_weight * img + (1-image_weight) * mask.
+    :returns: The default image with the cam overlay.
+    """
+    heatmap = cv2.applyColorMap(np.uint8(255 * mask), colormap)
+    if use_rgb:
+        heatmap = cv2.cvtColor(heatmap, cv2.COLOR_BGR2RGB)
+    heatmap = np.float32(heatmap) / 255
+
+    if np.max(img) > 1:
+        raise Exception(
+            "The input image should np.float32 in the range [0, 1]")
+
+    if image_weight < 0 or image_weight > 1:
+        raise Exception(
+            f"image_weight should be in the range [0, 1].\
+                Got: {image_weight}")
+
+    cam = (1 - image_weight) * heatmap + image_weight * img
+    cam = cam / np.max(cam)
+    return np.uint8(255 * cam)
+
+#%%
+visualization = show_cam_on_image( input_wrong[3], grayscale_cam[3], image_weight=1.0)
+#%%
+
+# visualization = deprocess_image(visualization)
+Image.fromarray(visualization)
+#%%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#%%
+input_wrong.shape
+#%%
+# model expects 224x224 3-color image
+transform = transforms.Compose([
+ transforms.Resize(224),
+ transforms.CenterCrop(224),
+ transforms.ToTensor()
+])
+
+# standard ImageNet normalization
+transform_normalize = transforms.Normalize(
+     mean=[0.485, 0.456, 0.406],
+     std=[0.229, 0.224, 0.225]
+ )
+
+input_img = transform_normalize(input_wrong)
+#%%
+output = model(input_img)
+output = F.softmax(output, dim=1)
+prediction_score, pred_label_idx = torch.topk(output, 1)
+pred_label_idx.squeeze_()
+#%%
+# Initialize the attribution algorithm with the model
+
+chosen_layer = model.layer3[-1].conv2
+integrated_gradients = GuidedGradCam(model, chosen_layer)
+
+# Ask the algorithm to attribute our output target to
+attributions_ig = integrated_gradients.attribute(input_img, target=pred_label_idx)
+#%%
+# Show the original image for comparison
+# _ = viz.visualize_image_attr(None, np.transpose(input_img[0].squeeze().cpu().detach().numpy(), (1,2,0)),
+                    #   method="original_image", title="Original Image")
+from matplotlib.colors import LinearSegmentedColormap
+default_cmap = LinearSegmentedColormap.from_list('custom blue',
+                                                 [(0, '#ffffff'),
+                                                  (0.25, '#0000ff'),
+                                                  (1, '#0000ff')], N=256)
+_ = viz.visualize_image_attr(np.transpose(attributions_ig[0].squeeze().cpu().detach().numpy(), (1,2,0)),
+                             np.transpose(input_img[0].squeeze().cpu().detach().numpy(), (1,2,0)),
+                             method='heat_map',
+                            #  show_colorbar=True,
+                             sign='positive',
+                             title='Integrated Gradients')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#%%
+# Initialize the attribution algorithm with the model
+integrated_gradients = IntegratedGradients(model)
+
+# Ask the algorithm to attribute our output target to
+attributions_ig = integrated_gradients.attribute(input_img, target=pred_label_idx, n_steps=200)
+
+# Show the original image for comparison
+_ = viz.visualize_image_attr(None, np.transpose(transformed_img.squeeze().cpu().detach().numpy(), (1,2,0)),
+                      method="original_image", title="Original Image")
+
+default_cmap = LinearSegmentedColormap.from_list('custom blue',
+                                                 [(0, '#ffffff'),
+                                                  (0.25, '#0000ff'),
+                                                  (1, '#0000ff')], N=256)
+
+_ = viz.visualize_image_attr(np.transpose(attributions_ig.squeeze().cpu().detach().numpy(), (1,2,0)),
+                             np.transpose(transformed_img.squeeze().cpu().detach().numpy(), (1,2,0)),
+                             method='heat_map',
+                             cmap=default_cmap,
+                             show_colorbar=True,
+                             sign='positive',
+                             title='Integrated Gradients')
+#%%
+
+chosen_layer = model.layer3[-1].conv2
+saliency = GuidedGradCam(model, chosen_layer)
+#%%
+grads = saliency.attribute(
+        (input_wrong), (label_wrong)
+    )
+#%%
+viz.visualize_image_attr(grads[0], input_wrong[0], "blended_heat_map")
+#%%
+grads = np.transpose(
+    grads.squeeze().cpu().detach().numpy(), (0, 2, 3, 1)
+)
+#%%
+grads[0].max()
+#%%
+original_images = [
+        ind.permute(1, 2, 0).cpu().detach() for ind in input_wrong
+    ]
+#%%
+original_images[0][grads[0]>3e-08].shape
+#%%
+decide_pixel_replacement(original_image=original_images[0], method='mean')
+
+#%%
+for ind in tqdm(range(len(original_images)), total=len(original_images)):
+    # TODO Split these into individual comprehensions for speed
+    # TODO Check if % of image is gone or not
+    original_images[ind][grads[ind] > 3e-08] = decide_pixel_replacement(
+        original_image=original_images[ind],
+        method="mean",
+    )
+#%%
+inv_normalize = transforms.Normalize(
+        mean=[-0.485/0.229, -0.485/0.229, -0.485/0.229],
+        std=[1/0.229, 1/0.229, 1/0.229]
+    )
+
+#%%
+# TODO : Dont save this everytime I guess??
+orig2 = torch.Tensor(np.stack(original_images))
+orig2 = orig2.permute(0, 3, 1, 2)
+orig2 = inv_normalize(orig2)
+orig2.shape
+#%%
+grads_transformed = grads.transpose(0,3,1,2)
+grads_transformed.shape
+#%%
+grads_transformed[0].max()
+#%%
+orig2[0]
+#%%
+test_comp = np.mean(grads_transformed[0],axis =0 ) <0.003
+#%%
+test_comp
+#%%
+#%%
+test_image = np.multiply(orig2[0], test_comp)
+test_image
+#%%
+# orig2[0][np.equal(test_comp, orig2[0]) == True] = 0
+#%%
+#%%
+t = torchvision.transforms.ToPILImage()
+plt.imshow(t(test_image))
+plt.axis("off")
+plt.gca().set_axis_off()
+plt.margins(x=0)
+plt.autoscale(False)
+
+#%%
+# orig2 = orig2.permute(0, 2,3,1)
+# orig2.shape
+#%%
+orig2.max()
+#%%
+input_wrong[-1].shape
+#%%
+plt.imshow(inv_normalize(original_images[0]).cpu())
+plt.axis("off")
+plt.gca().set_axis_off()
+plt.margins(x=0)
+plt.autoscale(False)
+
+
+
+
+
+
+#%%
 saliency = GuidedGradCam(model, model.layer3[-1].conv2)
 grads_test = saliency.attribute(
                     input_wrong, label_wrong
                 )
+
+#%%
+part_orig = original_images.copy()
+#%%
+for ind in tqdm(range(len(label_wrong)), total=len(label_wrong)):
+    # original_images[ind][grad_thresholds[ind]] = pixel_replacement[ind]
+    part_orig[ind][
+        grads[ind] > 0.008
+    ] = 255.0
+
+#%%
+
+orig2 = torch.Tensor(np.stack(part_orig)).permute(0, 3,1,2)
+orig2[1] = inv_normalize(orig2[1])
+#%%
+#%%
+orig2[0].shape
+#%%
+orig2 = np.uint8(orig2)
+orig2[0].min(), orig2[0].max()
+#%%
+plt.imshow(orig2[0])
+plt.axis("off")
+plt.gca().set_axis_off()
+plt.margins(x=0)
+plt.autoscale(False)
+plt.show()
 
 #%%
 
