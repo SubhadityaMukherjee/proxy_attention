@@ -400,9 +400,12 @@ with open("./proxyattention/pickler.pkl", "rb+") as f:
     model, saliency, grads, input_wrong, label_wrong, original_images = orig
 
 #%%
+grads.shape
+
+#%%
 from pytorch_grad_cam import GradCAM, HiResCAM, ScoreCAM, GradCAMPlusPlus, AblationCAM, XGradCAM, EigenCAM, FullGrad
 from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
-from pytorch_grad_cam.utils.image import show_cam_on_image, deprocess_image
+from pytorch_grad_cam.utils.image import show_cam_on_image, deprocess_image, preprocess_image
 #%%
 from torchvision.models import resnet50
 model_2 = resnet50(pretrained=True)
@@ -419,10 +422,30 @@ from PIL import Image
 targets = [ClassifierOutputTarget(29)]
 # You can also pass aug_smooth=True and eigen_smooth=True, to apply smoothing.
 grayscale_cam = cam(input_tensor=input_wrong, targets=targets)
+grayscale_cam = torch.Tensor(grayscale_cam).unsqueeze(3)
+
+# Repeat grayscale values along channel dimension
+grayscale_cam = torch.repeat_interleave(grayscale_cam, 3, dim=3)
 #%%
-input_wrong = np.array(input_wrong.cpu(), dtype= np.float32)/255.0
+grayscale_cam.shape
+#%%
+input_wrong = np.array(input_wrong.cpu(), dtype= np.uint8)/255
 #%%
 input_wrong = input_wrong.transpose(0, 2,3,1)
+
+#%%
+test_im, test_grad = input_wrong[0], grayscale_cam[0]
+# input_wrong[0][grayscale_cam[0][grayscale_cam[0] > 0.8]] = 0
+#%%
+test_im.min()
+#%%
+# test_grad[test_grad > 0.8]
+# np.argwhere(np.any(test_grad > 0.7))
+test_im[np.where(test_grad > 0.9)] = 0.0
+test_im = test_im/test_im.max()
+test_im = 255*test_im
+#%%
+Image.fromarray(test_im, mode = "RGB")
 #%%
 def show_cam_on_image(img: np.ndarray,
                       mask: np.ndarray,
@@ -441,9 +464,11 @@ def show_cam_on_image(img: np.ndarray,
     """
     heatmap = cv2.applyColorMap(np.uint8(255 * mask), colormap)
     if use_rgb:
+        # heatmap = cv2.cvtColor(heatmap, cv2.COLOR_BGR2RGB)
         heatmap = cv2.cvtColor(heatmap, cv2.COLOR_BGR2RGB)
-    heatmap = np.float32(heatmap) / 255
-
+    heatmap =np.float32(heatmap) / 255
+    # heatmap =np.heaviside(np.float32(heatmap) / 255, 0.5)
+    
     if np.max(img) > 1:
         raise Exception(
             "The input image should np.float32 in the range [0, 1]")
@@ -453,19 +478,41 @@ def show_cam_on_image(img: np.ndarray,
             f"image_weight should be in the range [0, 1].\
                 Got: {image_weight}")
 
-    cam = (1 - image_weight) * heatmap + image_weight * img
-    cam = cam / np.max(cam)
-    return np.uint8(255 * cam)
+    # cam = (1 - image_weight) * heatmap + image_weight * img
+    # cam = ((1 - image_weight) * heatmap) * (image_weight * img)
+    # cam = heatmap * img
+    # cam = cam / np.max(cam)
+    # heatmap = heatmap.mean(axis=0)
+    # heatmap[heatmap]
+    heatmap[heatmap > 0.5] = 1.0
+    heatmap[heatmap < 0.5] = 0.0
+    print(heatmap.shape, img.shape)
+    # img[heatmap> 0.08] = img.max()
+    # img = heatmap * img
+    # img = np.matmul(img, heatmap)
+    # img = heatmap * img
+    img = img/np.max(img)
+
+    return np.uint8(255 * img), heatmap
+    # return np.uint8(255 * cam), cam
 
 #%%
-visualization = show_cam_on_image( input_wrong[3], grayscale_cam[3], image_weight=1.0)
-#%%
-
-# visualization = deprocess_image(visualization)
+ind = 10
+visualization, heatmap = show_cam_on_image( input_wrong[ind], grayscale_cam[ind], image_weight=1.0, use_rgb=False)
+visualization.shape
 Image.fromarray(visualization)
 #%%
+heatmap
+#%%
+input_wrong[ind]
+#%%
+transform_normalize = transforms.Normalize(
+     mean=[0.485, 0.456, 0.406],
+     std=[0.229, 0.224, 0.225]
+ )
 
-
+Image.fromarray(deprocess_image(input_wrong[ind]))
+#%%
 
 
 
