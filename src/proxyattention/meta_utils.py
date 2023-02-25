@@ -2,8 +2,18 @@ import glob
 import itertools
 import mimetypes
 from pathlib import Path
-from typing import (Dict, Generator, Iterable, Iterator, List, Optional,
-                    Sequence, Set, Tuple, Union)
+from typing import (
+    Dict,
+    Generator,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Sequence,
+    Set,
+    Tuple,
+    Union,
+)
 
 import matplotlib.pyplot as plt
 import numpy as np

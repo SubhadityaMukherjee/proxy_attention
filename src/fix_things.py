@@ -10,8 +10,18 @@ import mimetypes
 import os
 import time
 from pathlib import Path
-from typing import (Dict, Generator, Iterable, Iterator, List, Optional,
-                    Sequence, Set, Tuple, Union)
+from typing import (
+    Dict,
+    Generator,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Sequence,
+    Set,
+    Tuple,
+    Union,
+)
 
 import albumentations as A
 import cv2
@@ -27,7 +37,14 @@ import torch.optim as optim
 import torchvision
 from albumentations.core.composition import Compose
 from albumentations.pytorch import ToTensorV2
-from captum.attr import DeepLift, IntegratedGradients, NoiseTunnel, Saliency, GuidedBackprop, GuidedGradCam
+from captum.attr import (
+    DeepLift,
+    IntegratedGradients,
+    NoiseTunnel,
+    Saliency,
+    GuidedBackprop,
+    GuidedGradCam,
+)
 from captum.attr import visualization as viz
 from sklearn import metrics, model_selection, preprocessing
 from sklearn.model_selection import StratifiedKFold
@@ -60,16 +77,20 @@ def reset_params(model):
 
 def choose_network(config):
     # vit_tiny_patch16_224.augreg_in21k_ft_in1k
-    if config["model"]== "vision_transformer":
-        config["model"]= "vit_tiny_patch16_224.augreg_in21k_ft_in1k"
+    if config["model"] == "vision_transformer":
+        config["model"] = "vit_tiny_patch16_224.augreg_in21k_ft_in1k"
     # Define the number of classes
     model = timm.create_model(
-        config["model"], pretrained=config["transfer_imagenet"], num_classes=config["num_classes"]).to(config["device"])
+        config["model"],
+        pretrained=config["transfer_imagenet"],
+        num_classes=config["num_classes"],
+    ).to(config["device"])
     model.train()
     return model
 
 
 # %%
+
 
 def decide_pixel_replacement(original_image, method="mean"):
     if method == "mean":
@@ -103,7 +124,10 @@ def train_model(
     proxy_step=False,
     config=None,
 ):
-    writer = SummaryWriter(log_dir=config["fname_start"]+str(config["global_run_count"]), comment=config["fname_start"])
+    writer = SummaryWriter(
+        log_dir=config["fname_start"] + str(config["global_run_count"]),
+        comment=config["fname_start"],
+    )
     since = time.time()
 
     best_model_wts = copy.deepcopy(model.state_dict())
@@ -186,7 +210,7 @@ def train_model(
                 writer.add_scalar("Number_Chosen", chosen_inds, epoch)
                 print(f"{chosen_inds} images chosen to run proxy on")
 
-                print(len(input_wrong) , len(label_wrong))
+                print(len(input_wrong), len(label_wrong))
                 input_wrong = input_wrong[:chosen_inds]
                 input_wrong = torch.squeeze(torch.stack(input_wrong, dim=0))
                 label_wrong = label_wrong[:chosen_inds]
@@ -198,10 +222,8 @@ def train_model(
                 # print(torch.cat(tuple(input_wrong)).shape)
                 # print(torch.cat(tuple(label_wrong)).shape)
                 # print(torch.cat(input_wrong, dim = 1).shape)
-                print(input_wrong.size() , label_wrong.size())
-                grads = saliency.attribute(
-                    input_wrong, label_wrong
-                )
+                print(input_wrong.size(), label_wrong.size())
+                grads = saliency.attribute(input_wrong, label_wrong)
                 grads = np.transpose(
                     grads.squeeze().cpu().detach().numpy(), (0, 2, 3, 1)
                 )
@@ -278,7 +300,10 @@ def train_model(
                 writer.add_scalar("Loss/Val", epoch_loss, epoch)
                 writer.add_scalar("Acc/Val", epoch_acc, epoch)
                 with tune.checkpoint_dir(epoch) as checkpoint_dir:
-                    save_path = Path(config["fname_start"] + str(config["global_run_count"])) / "checkpoint"
+                    save_path = (
+                        Path(config["fname_start"] + str(config["global_run_count"]))
+                        / "checkpoint"
+                    )
                     torch.save((model.state_dict(), optimizer.state_dict()), save_path)
 
                 tune.report(loss=epoch_loss, accuracy=epoch_acc)
@@ -298,13 +323,12 @@ def train_model(
     model.load_state_dict(best_model_wts)
     return model
 
+
 # %%
 def setup_train_round(config, proxy_step=False, num_epochs=1):
     # Data part
     train, val = create_folds(config)
-    image_datasets, dataloaders, dataset_sizes = create_dls(
-        train, val, config
-    )
+    image_datasets, dataloaders, dataset_sizes = create_dls(train, val, config)
     class_names = image_datasets["train"].classes
     config["num_classes"] = len(config["label_map"].keys())
 
@@ -341,14 +365,20 @@ def train_proxy_steps(config):
             config["load_proxy_data"] = False
         config["global_run_count"] += 1
 
+
 def tune_func(config):
     # tune.utils.wait_for_gpu(target_util = .1)
     train_proxy_steps(config=config)
 
+
 def hyperparam_tune(config):
     ray.init(num_gpus=1, num_cpus=12)
     scheduler = ASHAScheduler(
-        metric="loss", mode="min", max_t=30, grace_period=1, reduction_factor=2,
+        metric="loss",
+        mode="min",
+        max_t=30,
+        grace_period=1,
+        reduction_factor=2,
     )
 
     reporter = CLIReporter(metric_columns=["loss", "accuracy", "training_iteration"])
@@ -369,7 +399,9 @@ def hyperparam_tune(config):
     )
 
     df_res = result.get_dataframe()
-    df_res.to_csv(Path(config["fname_start"]+str(config["global_run_count"])) / "result_log.csv")
+    df_res.to_csv(
+        Path(config["fname_start"] + str(config["global_run_count"])) / "result_log.csv"
+    )
     best_trial = result.get_best_trial("loss", "min", "last")
     print("Best trial config: {}".format(best_trial.config))
     print("Best trial final validation loss: {}".format(best_trial.last_result["loss"]))
@@ -380,6 +412,8 @@ def hyperparam_tune(config):
     )
 
     print(result)
+
+
 #%%
 # print("OPENING")
 # with open("/mnt/e/CODE/Github/improving_robotics_datasets/src/runs/asl_test_asl_starter+20022023_11:42:03_subset-8000/train_proxy_steps_2023-02-20_11-42-08/train_proxy_steps_39809_00000_0_proxy_steps=p_1_2023-02-20_11-42-08/pickler.pkl", "rb+") as f:
@@ -397,17 +431,47 @@ def hyperparam_tune(config):
 #%%
 with open("./proxyattention/pickler.pkl", "rb+") as f:
     orig = pickle.load(f)
-    model, saliency, grads, input_wrong, label_wrong, original_images = orig
+    model, grads, input_wrong, label_wrong, original_images = orig
+    # cam, input_wrong, label_wrong, _, model, target_layers = orig
+
+from PIL import Image
 
 #%%
-grads.shape
+test_im = original_images[-1]
+Image.fromarray(test_im)
+#%%
+input_wrong.shape
+#%%
+model_2 = resnet50(pretrained=True)
+target_layers = [model_2.layer4[-1]]
+#%%
+cam = GradCAM(model=model_2, target_layers=target_layers, use_cuda=True)
+
+targets = [ClassifierOutputTarget(29)]
+# You can also pass aug_smooth=True and eigen_smooth=True, to apply smoothing.
+grayscale_cam = cam(input_tensor=input_wrong, targets=targets)
 
 #%%
-from pytorch_grad_cam import GradCAM, HiResCAM, ScoreCAM, GradCAMPlusPlus, AblationCAM, XGradCAM, EigenCAM, FullGrad
+from pytorch_grad_cam import (
+    GradCAM,
+    HiResCAM,
+    ScoreCAM,
+    GradCAMPlusPlus,
+    AblationCAM,
+    XGradCAM,
+    EigenCAM,
+    FullGrad,
+)
 from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
-from pytorch_grad_cam.utils.image import show_cam_on_image, deprocess_image, preprocess_image
-#%%
+from pytorch_grad_cam.utils.image import (
+    show_cam_on_image,
+    deprocess_image,
+    preprocess_image,
+)
+
 from torchvision.models import resnet50
+
+#%%
 model_2 = resnet50(pretrained=True)
 target_layers = [model_2.layer4[-1]]
 #%%
@@ -422,6 +486,9 @@ from PIL import Image
 targets = [ClassifierOutputTarget(29)]
 # You can also pass aug_smooth=True and eigen_smooth=True, to apply smoothing.
 grayscale_cam = cam(input_tensor=input_wrong, targets=targets)
+#%%
+input_wrong.shape
+#%%
 grayscale_cam = torch.Tensor(grayscale_cam).unsqueeze(3)
 
 # Repeat grayscale values along channel dimension
@@ -429,9 +496,9 @@ grayscale_cam = torch.repeat_interleave(grayscale_cam, 3, dim=3)
 #%%
 grayscale_cam.shape
 #%%
-input_wrong = np.array(input_wrong.cpu(), dtype= np.uint8)/255
+input_wrong = np.array(input_wrong.cpu(), dtype=np.uint8) / 255
 #%%
-input_wrong = input_wrong.transpose(0, 2,3,1)
+input_wrong = input_wrong.transpose(0, 2, 3, 1)
 
 #%%
 test_im, test_grad = input_wrong[0], grayscale_cam[0]
@@ -442,17 +509,19 @@ test_im.min()
 # test_grad[test_grad > 0.8]
 # np.argwhere(np.any(test_grad > 0.7))
 test_im[np.where(test_grad > 0.9)] = 0.0
-test_im = test_im/test_im.max()
-test_im = 255*test_im
+test_im = test_im / test_im.max()
+test_im = 255 * test_im
 #%%
-Image.fromarray(test_im, mode = "RGB")
+Image.fromarray(test_im, mode="RGB")
 #%%
-def show_cam_on_image(img: np.ndarray,
-                      mask: np.ndarray,
-                      use_rgb: bool = False,
-                      colormap: int = cv2.COLORMAP_JET,
-                      image_weight: float = 0.5) -> np.ndarray:
-    """ This function overlays the cam mask on the image as an heatmap.
+def show_cam_on_image(
+    img: np.ndarray,
+    mask: np.ndarray,
+    use_rgb: bool = False,
+    colormap: int = cv2.COLORMAP_JET,
+    image_weight: float = 0.5,
+) -> np.ndarray:
+    """This function overlays the cam mask on the image as an heatmap.
     By default the heatmap is in BGR format.
 
     :param img: The base image in RGB or BGR format.
@@ -466,17 +535,17 @@ def show_cam_on_image(img: np.ndarray,
     if use_rgb:
         # heatmap = cv2.cvtColor(heatmap, cv2.COLOR_BGR2RGB)
         heatmap = cv2.cvtColor(heatmap, cv2.COLOR_BGR2RGB)
-    heatmap =np.float32(heatmap) / 255
+    heatmap = np.float32(heatmap) / 255
     # heatmap =np.heaviside(np.float32(heatmap) / 255, 0.5)
-    
+
     if np.max(img) > 1:
-        raise Exception(
-            "The input image should np.float32 in the range [0, 1]")
+        raise Exception("The input image should np.float32 in the range [0, 1]")
 
     if image_weight < 0 or image_weight > 1:
         raise Exception(
             f"image_weight should be in the range [0, 1].\
-                Got: {image_weight}")
+                Got: {image_weight}"
+        )
 
     # cam = (1 - image_weight) * heatmap + image_weight * img
     # cam = ((1 - image_weight) * heatmap) * (image_weight * img)
@@ -491,14 +560,17 @@ def show_cam_on_image(img: np.ndarray,
     # img = heatmap * img
     # img = np.matmul(img, heatmap)
     # img = heatmap * img
-    img = img/np.max(img)
+    img = img / np.max(img)
 
     return np.uint8(255 * img), heatmap
     # return np.uint8(255 * cam), cam
 
+
 #%%
 ind = 10
-visualization, heatmap = show_cam_on_image( input_wrong[ind], grayscale_cam[ind], image_weight=1.0, use_rgb=False)
+visualization, heatmap = show_cam_on_image(
+    input_wrong[ind], grayscale_cam[ind], image_weight=1.0, use_rgb=False
+)
 visualization.shape
 Image.fromarray(visualization)
 #%%
@@ -507,48 +579,25 @@ heatmap
 input_wrong[ind]
 #%%
 transform_normalize = transforms.Normalize(
-     mean=[0.485, 0.456, 0.406],
-     std=[0.229, 0.224, 0.225]
- )
+    mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+)
 
 Image.fromarray(deprocess_image(input_wrong[ind]))
 #%%
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 #%%
 input_wrong.shape
 #%%
 # model expects 224x224 3-color image
-transform = transforms.Compose([
- transforms.Resize(224),
- transforms.CenterCrop(224),
- transforms.ToTensor()
-])
+transform = transforms.Compose(
+    [transforms.Resize(224), transforms.CenterCrop(224), transforms.ToTensor()]
+)
 
 # standard ImageNet normalization
 transform_normalize = transforms.Normalize(
-     mean=[0.485, 0.456, 0.406],
-     std=[0.229, 0.224, 0.225]
- )
+    mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+)
 
 input_img = transform_normalize(input_wrong)
 #%%
@@ -567,37 +616,20 @@ attributions_ig = integrated_gradients.attribute(input_img, target=pred_label_id
 #%%
 # Show the original image for comparison
 # _ = viz.visualize_image_attr(None, np.transpose(input_img[0].squeeze().cpu().detach().numpy(), (1,2,0)),
-                    #   method="original_image", title="Original Image")
+#   method="original_image", title="Original Image")
 from matplotlib.colors import LinearSegmentedColormap
-default_cmap = LinearSegmentedColormap.from_list('custom blue',
-                                                 [(0, '#ffffff'),
-                                                  (0.25, '#0000ff'),
-                                                  (1, '#0000ff')], N=256)
-_ = viz.visualize_image_attr(np.transpose(attributions_ig[0].squeeze().cpu().detach().numpy(), (1,2,0)),
-                             np.transpose(input_img[0].squeeze().cpu().detach().numpy(), (1,2,0)),
-                             method='heat_map',
-                            #  show_colorbar=True,
-                             sign='positive',
-                             title='Integrated Gradients')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+default_cmap = LinearSegmentedColormap.from_list(
+    "custom blue", [(0, "#ffffff"), (0.25, "#0000ff"), (1, "#0000ff")], N=256
+)
+_ = viz.visualize_image_attr(
+    np.transpose(attributions_ig[0].squeeze().cpu().detach().numpy(), (1, 2, 0)),
+    np.transpose(input_img[0].squeeze().cpu().detach().numpy(), (1, 2, 0)),
+    method="heat_map",
+    #  show_colorbar=True,
+    sign="positive",
+    title="Integrated Gradients",
+)
 
 
 #%%
@@ -605,48 +637,49 @@ _ = viz.visualize_image_attr(np.transpose(attributions_ig[0].squeeze().cpu().det
 integrated_gradients = IntegratedGradients(model)
 
 # Ask the algorithm to attribute our output target to
-attributions_ig = integrated_gradients.attribute(input_img, target=pred_label_idx, n_steps=200)
+attributions_ig = integrated_gradients.attribute(
+    input_img, target=pred_label_idx, n_steps=200
+)
 
 # Show the original image for comparison
-_ = viz.visualize_image_attr(None, np.transpose(transformed_img.squeeze().cpu().detach().numpy(), (1,2,0)),
-                      method="original_image", title="Original Image")
+_ = viz.visualize_image_attr(
+    None,
+    np.transpose(transformed_img.squeeze().cpu().detach().numpy(), (1, 2, 0)),
+    method="original_image",
+    title="Original Image",
+)
 
-default_cmap = LinearSegmentedColormap.from_list('custom blue',
-                                                 [(0, '#ffffff'),
-                                                  (0.25, '#0000ff'),
-                                                  (1, '#0000ff')], N=256)
+default_cmap = LinearSegmentedColormap.from_list(
+    "custom blue", [(0, "#ffffff"), (0.25, "#0000ff"), (1, "#0000ff")], N=256
+)
 
-_ = viz.visualize_image_attr(np.transpose(attributions_ig.squeeze().cpu().detach().numpy(), (1,2,0)),
-                             np.transpose(transformed_img.squeeze().cpu().detach().numpy(), (1,2,0)),
-                             method='heat_map',
-                             cmap=default_cmap,
-                             show_colorbar=True,
-                             sign='positive',
-                             title='Integrated Gradients')
+_ = viz.visualize_image_attr(
+    np.transpose(attributions_ig.squeeze().cpu().detach().numpy(), (1, 2, 0)),
+    np.transpose(transformed_img.squeeze().cpu().detach().numpy(), (1, 2, 0)),
+    method="heat_map",
+    cmap=default_cmap,
+    show_colorbar=True,
+    sign="positive",
+    title="Integrated Gradients",
+)
 #%%
 
 chosen_layer = model.layer3[-1].conv2
 saliency = GuidedGradCam(model, chosen_layer)
 #%%
-grads = saliency.attribute(
-        (input_wrong), (label_wrong)
-    )
+grads = saliency.attribute((input_wrong), (label_wrong))
 #%%
 viz.visualize_image_attr(grads[0], input_wrong[0], "blended_heat_map")
 #%%
-grads = np.transpose(
-    grads.squeeze().cpu().detach().numpy(), (0, 2, 3, 1)
-)
+grads = np.transpose(grads.squeeze().cpu().detach().numpy(), (0, 2, 3, 1))
 #%%
 grads[0].max()
 #%%
-original_images = [
-        ind.permute(1, 2, 0).cpu().detach() for ind in input_wrong
-    ]
+original_images = [ind.permute(1, 2, 0).cpu().detach() for ind in input_wrong]
 #%%
-original_images[0][grads[0]>3e-08].shape
+original_images[0][grads[0] > 3e-08].shape
 #%%
-decide_pixel_replacement(original_image=original_images[0], method='mean')
+decide_pixel_replacement(original_image=original_images[0], method="mean")
 
 #%%
 for ind in tqdm(range(len(original_images)), total=len(original_images)):
@@ -658,9 +691,9 @@ for ind in tqdm(range(len(original_images)), total=len(original_images)):
     )
 #%%
 inv_normalize = transforms.Normalize(
-        mean=[-0.485/0.229, -0.485/0.229, -0.485/0.229],
-        std=[1/0.229, 1/0.229, 1/0.229]
-    )
+    mean=[-0.485 / 0.229, -0.485 / 0.229, -0.485 / 0.229],
+    std=[1 / 0.229, 1 / 0.229, 1 / 0.229],
+)
 
 #%%
 # TODO : Dont save this everytime I guess??
@@ -669,14 +702,14 @@ orig2 = orig2.permute(0, 3, 1, 2)
 orig2 = inv_normalize(orig2)
 orig2.shape
 #%%
-grads_transformed = grads.transpose(0,3,1,2)
+grads_transformed = grads.transpose(0, 3, 1, 2)
 grads_transformed.shape
 #%%
 grads_transformed[0].max()
 #%%
 orig2[0]
 #%%
-test_comp = np.mean(grads_transformed[0],axis =0 ) <0.003
+test_comp = np.mean(grads_transformed[0], axis=0) < 0.003
 #%%
 test_comp
 #%%
@@ -709,28 +742,20 @@ plt.margins(x=0)
 plt.autoscale(False)
 
 
-
-
-
-
 #%%
 saliency = GuidedGradCam(model, model.layer3[-1].conv2)
-grads_test = saliency.attribute(
-                    input_wrong, label_wrong
-                )
+grads_test = saliency.attribute(input_wrong, label_wrong)
 
 #%%
 part_orig = original_images.copy()
 #%%
 for ind in tqdm(range(len(label_wrong)), total=len(label_wrong)):
     # original_images[ind][grad_thresholds[ind]] = pixel_replacement[ind]
-    part_orig[ind][
-        grads[ind] > 0.008
-    ] = 255.0
+    part_orig[ind][grads[ind] > 0.008] = 255.0
 
 #%%
 
-orig2 = torch.Tensor(np.stack(part_orig)).permute(0, 3,1,2)
+orig2 = torch.Tensor(np.stack(part_orig)).permute(0, 3, 1, 2)
 orig2[1] = inv_normalize(orig2[1])
 #%%
 #%%
@@ -752,7 +777,7 @@ saliency = IntegratedGradients(model)
 nt = NoiseTunnel(saliency)
 #%%
 #%%
-grads_test = nt.attribute(input_wrong[:10], nt_type='smoothgrad', target=3)
+grads_test = nt.attribute(input_wrong[:10], nt_type="smoothgrad", target=3)
 #%%
 grads_test
 #%%
@@ -770,17 +795,15 @@ part_orig = original_images.copy()
 #%%
 for ind in tqdm(range(len(label_wrong)), total=len(label_wrong)):
     # original_images[ind][grad_thresholds[ind]] = pixel_replacement[ind]
-    part_orig[ind][
-        grads[ind] > 0.008
-    ] = 255.0
+    part_orig[ind][grads[ind] > 0.008] = 255.0
 
 #%%
 inv_normalize = transforms.Normalize(
-        mean=[-0.485/0.229, -0.485/0.229, -0.485/0.229],
-        std=[1/0.229, 1/0.229, 1/0.229]
-    )
+    mean=[-0.485 / 0.229, -0.485 / 0.229, -0.485 / 0.229],
+    std=[1 / 0.229, 1 / 0.229, 1 / 0.229],
+)
 
-orig2 = torch.Tensor(np.stack(part_orig)).permute(0, 3,1,2)
+orig2 = torch.Tensor(np.stack(part_orig)).permute(0, 3, 1, 2)
 orig2.shape
 #%%
 
@@ -801,6 +824,7 @@ plt.autoscale(False)
 #%%
 def show(imgs):
     import torchvision.transforms.functional as F
+
     if not isinstance(imgs, list):
         imgs = [imgs]
     fig, axs = plt.subplots(ncols=len(imgs), squeeze=False)
@@ -810,10 +834,12 @@ def show(imgs):
         axs[0, i].imshow(np.asarray(img))
         axs[0, i].set(xticklabels=[], yticklabels=[], xticks=[], yticks=[])
 
+
 # %%
 import torch
 from torchvision.utils import make_grid
 from torch.utils.tensorboard import SummaryWriter
+
 #%%
 # np.stack(orig).shape
 #%%
@@ -826,7 +852,7 @@ from torch.utils.tensorboard import SummaryWriter
 writer = SummaryWriter()
 
 # log the grid of images to TensorBoard
-writer.add_images('orig_images', orig2, global_step=0, dataformats='NCHW')
+writer.add_images("orig_images", orig2, global_step=0, dataformats="NCHW")
 
 # close the summary writer
 writer.close()

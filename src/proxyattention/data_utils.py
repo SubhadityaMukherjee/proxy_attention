@@ -10,8 +10,18 @@ import mimetypes
 import os
 import time
 from pathlib import Path
-from typing import (Dict, Generator, Iterable, Iterator, List, Optional,
-                    Sequence, Set, Tuple, Union)
+from typing import (
+    Dict,
+    Generator,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Sequence,
+    Set,
+    Tuple,
+    Union,
+)
 
 import albumentations as A
 import cv2
@@ -92,10 +102,11 @@ def clear_proxy_images(config):
     _ = [Path.unlink(x) for x in all_files if "proxy" in str(x)]
     print("[INFO] Cleared all existing proxy images")
 
+
 def create_folds(config):
     all_files = get_files(config["ds_path"])
     random.shuffle(all_files)
-    if config["subset_images"]!= None:
+    if config["subset_images"] != None:
         all_files = all_files[: config["subset_images"]]
     if config["load_proxy_data"] == False:
         all_files = [x for x in all_files if "proxy" not in str(x)]
@@ -114,8 +125,8 @@ def create_folds(config):
     label_map = {i: l for i, l in enumerate(temp.classes_)}
     rev_label_map = {l: i for i, l in enumerate(temp.classes_)}
 
-    config["label_map"]= label_map
-    config["rev_label_map"]= rev_label_map
+    config["label_map"] = label_map
+    config["rev_label_map"] = rev_label_map
 
     # Kfold splits
     df["kfold"] = -1
@@ -183,39 +194,44 @@ def create_dls(train, val, config):
             image_datasets["train"],
             batch_size=config["batch_size"],
             shuffle=True,
-            num_workers = 8,
+            num_workers=8,
         ),
         "val": torch.utils.data.DataLoader(
             image_datasets["val"],
             batch_size=config["batch_size"],
             shuffle=False,
-            num_workers = 8,
+            num_workers=8,
         ),
     }
 
     dataset_sizes = {x: len(image_datasets[x]) for x in ["train", "val"]}
 
     return image_datasets, dataloaders, dataset_sizes
+
+
 #%%
 def batchify(dataset, idxs):
-    'Return a list of items for the supplied dataset and idxs'
+    "Return a list of items for the supplied dataset and idxs"
     tss = [dataset[i][0] for i in idxs]
-    ys  = [dataset[i][1] for i in idxs]
+    ys = [dataset[i][1] for i in idxs]
     return (tss, ys)
 
+
 def itemize(batch):
-    #take a batch and create a list of items. Each item represent a tuple of (tseries, y)
+    # take a batch and create a list of items. Each item represent a tuple of (tseries, y)
     tss, ys = batch
-    b = [(ts, y) for ts,y in zip(tss, ys)]
+    b = [(ts, y) for ts, y in zip(tss, ys)]
     return b
 
+
 def get_list_items(dataset, idxs):
-    'Return a list of items for the supplied dataset and idxs'
+    "Return a list of items for the supplied dataset and idxs"
     list = [dataset[i] for i in idxs]
     return list
 
+
 def get_batch(dataset, idxs):
-    'Return a batch based on list of items from dataset at idxs'
+    "Return a batch based on list of items from dataset at idxs"
     # list_items = [(image2tensor(PILImage.create(dataset[i][0])), dataset[i][1]) for i in idxs]
     # tdl = TfmdDL(list_items, bs=2, num_workers=0)
     # tdl.to(default_device())
