@@ -214,7 +214,7 @@ def train_model(
                 chosen_inds = int(np.ceil(config["change_subset_attention"] * len(label_wrong)))
                 # TODO some sort of decay?
                 # TODO Convert to batches to run over more
-                # chosen_inds = min(config["batch_size"], chosen_inds)
+                chosen_inds = min(config["batch_size"], chosen_inds)
 
                 writer.add_scalar(
                     "Number_Chosen", chosen_inds, config["global_run_count"]
@@ -327,7 +327,7 @@ def setup_train_round(config, proxy_step=False, num_epochs=1):
 def train_proxy_steps(config):
     assert torch.cuda.is_available()
 
-    fname_start = f'/mnt/e/CODE/Github/improving_robotics_datasets/src/runs/{config["ds_name"]}_{config["experiment_name"]}+{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}_ps-{str(config["proxy_steps"])}'
+    fname_start = f'/mnt/e/CODE/Github/improving_robotics_datasets/src/runs/{config["ds_name"]}_{config["experiment_name"]}+{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}_ps-{str(config["proxy_steps"])}_gradient-{str(config["gradient_method"])}_px-{str(config["pixel_replacement_method"])}-subs-{str(config["change_subset_attention"])}_pt-{str(config["proxy_threshold"])}_cs-{str(config["clear_every_step"])}'
 
     config["fname_start"] = fname_start
     config["global_run_count"] = 0
@@ -346,7 +346,7 @@ def train_proxy_steps(config):
 
 
 def hyperparam_tune(config):
-    # ray.init()
+    ray.init()
     scheduler = ASHAScheduler(
         max_t=30,
         grace_period=1,
@@ -373,13 +373,4 @@ def hyperparam_tune(config):
 
     df_res = result.get_dataframe()
     df_res.to_csv(Path(config["fname_start"] + "result_log.csv"))
-    best_trial = result.get_best_result("loss", "min", "last")
-    print("Best trial config: {}".format(best_trial.config))
-    print("Best trial final validation loss: {}".format(best_trial.last_result["loss"]))
-    print(
-        "Best trial final validation accuracy: {}".format(
-            best_trial.last_result["accuracy"]
-        )
-    )
-
-    print(result)
+    # best_trial = result.get_best_result("loss", "min", "last")

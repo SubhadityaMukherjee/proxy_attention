@@ -85,7 +85,7 @@ config = {
     "change_subset_attention": tune.grid_search([0.3, 0.5, 0.8]),
     # "shuffle_dataset": tune.choice([True, False]),
     "num_gpu": 1,
-    "num_cpu": 10,
+    "num_cpu": 11,
     "transfer_imagenet": True,
     "subset_images": 10000,
     "proxy_threshold": tune.loguniform(0.8, .95),
