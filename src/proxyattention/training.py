@@ -39,6 +39,7 @@ from pytorch_grad_cam.utils.image import (
 from ray import tune
 from ray.tune import CLIReporter
 from ray.tune.schedulers import ASHAScheduler
+from ray.tune.search.optuna import OptunaSearch
 from torch.optim import lr_scheduler
 from torch.utils.tensorboard import SummaryWriter
 from torchvision import transforms
@@ -59,6 +60,18 @@ dict_decide_change = {
     "halfmax": lambda x: torch.max(x) / 2,
 }
 
+#TODO Smoothing maybe?
+dict_gradient_method = {
+        "gradcam" : GradCAM,
+        "gradcamplusplus" : GradCAMPlusPlus,
+        "eigencam" : EigenCAM,
+    }    
+
+inv_normalize = transforms.Normalize(
+    mean=[-0.485 / 0.229, -0.456 / 0.224, -0.406 / 0.225],
+    std=[1 / 0.229, 1 / 0.224, 1 / 0.225],
+)
+
 
 def reset_params(model):
     for param in model.parameters():
@@ -77,6 +90,19 @@ def choose_network(config):
     ).to(config["device"])
     model.train()
     return model
+#%%
+
+def perform_proxy_step(cam, input_wrong, config):
+    grads = cam(input_tensor=input_wrong, targets=None)
+    grads = (
+        torch.Tensor(grads).to("cuda").unsqueeze(1).expand(-1, 3, -1, -1)
+    )
+
+    return torch.where(
+        grads > config["proxy_threshold"],
+        dict_decide_change[config["pixel_replacement_method"]](grads),
+        inv_normalize(input_wrong),
+    )
 
 
 # %%
@@ -99,10 +125,6 @@ def train_model(
     # Save config info to tensorboard
     for key, value in config.items():
         writer.add_text(key, str(value))
-    inv_normalize = transforms.Normalize(
-        mean=[-0.485 / 0.229, -0.456 / 0.224, -0.406 / 0.225],
-        std=[1 / 0.229, 1 / 0.224, 1 / 0.225],
-    )
     since = time.time()
 
     best_model_wts = copy.deepcopy(model.state_dict())
@@ -115,11 +137,8 @@ def train_model(
     elif config["model"] == "resnet50":
         target_layers = [model.layer4[-1].conv2]
 
-    if config["gradient_method"] == "gradcam":
-        cam = GradCAMPlusPlus(model=model, target_layers=target_layers, use_cuda=True)
-    # with open("/mnt/e/CODE/Github/improving_robotics_datasets/src/proxyattention/pickler.pkl", "wb") as f:
-    #     pickle.dump((cam, input_wrong, label_wrong, label_wrong, model, target_layers),f)
-    # exit(0)
+
+    cam = dict_gradient_method[config["gradient_method"]](model=model, target_layers=target_layers, use_cuda=True)
 
     tfm = transforms.ToPILImage()
     for epoch in pbar:
@@ -192,23 +211,25 @@ def train_model(
             if proxy_step == True and phase == "train":
                 print("Performing Proxy step")
                 # TODO Save Classwise fraction
-                frac_choose = 0.25
-                chosen_inds = int(np.ceil(frac_choose * len(label_wrong)))
+                chosen_inds = int(np.ceil(config["change_subset_attention"] * len(label_wrong)))
                 # TODO some sort of decay?
-                # TODO Conver to batches to run over more
-                chosen_inds = min(50, chosen_inds)
+                # TODO Convert to batches to run over more
+                # chosen_inds = min(config["batch_size"], chosen_inds)
 
                 writer.add_scalar(
                     "Number_Chosen", chosen_inds, config["global_run_count"]
                 )
                 print(f"{chosen_inds} images chosen to run proxy on")
 
-                # print(len(input_wrong) , len(label_wrong))
                 input_wrong = input_wrong[:chosen_inds]
+                label_wrong = label_wrong[:chosen_inds]
+
                 try:
                     input_wrong = torch.squeeze(torch.stack(input_wrong, dim=1))
+                    label_wrong = torch.squeeze(torch.stack(label_wrong, dim=1))
                 except:
                     input_wrong = torch.squeeze(input_wrong)
+                    label_wrong = torch.squeeze(label_wrong)
 
                 writer.add_images(
                     "original_images",
@@ -216,27 +237,8 @@ def train_model(
                     # input_wrong,
                     config["global_run_count"],
                 )
-                label_wrong = label_wrong[:chosen_inds]
-                try:
-                    label_wrong = torch.squeeze(torch.stack(label_wrong, dim=1))
-                except:
-                    label_wrong = torch.squeeze(label_wrong)
-
-                # with open("/mnt/e/CODE/Github/improving_robotics_datasets/src/proxyattention/pickler.pkl", "wb") as f:
-                #     pickle.dump((model, target_layers, input_wrong, label_wrong), f)
-
-                # exit(0)
-
-                grads = cam(input_tensor=input_wrong, targets=None)
-                grads = (
-                    torch.Tensor(grads).to("cuda").unsqueeze(1).expand(-1, 3, -1, -1)
-                )
-
-                thresholded_ims = torch.where(
-                    grads > config["proxy_threshold"],
-                    dict_decide_change[config["pixel_replacement_method"]](grads),
-                    inv_normalize(input_wrong),
-                )
+                
+                thresholded_ims= perform_proxy_step(cam, input_wrong, config)
 
                 writer.add_images(
                     "converted_proxy",
@@ -283,8 +285,6 @@ def train_model(
             if phase == "val" and epoch_acc > best_acc:
                 best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
-
-        # print()
 
     time_elapsed = time.time() - since
     print(f"Training complete in {time_elapsed // 60:.0f}m {time_elapsed % 60:.0f}s")
@@ -338,8 +338,6 @@ def train_proxy_steps(config):
         else:
             setup_train_round(config=config, proxy_step=False, num_epochs=step)
 
-        # clear_proxy_images(config=config)  # Clean directory
-        # config["global_run_count"] += 1
         if config["clear_every_step"] == True:
             clear_proxy_images(config=config)  # Clean directory
 
@@ -360,13 +358,13 @@ def hyperparam_tune(config):
     tuner = tune.Tuner(
         tune.with_resources(
             tune.with_parameters(train_proxy_steps),
-            resources={"cpu": 10, "gpu": 1},
+            resources={"cpu": config["num_cpu"], "gpu": config["num_gpu"]},
         ),
         tune_config=tune.TuneConfig(
             metric="loss",
             mode="min",
             scheduler=scheduler,
-            num_samples=10,
+            # search_alg=OptunaSearch(),
         ),
         run_config=ray.air.RunConfig(progress_reporter=reporter),
         param_space=config,
@@ -375,7 +373,7 @@ def hyperparam_tune(config):
 
     df_res = result.get_dataframe()
     df_res.to_csv(Path(config["fname_start"] + "result_log.csv"))
-    best_trial = result.get_best_trial("loss", "min", "last")
+    best_trial = result.get_best_result("loss", "min", "last")
     print("Best trial config: {}".format(best_trial.config))
     print("Best trial final validation loss: {}".format(best_trial.last_result["loss"]))
     print(
