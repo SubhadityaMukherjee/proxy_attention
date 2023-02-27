@@ -3,89 +3,48 @@
 
 import copy
 import datetime
-import glob
-import itertools
 import logging
-import mimetypes
 import os
 import time
 from pathlib import Path
-from typing import (
-    Dict,
-    Generator,
-    Iterable,
-    Iterator,
-    List,
-    Optional,
-    Sequence,
-    Set,
-    Tuple,
-    Union,
-)
-
-import albumentations as A
-import cv2
 
 import matplotlib
 
 matplotlib.use("Agg")  # no UI backend
-import matplotlib.pyplot as plt
+import pickle
+
 import numpy as np
-import pandas as pd
-import seaborn as sns
+import ray
 import timm
 import torch
 import torch.backends.cudnn as cudnn
 import torch.nn as nn
 import torch.optim as optim
-import torchvision
-from albumentations.core.composition import Compose
-from albumentations.pytorch import ToTensorV2
-from captum.attr import (
-    DeepLift,
-    IntegratedGradients,
-    NoiseTunnel,
-    Saliency,
-    GuidedGradCam,
-)
-from captum.attr import visualization as viz
-from sklearn import metrics, model_selection, preprocessing
-from sklearn.model_selection import StratifiedKFold
-from torch import nn
-from torch.nn import functional as F
-from torch.optim import lr_scheduler
-from torch.utils.data import DataLoader, Dataset, TensorDataset, random_split
-from torch.utils.tensorboard import SummaryWriter
-from torchvision import datasets, models, transforms
-from tqdm import tqdm
-from ray import tune
-import ray
-from ray.tune import CLIReporter
-from ray.tune.schedulers import ASHAScheduler
-
-from .data_utils import create_folds, create_dls, clear_proxy_images
-from .meta_utils import *
-import pickle
+from PIL import Image
 from pytorch_grad_cam import (
-    GradCAM,
-    HiResCAM,
-    ScoreCAM,
-    GradCAMPlusPlus,
     AblationCAM,
-    XGradCAM,
     EigenCAM,
     FullGrad,
+    GradCAM,
+    GradCAMPlusPlus,
+    HiResCAM,
+    ScoreCAM,
+    XGradCAM,
 )
-from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
 from pytorch_grad_cam.utils.image import (
-    show_cam_on_image,
     deprocess_image,
     preprocess_image,
+    show_cam_on_image,
 )
+from ray import tune
+from ray.tune import CLIReporter
+from ray.tune.schedulers import ASHAScheduler
+from torch.optim import lr_scheduler
+from torch.utils.tensorboard import SummaryWriter
+from torchvision import transforms
+from tqdm import tqdm
 
-from torchvision.models import resnet18, resnet50
-
-from PIL import Image
+from .data_utils import clear_proxy_images, create_dls, create_folds
 
 # sns.set()
 
@@ -93,6 +52,12 @@ os.environ["TORCH_HOME"] = "/mnt/e/Datasets/"
 cudnn.benchmark = True
 
 # %%
+dict_decide_change = {
+    "mean": torch.mean,
+    "max": torch.max,
+    "min": torch.min,
+    "halfmax": lambda x: torch.max(x) / 2,
+}
 
 
 def reset_params(model):
@@ -118,27 +83,6 @@ def choose_network(config):
 # TODO Proxy attention tabular support
 
 
-def decide_pixel_replacement(original_image, method="mean"):
-    if method == "mean":
-        val = original_image.mean()
-    elif method == "max":
-        val = original_image.max()
-    elif method == "min":
-        val = original_image.min()
-    elif method == "black":
-        val = 0.0
-    elif method == "white":
-        val = 255.0
-    elif method == "half":
-        val = 127.5
-
-    return val
-
-
-def permute_and_detach(obj):
-    return obj.permute(1, 2, 0).cpu().detach()
-
-
 def train_model(
     model,
     criterion,
@@ -155,23 +99,15 @@ def train_model(
     # Save config info to tensorboard
     for key, value in config.items():
         writer.add_text(key, str(value))
-
     inv_normalize = transforms.Normalize(
-        mean=[-0.485 / 0.229, -0.485 / 0.229, -0.485 / 0.229],
-        std=[1 / 0.229, 1 / 0.229, 1 / 0.229],
+        mean=[-0.485 / 0.229, -0.456 / 0.224, -0.406 / 0.225],
+        std=[1 / 0.229, 1 / 0.224, 1 / 0.225],
     )
     since = time.time()
 
     best_model_wts = copy.deepcopy(model.state_dict())
     best_acc = 0.0
     pbar = tqdm(range(num_epochs), total=num_epochs)
-
-    # if config["model"]== "vision_transformer":
-    #     config["model"]= "vit_tiny_patch16_224.augreg_in21k_ft_in1k"
-    # # Define the number of classes
-    # model = timm.create_model(
-    #     config["model"], pretrained=config["transfer_imagenet"], num_classes=config["num_classes"]).to(config["device"])
-    # model.train()
 
     if config["model"] == "resnet18":
         target_layers = [model.layer4[-1].conv2]
@@ -180,12 +116,10 @@ def train_model(
         target_layers = [model.layer4[-1].conv2]
 
     if config["gradient_method"] == "gradcam":
-        cam = GradCAM(model=model, target_layers=target_layers, use_cuda=True)
+        cam = GradCAMPlusPlus(model=model, target_layers=target_layers, use_cuda=True)
     # with open("/mnt/e/CODE/Github/improving_robotics_datasets/src/proxyattention/pickler.pkl", "wb") as f:
     #     pickle.dump((cam, input_wrong, label_wrong, label_wrong, model, target_layers),f)
     # exit(0)
-
-    targets = [ClassifierOutputTarget(config["num_classes"] - 1)]
 
     tfm = transforms.ToPILImage()
     for epoch in pbar:
@@ -255,7 +189,7 @@ def train_model(
             if phase == "train":
                 scheduler.step()
 
-            if proxy_step == True:
+            if proxy_step == True and phase == "train":
                 print("Performing Proxy step")
                 # TODO Save Classwise fraction
                 frac_choose = 0.25
@@ -272,13 +206,14 @@ def train_model(
                 # print(len(input_wrong) , len(label_wrong))
                 input_wrong = input_wrong[:chosen_inds]
                 try:
-                    input_wrong = torch.squeeze(torch.stack(input_wrong, dim=0))
+                    input_wrong = torch.squeeze(torch.stack(input_wrong, dim=1))
                 except:
                     input_wrong = torch.squeeze(input_wrong)
 
                 writer.add_images(
                     "original_images",
                     inv_normalize(input_wrong),
+                    # input_wrong,
                     config["global_run_count"],
                 )
                 label_wrong = label_wrong[:chosen_inds]
@@ -287,84 +222,29 @@ def train_model(
                 except:
                     label_wrong = torch.squeeze(label_wrong)
 
-                # targets = [ClassifierOutputTarget(29)]
-                # print(config["num_classes"])
-                # You can also pass aug_smooth=True and eigen_smooth=True, to apply smoothing.
-                # print(input_wrong.shape, input_wrong)
-                grads = cam(input_tensor=input_wrong, targets=targets)
-                grads = torch.Tensor(grads).unsqueeze(3)
+                # with open("/mnt/e/CODE/Github/improving_robotics_datasets/src/proxyattention/pickler.pkl", "wb") as f:
+                #     pickle.dump((model, target_layers, input_wrong, label_wrong), f)
 
-                # Repeat grayscale values along channel dimension
-                grads = torch.repeat_interleave(grads, 3, dim=3)
+                # exit(0)
 
-                grads = np.transpose(grads.cpu().detach().numpy(), (0, 3, 1, 2))
-                # grads = grads.squeeze().cpu().detach().numpy()
+                grads = cam(input_tensor=input_wrong, targets=None)
+                grads = (
+                    torch.Tensor(grads).to("cuda").unsqueeze(1).expand(-1, 3, -1, -1)
+                )
 
-                print("Calculating permutes and sending to CPU")
-                # TODO replace these with direct array operations?
-                # original_images = [
-                # permute_and_detach(ind)
-                # for ind in tqdm(input_wrong, total=len(input_wrong))
-                # ]
-                # print(input_wrong.size())
-                # original_images = [
-                #     ind.permute(1, 2, 0).cpu().detach() for ind in input_wrong
-                # ]
-                original_images = [ind.cpu().detach() for ind in input_wrong]
+                thresholded_ims = torch.where(
+                    grads > config["proxy_threshold"],
+                    dict_decide_change[config["pixel_replacement_method"]](grads),
+                    inv_normalize(input_wrong),
+                )
 
-                print("Calculating pixel replacement method")
-                # pixel_replacement = [
-                #     decide_pixel_replacement(x, config["pixel_replacement_method"])
-                #     for x in tqdm(original_images, total=len(original_images))
-                # ]
-
-                print("Calculating gradient thresholds")
-                # grad_thresholds = [
-                #     calc_grad_threshold(grad) for grad in tqdm(grads, total=len(grads))
-                # ]
-                # grad_thresholds = [grads[ind].max() for ind in tqdm(range(len(label_wrong)))]
-                grad_thresholds = np.max(grads, axis=1) / config["proxy_threshold"]
-
-                for ind in tqdm(range(len(label_wrong)), total=len(label_wrong)):
-                    # TODO Split these into individual comprehensions for speed
-                    # TODO Check if % of image is gone or not
-                    # original_images[ind][
-                    #     grads[ind] > config["proxy_threshold"]
-                    # ] = decide_pixel_replacement(
-                    #     original_image=original_images[ind],
-                    #     method=config["pixel_replacement_method"],
-                    # )
-                    # original_images[ind][
-                    #     grads[ind] > grads[ind].max()/.9
-                    # ] = decide_pixel_replacement(
-                    #     original_image=original_images[ind],
-                    #     method=config["pixel_replacement_method"],
-                    # )
-                    original_images[ind][
-                        np.where(grads[ind] > grad_thresholds[ind])
-                    ] = decide_pixel_replacement(
-                        original_images[ind], config["pixel_replacement_method"]
-                    )
-
-                # TODO : Dont save this everytime I guess??
-                orig2 = torch.Tensor(np.stack(original_images))
-
-                orig2 = inv_normalize(orig2)
                 writer.add_images(
                     "converted_proxy",
-                    orig2,
+                    thresholded_ims,
                     config["global_run_count"],
-                    dataformats="NCHW",
                 )
-                # original_images = original_images.permute()
 
                 print("Saving the images")
-                # cm = plt.get_cmap("viridis")
-
-                # TODO Prune least important weights/filters? Pruning by explaining
-                # original_images = np.uint8(np.stack(original_images)).transpose(0, 2, 3, 1)
-                # with open("/mnt/e/CODE/Github/improving_robotics_datasets/src/proxyattention/pickler.pkl", "wb") as f:
-                #     pickle.dump((model, grads, input_wrong, label_wrong, original_images), f)
 
                 for ind in tqdm(range(len(label_wrong)), total=len(label_wrong)):
                     label = config["label_map"][label_wrong[ind].item()]
@@ -373,7 +253,7 @@ def train_model(
                         / label
                         / f"proxy-{ind}-{config['global_run_count']}.png"
                     )
-                    tfm(orig2[ind]).save(save_name)
+                    tfm(thresholded_ims[ind]).save(save_name)
 
             epoch_loss = running_loss / dataset_sizes[phase]
             epoch_acc = running_corrects.double() / dataset_sizes[phase]
@@ -446,7 +326,6 @@ def setup_train_round(config, proxy_step=False, num_epochs=1):
 
 def train_proxy_steps(config):
     assert torch.cuda.is_available()
-    # config["global_run_count"] = 0
 
     fname_start = f'/mnt/e/CODE/Github/improving_robotics_datasets/src/runs/{config["ds_name"]}_{config["experiment_name"]}+{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}_ps-{str(config["proxy_steps"])}'
 
@@ -459,8 +338,13 @@ def train_proxy_steps(config):
         else:
             setup_train_round(config=config, proxy_step=False, num_epochs=step)
 
-        clear_proxy_images(config=config)  # Clean directory
+        # clear_proxy_images(config=config)  # Clean directory
         # config["global_run_count"] += 1
+        if config["clear_every_step"] == True:
+            clear_proxy_images(config=config)  # Clean directory
+
+    if config["clear_every_step"] == False:
+        clear_proxy_images(config=config)  # Clean directory
 
 
 def hyperparam_tune(config):
@@ -472,21 +356,6 @@ def hyperparam_tune(config):
     )
 
     reporter = CLIReporter(metric_columns=["loss", "accuracy", "training_iteration"])
-
-    # result = tune.run(
-    #     train_proxy_steps,
-    #     config=config,
-    #     scheduler=scheduler,
-    #     progress_reporter=reporter,
-    #     checkpoint_at_end=True,
-    #     # max_failures=100,
-    #     num_samples=10,
-    #     resources_per_trial={
-    #         "gpu": 1,
-    #         "cpu": 10,
-    #     },
-    #     local_dir=config["fname_start"],
-    # )
 
     tuner = tune.Tuner(
         tune.with_resources(
