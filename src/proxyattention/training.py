@@ -53,6 +53,7 @@ os.environ["TORCH_HOME"] = "/mnt/e/Datasets/"
 cudnn.benchmark = True
 
 # %%
+#TODO Add a "weighted method"
 dict_decide_change = {
     "mean": torch.mean,
     "max": torch.max,
