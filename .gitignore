@@ -136,4 +136,3 @@ events.out*
 *.tfrecord
 runs/
 *.pkl
-!*result_log.csv
