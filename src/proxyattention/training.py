@@ -296,6 +296,7 @@ def train_model(
 
 
 # %%
+#TODO Better transfer learning params. more trainable layers
 def setup_train_round(config, proxy_step=False, num_epochs=1):
     # Data part
     train, val = create_folds(config)
@@ -307,10 +308,12 @@ def setup_train_round(config, proxy_step=False, num_epochs=1):
     criterion = nn.CrossEntropyLoss()
 
     # Observe that all parameters are being optimized
-    optimizer_ft = optim.Adam(model_ft.parameters(), lr=3e-4)
+    #TODO Fix this for tranasfer learning . Reduce rate
+    optimizer_ft = optim.Adam(model_ft.parameters(), lr=3e-5)
 
     # Decay LR by a factor of 0.1 every 7 epochs
-    exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=7, gamma=0.1)
+    exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=4, gamma=0.1)
+    # exp_lr_scheduler = lr_scheduler.CosineAnnealingLR(optimizer_ft, len(dataloaders["train"]))
     trained_model = train_model(
         model_ft,
         criterion,

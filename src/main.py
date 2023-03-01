@@ -73,7 +73,7 @@ os.environ["TORCH_HOME"] = "/mnt/e/Datasets/"
 # Config
 
 config = {
-    "experiment_name": "test_asl_starter",
+    "experiment_name": "asl_test_notransfer",
     "ds_path": Path("/mnt/e/Datasets/asl/asl_alphabet_train/asl_alphabet_train"),
     "ds_name": "asl",
     "name_fn": proxyattention.data_utils.asl_name_fn,
@@ -86,7 +86,7 @@ config = {
     # "shuffle_dataset": tune.choice([True, False]),
     "num_gpu": 1,
     "num_cpu": 11,
-    "transfer_imagenet": True,
+    "transfer_imagenet": False,
     "subset_images": 10000,
     "proxy_threshold": tune.loguniform(0.8, .95),
     "pixel_replacement_method": tune.grid_search(["mean", "max", "min", "halfmax"]),
@@ -94,10 +94,13 @@ config = {
     # "proxy_steps": tune.choice([[1, "p", 1], [3, "p", 1], [1, 1], [3,1]]),
     # "proxy_steps": tune.choice([["p", 1],[1, 1], ["p",1], [1, "p",1], [1,1,1]]),
     # "proxy_steps": tune.choice([[10, "p",10, "p", 30, "p", 20], [70], [70, "p"], [30, "p", 40], [30, "p", 40, "p"], [10, "p",10, "p", 30, "p", 20, "p"], ["p", 70]]),
-    "proxy_steps": tune.grid_search([[2, "p", 2], [4]]),
+    # "proxy_steps": tune.grid_search([[2, "p", 2], [4]]),
+    # "proxy_steps": tune.grid_search([[2, "p", 5]]),
+    "proxy_steps": tune.grid_search([[10, "p", 10], [20]]),
     "load_proxy_data": False,
     # "global_run_count" : 0,
     "gradient_method": tune.grid_search(["gradcam", "gradcamplusplus", "eigencam"]),
+    # "gradient_method": "gradcamplusplus",
     # "aug_smooth" : tune.choice([True, False]),
     # "eigen_smooth" : tune.choice([True, False]),
     "clear_every_step": tune.grid_search([True, False]),
