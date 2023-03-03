@@ -130,7 +130,7 @@ def train_model(
 
     best_model_wts = copy.deepcopy(model.state_dict())
     best_acc = 0.0
-    pbar = tqdm(range(num_epochs), total=num_epochs)
+    pbar = tqdm(range(config["global_run_count"], config["global_run_count"]+num_epochs), total=num_epochs)
 
     if config["model"] == "resnet18":
         target_layers = [model.layer4[-1].conv2]
@@ -310,11 +310,16 @@ def setup_train_round(config, proxy_step=False, num_epochs=1):
 
     # Observe that all parameters are being optimized
     #TODO Fix this for tranasfer learning . Reduce rate
-    optimizer_ft = optim.Adam(model_ft.parameters(), lr=3e-5)
+    # if config["transfer_imagenet"] == True:
+        # optimizer_ft = optim.Adam(model_ft.parameters(), lr=3e-5)
+    # else:
+        # optimizer_ft = optim.Adam(model_ft.parameters(), lr=3e-4)
+    optimizer_ft = optim.Adam(model_ft.parameters(), lr=1e-3)
 
-    # Decay LR by a factor of 0.1 every 7 epochs
-    exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=4, gamma=0.1)
-    # exp_lr_scheduler = lr_scheduler.CosineAnnealingLR(optimizer_ft, len(dataloaders["train"]))
+    # Decay LR 
+    # exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=10, gamma=0.1)
+    # exp_lr_scheduler = lr_scheduler.ReduceLROnPlateau(optimizer_ft, verbose = True)
+    exp_lr_scheduler = lr_scheduler.CosineAnnealingLR(optimizer_ft, len(dataloaders["train"]))
     trained_model = train_model(
         model_ft,
         criterion,
@@ -335,6 +340,7 @@ def train_proxy_steps(config):
 
     config["fname_start"] = fname_start
     config["global_run_count"] = 0
+    
 
     for step in config["proxy_steps"]:
         if step == "p":
@@ -353,7 +359,7 @@ def hyperparam_tune(config):
     ray.init()
     scheduler = ASHAScheduler(
         max_t=30,
-        grace_period=1,
+        grace_period=10,
         reduction_factor=2,
     )
 
@@ -362,18 +368,20 @@ def hyperparam_tune(config):
     tuner = tune.Tuner(
         tune.with_resources(
             tune.with_parameters(train_proxy_steps),
-            resources={"cpu": config["num_cpu"], "gpu": config["num_gpu"]},
+            resources={"cpu": config["num_cpu"], "gpu": config["num_gpu"],},
         ),
         tune_config=tune.TuneConfig(
             metric="loss",
             mode="min",
             scheduler=scheduler,
             # search_alg=OptunaSearch(),
+            max_concurrent_trials=5,
         ),
         run_config=ray.air.RunConfig(progress_reporter=reporter),
         param_space=config,
     )
     result = tuner.fit()
+
 
     df_res = result.get_dataframe()
     df_res.to_csv(Path(config["fname_start"] + "result_log.csv"))
