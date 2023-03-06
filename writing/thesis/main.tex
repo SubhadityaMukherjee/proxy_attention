@@ -1,0 +1,175 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% LaTeX book template                           %%
+%% Author:  Amber Jain (http://amberj.devio.us/) %%
+%% License: ISC license                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[a4paper,11pt]{book}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{subcaption}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{wrapfig}    % inline figures
+\usepackage{enumitem}
+\usepackage{comment}
+\usepackage{lipsum}
+\usepackage{graphicx} % Use for Images
+\usepackage{here}     % Forced Figure Placement
+\usepackage{pslatex}	% Use PostScript Fonts
+\usepackage{fancyhdr} % Use headers
+\usepackage{float}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Source: http://en.wikibooks.org/wiki/LaTeX/Hyperlinks %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+% \usepackage{biblatex}
+% \usepackage[refsection=chapter]{biblatex}
+\usepackage{biblatex}
+\addbibresource{My Library.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 'dedication' environment: To add a dedication paragraph at the start of book %
+% Source: http://www.tug.org/pipermail/texhax/2010-June/015184.html            %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newenvironment{dedication}
+{
+   \cleardoublepage
+   \thispagestyle{empty}
+   \vspace*{\stretch{1}}
+   \hfill\begin{minipage}[t]{0.66\textwidth}
+   \raggedright
+}
+{
+   \end{minipage}
+   \vspace*{\stretch{3}}
+  %  \clearpage
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Chapter quote at the start of chapter        %
+% Source: http://tex.stackexchange.com/a/53380 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\makeatletter
+\renewcommand{\@chapapp}{}% Not necessary...
+\newenvironment{chapquote}[2][2em]
+  {\setlength{\@tempdima}{#1}%
+   \def\chapquote@author{#2}%
+   \parshape 1 \@tempdima \dimexpr\textwidth-2\@tempdima\relax%
+   \itshape}
+  {\par\normalfont\hfill--\ \chapquote@author\hspace*{\@tempdima}\par\bigskip}
+\makeatother
+
+
+% Define the page styles
+\fancypagestyle{titlepage}{
+	\fancyhf{}
+	\fancyhead[C]{\includegraphics[width=\textwidth]{images/banner.png}}
+	\renewcommand{\headrulewidth}{1pt}
+}
+
+%\fancypagestyle{body}{
+%	\fancyhf{}
+%  \fancyhead[C]{\includegraphics{images/banner.png}}
+%}
+
+\fancypagestyle{body}{
+    \fancyhf{}
+    \fancyhead[C]{\includegraphics[width=.8\textwidth]{images/banner.png}}
+    % \setlength{\headsep}{1pt}
+    % \addtolength{\topmargin}{-45.11401pt}
+    % \setlength{\headheight}{77.11401pt}
+    % \fancyhead[LE,RO]{\thepage}
+    \renewcommand{\headrulewidth}{.8pt}
+
+    % \fancyhead[RE,LO]{Chapter \leftmark}
+    
+}
+
+\fancypagestyle{contents}{
+    \fancyhf{}
+    \fancyhead[LE,RO]{\thepage}
+    \fancyhead[RE,LO]{\leftmark}
+}
+
+\fancypagestyle{appendix}{
+    \fancyhf{}
+    \fancyhead[LE,RO]{\thepage}
+    \fancyhead[RE,LO]{APPENDICES}
+}
+
+\fancypagestyle{acknowledgements}{
+    \fancyhf{}
+    \fancyhead[LE,RO]{\thepage}
+}
+
+
+\renewcommand{\headrulewidth}{1.5pt}
+\renewcommand{\arraystretch}{1.2}
+\usepackage{tabularx}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% First page of book which contains 'stuff' like: %
+%  - Book title, subtitle                         %
+%  - Book author name                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% % Book's title and subtitle
+% \title{\Huge \textbf{Sample Book Title}  \footnote{This is a footnote.} \\ \huge Sample book subtitle \footnote{This is yet another footnote.}}
+% % Author
+% \author{\textsc{First-name Last-name}\thanks{\url{www.example.com}}}
+\title{
+    \vspace{1cm}
+        {\bf
+        {\Huge Proxy Attention : Comparing and Combining Augmentation with Attention\\
+        % \vspace{2mm}Som\\
+        }
+        }
+        \vspace{4mm}Graduation Project Proposal\\(Computational Intelligence and Robotics)\\
+        \vspace{4mm}Subhaditya Mukherjee (s4747925)\\Oct 25 2022\\
+        \vspace{10cm}{\LARGE Internal Supervisor(s): S.H. Mohades Kasaei, PhD (Artificial Intelligence, University of Groningen)}\\
+        {\bf {Artificial Intelligence\\University of Groningen, The Netherlands}}
+}
+\date{}
+
+\maketitle
+\thispagestyle{titlepage}
+
+
+
+\begin{document}
+
+\frontmatter
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Add a dedication paragraph to dedicate your book to someone %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{dedication}
+\end{dedication}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Auto-generated table of contents, list of figures and list of tables %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\tableofcontents
+\listoffigures
+\listoftables
+
+\mainmatter
+\include{chapters/introduction.tex}
+\include{chapters/background.tex}
+\include{chapters/sota.tex}
+\include{chapters/proposed.tex}
+\include{chapters/implementation.tex}
+\include{chapters/evaluation.tex}
+\include{chapters/conclusions.tex}
+\include{chapters/appendix.tex}
+\printbibliography[heading=bibnumbered]
+\end{document}

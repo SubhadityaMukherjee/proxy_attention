@@ -54,12 +54,15 @@ cudnn.benchmark = True
 
 # %%
 #TODO Add a "weighted method"
+
 dict_decide_change = {
     "mean": torch.mean,
     "max": torch.max,
     "min": torch.min,
     "halfmax": lambda x: torch.max(x) / 2,
 }
+
+
 
 #TODO Smoothing maybe?
 dict_gradient_method = {
@@ -78,7 +81,7 @@ def reset_params(model):
     for param in model.parameters():
         param.requires_grad = False
 
-
+#TODO find some models to use from the repo
 def choose_network(config):
     # vit_tiny_patch16_224.augreg_in21k_ft_in1k
     if config["model"] == "vision_transformer":
@@ -98,12 +101,21 @@ def perform_proxy_step(cam, input_wrong, config):
     grads = (
         torch.Tensor(grads).to("cuda").unsqueeze(1).expand(-1, 3, -1, -1)
     )
+    normalized_inps = inv_normalize(input_wrong)
+    #TODO Check this
+    if config["pixel_replacement_method"] is not "blended":
+        return torch.where(
+            grads > config["proxy_threshold"],
+            dict_decide_change[config["pixel_replacement_method"]](grads),
+            normalized_inps,
+        )
+    else:
+        return torch.where(
+            grads > config["proxy_threshold"],
+            grads * normalized_inps,
+            normalized_inps,
+        )
 
-    return torch.where(
-        grads > config["proxy_threshold"],
-        dict_decide_change[config["pixel_replacement_method"]](grads),
-        inv_normalize(input_wrong),
-    )
 
 
 # %%
@@ -132,11 +144,36 @@ def train_model(
     best_acc = 0.0
     pbar = tqdm(range(config["global_run_count"], config["global_run_count"]+num_epochs), total=num_epochs)
 
+    # FasterRCNN: model.backbone
+    # Resnet18 and 50: model.layer4[-1]
+    # VGG and densenet161: model.features[-1]
+    # mnasnet1_0: model.layers[-1]
+    # ViT: model.blocks[-1].norm1
+    # SwinT: model.layers[-1].blocks[-1].norm1
+
+    # if config["model"] == "resnet18":
+    #     target_layers = [model.layer4[-1].conv2]
+
+    # elif config["model"] == "resnet50":
+    #     target_layers = [model.layer4[-1].conv2]
+    
     if config["model"] == "resnet18":
         target_layers = [model.layer4[-1].conv2]
-
     elif config["model"] == "resnet50":
         target_layers = [model.layer4[-1].conv2]
+    elif config["model"] == "FasterRCNN":
+        target_layers = model.backbone
+    elif config["model"] == "VGG" or config["model"] == "densenet161":
+        target_layers = model.features[-1]
+    elif config["model"] == "mnasnet1_0":
+        target_layers = model.layers[-1]
+    elif config["model"] == "ViT":
+        target_layers = model.blocks[-1].norm1
+    elif config["model"] == "SwinT":
+        target_layers = model.layers[-1].blocks[-1].norm1
+    else:
+        raise ValueError("Unsupported model type!")
+
 
 
     cam = dict_gradient_method[config["gradient_method"]](model=model, target_layers=target_layers, use_cuda=True)
@@ -214,7 +251,7 @@ def train_model(
                 # TODO Save Classwise fraction
                 chosen_inds = int(np.ceil(config["change_subset_attention"] * len(label_wrong)))
                 # TODO some sort of decay?
-                # TODO Convert to batches to run over more
+                # TODO Remove min and batchify
                 chosen_inds = min(config["batch_size"], chosen_inds)
 
                 writer.add_scalar(
@@ -239,6 +276,7 @@ def train_model(
                     config["global_run_count"],
                 )
                 
+                # TODO run over all the batches
                 thresholded_ims= perform_proxy_step(cam, input_wrong, config)
 
                 writer.add_images(

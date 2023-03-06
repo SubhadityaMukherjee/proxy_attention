@@ -90,7 +90,8 @@ config = {
     "transfer_imagenet": tune.grid_search([True, False]),
     "subset_images": 8000,
     "proxy_threshold": tune.loguniform(0.8, .95),
-    "pixel_replacement_method": tune.grid_search(["mean", "max", "min", "halfmax"]),
+    # "pixel_replacement_method": tune.grid_search(["mean", "max", "min", "halfmax"]),
+    "pixel_replacement_method": tune.grid_search(["blended", "max", "min"]),
     "model": tune.grid_search(["resnet18"]),
     # "model": tune.grid_search(["vit_base_patch8_224", "resnet18"]),
     # "proxy_steps": tune.choice([[1, "p", 1], [3, "p", 1], [1, 1], [3,1]]),
@@ -102,11 +103,12 @@ config = {
     # "proxy_steps": ["p"],
     "load_proxy_data": False,
     # "global_run_count" : 0,
-    "gradient_method": tune.grid_search(["gradcam", "gradcamplusplus", "eigencam"]),
-    # "gradient_method": "gradcamplusplus",
+    # "gradient_method": tune.grid_search(["gradcam", "gradcamplusplus", "eigencam"]),
+    "gradient_method": "gradcamplusplus",
     # "aug_smooth" : tune.choice([True, False]),
     # "eigen_smooth" : tune.choice([True, False]),
-    "clear_every_step": tune.grid_search([True, False]),
+    # "clear_every_step": tune.grid_search([True, False]),
+    "clear_every_step": True,
 }
 
 # Make dirs
@@ -116,12 +118,13 @@ fname_start = f'/mnt/e/CODE/Github/improving_robotics_datasets/src/runs/{config[
 
 config["fname_start"] = fname_start
 
-# TODO logging
 logging.basicConfig(filename=fname_start, encoding="utf-8", level=logging.DEBUG)
 logging.info(f"[INFO] : File name = {fname_start}")
 print(f"[INFO] : File name = {fname_start}")
 
 config["device"] = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+# %%
+
 #%%
 
 proxyattention.data_utils.clear_proxy_images(config=config)
