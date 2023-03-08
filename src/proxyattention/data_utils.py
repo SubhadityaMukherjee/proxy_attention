@@ -17,19 +17,12 @@ from torch.utils.data import Dataset
 import random
 
 from .meta_utils import get_files
-
-
 os.environ["TORCH_HOME"] = "/media/hdd/Datasets/"
 cudnn.benchmark = True
 
 # %%
-def fish_name_fn(x):
+def get_parent_name(x):
     return str(x).split("/")[-2]
-
-
-def asl_name_fn(x):
-    return str(x).split("/")[-2]
-
 
 # %%
 # TODO Create dataset loader for tabular
@@ -97,7 +90,7 @@ def create_folds(config):
     # Kfold splits
     df["kfold"] = -1
     df = df.sample(frac=1).reset_index(drop=True)
-    stratify = StratifiedKFold(n_splits=2)
+    stratify = StratifiedKFold(n_splits=2, shuffle=True)
     for i, (t_idx, v_idx) in enumerate(
         stratify.split(X=df.image_id.values, y=df.label.values)
     ):

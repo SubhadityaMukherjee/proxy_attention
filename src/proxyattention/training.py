@@ -40,337 +40,311 @@ from ray import tune
 from ray.tune import CLIReporter
 from ray.tune.schedulers import ASHAScheduler
 from ray.tune.search.optuna import OptunaSearch
+from ray.tune.integration.pytorch_lightning import (
+    TuneReportCallback,
+    TuneReportCheckpointCallback,
+)
 from torch.optim import lr_scheduler
-from torch.utils.tensorboard import SummaryWriter
+from torch.optim.lr_scheduler import OneCycleLR
+
+# from torch.utils.tensorboard import SummaryWriter
 from torchvision import transforms
 from tqdm import tqdm
 
+from pytorch_lightning import LightningModule, Trainer, seed_everything
+from pytorch_lightning.callbacks import LearningRateMonitor, StochasticWeightAveraging
+from pytorch_lightning.callbacks.progress import TQDMProgressBar
+from pytorch_lightning.loggers import CSVLogger, TensorBoardLogger
+from torchmetrics.functional import accuracy
+from pytorch_lightning.callbacks import ModelCheckpoint
+import torch.nn.functional as F
+
+
 from .data_utils import clear_proxy_images, create_dls, create_folds
+from .meta_utils import get_files, save_pickle, read_pickle
+
 
 # sns.set()
 
 os.environ["TORCH_HOME"] = "/mnt/e/Datasets/"
 cudnn.benchmark = True
-
-# %%
-#TODO Add a "weighted method"
-
-dict_decide_change = {
-    "mean": torch.mean,
-    "max": torch.max,
-    "min": torch.min,
-    "halfmax": lambda x: torch.max(x) / 2,
-}
-
-
-
-#TODO Smoothing maybe?
-dict_gradient_method = {
-        "gradcam" : GradCAM,
-        "gradcamplusplus" : GradCAMPlusPlus,
-        "eigencam" : EigenCAM,
-    }    
-
-inv_normalize = transforms.Normalize(
-    mean=[-0.485 / 0.229, -0.456 / 0.224, -0.406 / 0.225],
-    std=[1 / 0.229, 1 / 0.224, 1 / 0.225],
-)
-
-
-def reset_params(model):
-    for param in model.parameters():
-        param.requires_grad = False
-
-#TODO find some models to use from the repo
-def choose_network(config):
-    # vit_tiny_patch16_224.augreg_in21k_ft_in1k
-    if config["model"] == "vision_transformer":
-        config["model"] = "vit_tiny_patch16_224.augreg_in21k_ft_in1k"
-    # Define the number of classes
-    model = timm.create_model(
-        config["model"],
-        pretrained=config["transfer_imagenet"],
-        num_classes=config["num_classes"],
-    ).to(config["device"])
-    model.train()
-    return model
 #%%
 
-def perform_proxy_step(cam, input_wrong, config):
-    grads = cam(input_tensor=input_wrong, targets=None)
-    grads = (
-        torch.Tensor(grads).to("cuda").unsqueeze(1).expand(-1, 3, -1, -1)
-    )
-    normalized_inps = inv_normalize(input_wrong)
-    #TODO Check this
-    if config["pixel_replacement_method"] is not "blended":
-        return torch.where(
-            grads > config["proxy_threshold"],
-            dict_decide_change[config["pixel_replacement_method"]](grads),
-            normalized_inps,
-        )
-    else:
-        return torch.where(
-            grads > config["proxy_threshold"],
-            grads * normalized_inps,
-            normalized_inps,
+#%%
+class LitModel(LightningModule):
+
+    # TODO Proxy attention tabular support
+    def __init__(self, config, proxy_step, lr=0.05):
+        super().__init__()
+
+        self.save_hyperparameters()
+        self.config = config
+
+        self.dict_decide_change = {
+            "mean": torch.mean,
+            "max": torch.max,
+            "min": torch.min,
+            "halfmax": lambda x: torch.max(x) / 2,
+        }
+
+        self.dict_gradient_method = {
+            "gradcam": GradCAM,
+            "gradcamplusplus": GradCAMPlusPlus,
+            "eigencam": EigenCAM,
+        }
+
+        self.inv_normalize = transforms.Normalize(
+            mean=[-0.485 / 0.229, -0.456 / 0.224, -0.406 / 0.225],
+            std=[1 / 0.229, 1 / 0.224, 1 / 0.225],
         )
 
+        self.model = self.choose_network()
+        self.target_layers = self.select_target_layer()
+        self.cam = self.dict_gradient_method[self.config["gradient_method"]](
+            model=self.model, target_layers=self.target_layers
+        )
+        self.tfm = transforms.ToPILImage()
+
+        self.input_wrong = []
+        self.label_wrong = []
+        self.proxy_step = proxy_step
+
+    def select_target_layer(self):
+        if self.config["model"] == "resnet18":
+            target_layers = [self.model.layer4[-1].conv2]
+        elif self.config["model"] == "resnet50":
+            target_layers = [self.model.layer4[-1].conv2]
+        elif self.config["model"] == "FasterRCNN":
+            target_layers = self.model.backbone
+        elif self.config["model"] == "VGG" or self.config["model"] == "densenet161":
+            target_layers = self.model.features[-1]
+        elif self.config["model"] == "mnasnet1_0":
+            target_layers = self.model.layers[-1]
+        elif self.config["model"] == "ViT":
+            target_layers = self.model.blocks[-1].norm1
+        elif self.config["model"] == "SwinT":
+            target_layers = self.model.layers[-1].blocks[-1].norm1
+        else:
+            raise ValueError("Unsupported model type!")
+        return target_layers
+
+    def choose_network(self):
+        # TODO find some models to use from the repo
+        # vit_tiny_patch16_224.augreg_in21k_ft_in1k
+        if self.config["model"] == "vision_transformer":
+            self.config["model"] = "vit_tiny_patch16_224.augreg_in21k_ft_in1k"
+        # Define the number of classes
+        return timm.create_model(
+            self.config["model"],
+            pretrained=self.config["transfer_imagenet"],
+            num_classes=self.config["num_classes"],
+        )
+
+    def perform_proxy_step(self, input_wrong):
+        grads = self.cam(input_tensor=input_wrong, targets=None)
+        grads = torch.Tensor(grads).unsqueeze(1).expand(-1, 3, -1, -1)
+        normalized_inps = self.inv_normalize(input_wrong)
+        if self.config["pixel_replacement_method"] != "blended":
+            return torch.where(
+                grads > self.config["proxy_threshold"],
+                self.dict_decide_change[self.config["pixel_replacement_method"]](grads),
+                normalized_inps,
+            )
+        else:
+            # TODO Fix this
+            return torch.where(
+                grads > self.config["proxy_threshold"],
+                (1 - 0.2 * grads) * normalized_inps,
+                normalized_inps,
+            )
+
+    def forward(self, x):
+        out = self.model(x)
+        return F.log_softmax(out, dim=1)
+
+    def training_step(self, batch, batch_idx):
+        x, y = batch["x"], batch["y"]
+        logits = self.model(x)
+        loss = F.cross_entropy(logits, y)
+        self.config["global_run_count"] += 1
+        return loss
+
+    def validation_step(self, batch, batch_idx):
+        self.evaluate(batch, "val")
+
+    def test_step(self, batch, batch_idx):
+        self.evaluate(batch, "test")
+
+    def configure_optimizers(self):
+        optimizer = torch.optim.SGD(
+            self.model.parameters(),
+            lr=self.hparams.lr,
+            momentum=0.9,
+            weight_decay=5e-4,
+        )
+        steps_per_epoch = 45000 // self.config["batch_size"]
+        scheduler_dict = {
+            "scheduler": OneCycleLR(
+                optimizer,
+                0.1,
+                epochs=self.trainer.max_epochs,
+                steps_per_epoch=steps_per_epoch,
+            ),
+            "interval": "step",
+        }
+        return {"optimizer": optimizer, "lr_scheduler": scheduler_dict}
+
+    def evaluate(self, batch, stage=None):
+        x, y = batch["x"], batch["y"]
+        logits = self.model(x)
+        loss = F.cross_entropy(logits, y)
+        preds = torch.argmax(logits, dim=1)
+        acc = accuracy(
+            preds, y, task="multiclass", num_classes=self.config["num_classes"]
+        )
+
+        if stage:
+            self.log(f"ptl/{stage}_loss", loss, prog_bar=True)
+            self.log(f"ptl/{stage}_acc", acc, prog_bar=True)
+
+        if stage == "train" and self.proxy_step == True:
+            wrong_indices = (y != preds).nonzero()
+            self.input_wrong.extend(x[wrong_indices])
+            self.label_wrong.extend(x[wrong_indices])
+
+            logging.info("Performing Proxy step")
+            print("Performing Proxy step")
+
+            # TODO Save Classwise fraction
+            chosen_inds = int(
+                np.ceil(self.config["change_subset_attention"] * len(self.label_wrong))
+            )
+            # TODO some sort of decay?
+            # TODO Remove min and batchify
+            chosen_inds = min(self.config["batch_size"], chosen_inds)
+
+            self.log("Number_chosen", chosen_inds)
+            logging.info(f"{chosen_inds} images chosen to run proxy on")
+
+            self.input_wrong = self.input_wrong[:chosen_inds]
+            self.label_wrong = self.label_wrong[:chosen_inds]
+
+            try:
+                self.input_wrong = torch.squeeze(torch.stack(self.input_wrong, dim=1))
+                self.label_wrong = torch.squeeze(torch.stack(self.label_wrong, dim=1))
+            except:
+                self.input_wrong = torch.squeeze(self.input_wrong)
+                self.label_wrong = torch.squeeze(self.label_wrong)
+            
+            # TODO fix this
+            self.logger.log_image(
+                "original_images", self.inv_normalize(self.input_wrong)
+            )
+
+            self.thresholded_ims = self.perform_proxy_step(
+                self.cam, self.input_wrong, self.config
+            )
+
+            # TODO fix this
+            self.logger.log_image("converted_images", self.thresholded_ims)
+
+            for ind in tqdm(range(len(self.label_wrong)), total=len(self.label_wrong)):
+                label = self.config["label_map"][self.label_wrong[ind].item()]
+                save_name = (
+                    self.config["ds_path"]
+                    / label
+                    / f"proxy-{ind}-{self.config['global_run_count']}.png"
+                )
+                self.tfm(self.thresholded_ims[ind]).save(save_name)
+
+
+#%%
+def get_last_checkpoint(checkpoint_folder):
+    "https://github.com/Lightning-AI/lightning/issues/4176"
+    if os.path.exists(checkpoint_folder):
+        past_experiments = sorted(
+            Path(checkpoint_folder).iterdir(), key=os.path.getmtime
+        )
+
+        for experiment in past_experiments[::-1]:
+            experiment_folder = os.path.join(experiment, "checkpoints")
+            if os.path.exists(experiment_folder):
+                checkpoints = os.listdir(experiment_folder)
+
+                if len(checkpoints):
+                    checkpoints.sort()
+                    path = os.path.join(experiment_folder, checkpoints[-1])
+                    return path
+
+    return None
 
 
 # %%
-# TODO Proxy attention tabular support
+def setup_train_round(config, proxy_step=False, num_epochs=1, chk=None):
 
-
-def train_model(
-    model,
-    criterion,
-    optimizer,
-    scheduler,
-    dataloaders,
-    dataset_sizes,
-    num_epochs=25,
-    proxy_step=False,
-    config=None,
-):
-    writer = SummaryWriter(log_dir=config["fname_start"], comment=config["fname_start"])
-
-    # Save config info to tensorboard
-    for key, value in config.items():
-        writer.add_text(key, str(value))
-    since = time.time()
-
-    best_model_wts = copy.deepcopy(model.state_dict())
-    best_acc = 0.0
-    pbar = tqdm(range(config["global_run_count"], config["global_run_count"]+num_epochs), total=num_epochs)
-
-    # FasterRCNN: model.backbone
-    # Resnet18 and 50: model.layer4[-1]
-    # VGG and densenet161: model.features[-1]
-    # mnasnet1_0: model.layers[-1]
-    # ViT: model.blocks[-1].norm1
-    # SwinT: model.layers[-1].blocks[-1].norm1
-
-    # if config["model"] == "resnet18":
-    #     target_layers = [model.layer4[-1].conv2]
-
-    # elif config["model"] == "resnet50":
-    #     target_layers = [model.layer4[-1].conv2]
-    
-    if config["model"] == "resnet18":
-        target_layers = [model.layer4[-1].conv2]
-    elif config["model"] == "resnet50":
-        target_layers = [model.layer4[-1].conv2]
-    elif config["model"] == "FasterRCNN":
-        target_layers = model.backbone
-    elif config["model"] == "VGG" or config["model"] == "densenet161":
-        target_layers = model.features[-1]
-    elif config["model"] == "mnasnet1_0":
-        target_layers = model.layers[-1]
-    elif config["model"] == "ViT":
-        target_layers = model.blocks[-1].norm1
-    elif config["model"] == "SwinT":
-        target_layers = model.layers[-1].blocks[-1].norm1
-    else:
-        raise ValueError("Unsupported model type!")
-
-
-
-    cam = dict_gradient_method[config["gradient_method"]](model=model, target_layers=target_layers, use_cuda=True)
-
-    tfm = transforms.ToPILImage()
-    for epoch in pbar:
-        config["global_run_count"] += 1
-
-        # Each epoch has a training and validation phase
-        input_wrong = []
-        label_wrong = []
-        for phase in ["train", "val"]:
-            if phase == "train":
-                model.train()  # Set model to training mode
-            else:
-                model.eval()  # Set model to evaluate mode
-
-            running_loss = 0.0
-            running_corrects = 0
-
-            # Iterate over data.
-
-            optimizer.zero_grad(set_to_none=True)
-            scaler = torch.cuda.amp.GradScaler()
-            for inps in tqdm(
-                dataloaders[phase], total=len(dataloaders[phase]), leave=False
-            ):
-                inputs = inps["x"].to(config["device"], non_blocking=True)
-                labels = inps["y"].to(config["device"], non_blocking=True)
-
-                # forward
-                # track history if only in train
-                with torch.set_grad_enabled(phase == "train"):
-                    with torch.cuda.amp.autocast():
-                        if phase == "train":
-                            outputs = model(inputs)
-                        else:
-                            with torch.no_grad():
-                                outputs = model(inputs)
-                        _, preds = torch.max(outputs, 1)
-                        loss = criterion(outputs, labels)
-                        if proxy_step == True and phase == "train":
-                            print("[INFO] : Proxy")
-                            logging.info("Proxy")
-                            wrong_indices = (labels != preds).nonzero()
-                            # input_wrong = input_wrong.stack(inputs[wrong_indices])
-                            input_wrong.extend(inputs[wrong_indices])
-                            label_wrong.extend(labels[wrong_indices])
-
-                    # backward + optimize only if in training phase
-                    if phase == "train":
-                        scaler.scale(loss).backward()
-                        # optimizer.step()
-
-                        scaler.step(optimizer)
-                        scaler.update()
-                        optimizer.zero_grad(set_to_none=True)
-
-                # statistics
-                running_loss += loss.item() * inputs.size(0)
-                running_corrects += torch.sum(preds == labels.data)
-                pbar.set_postfix(
-                    {
-                        "Phase": "running",
-                        "Loss": running_loss / dataset_sizes[phase],
-                        # 'Acc' : running_corrects.double() / dataset_sizes[phase],
-                    }
-                )
-
-            if phase == "train":
-                scheduler.step()
-
-            if proxy_step == True and phase == "train":
-                print("Performing Proxy step")
-                # TODO Save Classwise fraction
-                chosen_inds = int(np.ceil(config["change_subset_attention"] * len(label_wrong)))
-                # TODO some sort of decay?
-                # TODO Remove min and batchify
-                chosen_inds = min(config["batch_size"], chosen_inds)
-
-                writer.add_scalar(
-                    "Number_Chosen", chosen_inds, config["global_run_count"]
-                )
-                print(f"{chosen_inds} images chosen to run proxy on")
-
-                input_wrong = input_wrong[:chosen_inds]
-                label_wrong = label_wrong[:chosen_inds]
-
-                try:
-                    input_wrong = torch.squeeze(torch.stack(input_wrong, dim=1))
-                    label_wrong = torch.squeeze(torch.stack(label_wrong, dim=1))
-                except:
-                    input_wrong = torch.squeeze(input_wrong)
-                    label_wrong = torch.squeeze(label_wrong)
-
-                writer.add_images(
-                    "original_images",
-                    inv_normalize(input_wrong),
-                    # input_wrong,
-                    config["global_run_count"],
-                )
-                
-                # TODO run over all the batches
-                thresholded_ims= perform_proxy_step(cam, input_wrong, config)
-
-                writer.add_images(
-                    "converted_proxy",
-                    thresholded_ims,
-                    config["global_run_count"],
-                )
-
-                print("Saving the images")
-
-                for ind in tqdm(range(len(label_wrong)), total=len(label_wrong)):
-                    label = config["label_map"][label_wrong[ind].item()]
-                    save_name = (
-                        config["ds_path"]
-                        / label
-                        / f"proxy-{ind}-{config['global_run_count']}.png"
-                    )
-                    tfm(thresholded_ims[ind]).save(save_name)
-
-            epoch_loss = running_loss / dataset_sizes[phase]
-            epoch_acc = running_corrects.double() / dataset_sizes[phase]
-
-            pbar.set_postfix({"Phase": phase, "Loss": epoch_loss, "Acc": epoch_acc})
-
-            # TODO Add more loss functions
-            # TODO Classwise accuracy
-            if proxy_step == True:
-                writer.add_scalar("proxy_step", True, config["global_run_count"])
-            else:
-                writer.add_scalar("proxy_step", False, config["global_run_count"])
-
-            if phase == "train":
-                writer.add_scalar("Loss/Train", epoch_loss, config["global_run_count"])
-                writer.add_scalar("Acc/Train", epoch_acc, config["global_run_count"])
-            if phase == "val":
-                writer.add_scalar("Loss/Val", epoch_loss, config["global_run_count"])
-                writer.add_scalar("Acc/Val", epoch_acc, config["global_run_count"])
-                with tune.checkpoint_dir(config["global_run_count"]) as checkpoint_dir:
-                    save_path = Path(config["fname_start"]) / "checkpoint"
-                    torch.save((model.state_dict(), optimizer.state_dict()), save_path)
-
-                tune.report(loss=epoch_loss, accuracy=epoch_acc)
-
-            # deep copy the model
-            if phase == "val" and epoch_acc > best_acc:
-                best_acc = epoch_acc
-                best_model_wts = copy.deepcopy(model.state_dict())
-
-    time_elapsed = time.time() - since
-    print(f"Training complete in {time_elapsed // 60:.0f}m {time_elapsed % 60:.0f}s")
-    print(f"Best val Acc: {best_acc:4f}")
-
-    # load best model weights
-    model.load_state_dict(best_model_wts)
-    return model
-
-
-# %%
-#TODO Better transfer learning params. more trainable layers
-def setup_train_round(config, proxy_step=False, num_epochs=1):
-    # Data part
+    # TODO Fix global run count
     train, val = create_folds(config)
     image_datasets, dataloaders, dataset_sizes = create_dls(train, val, config)
     class_names = image_datasets["train"].classes
     config["num_classes"] = len(config["label_map"].keys())
 
-    model_ft = choose_network(config)
-    criterion = nn.CrossEntropyLoss()
+    model = LitModel(config, proxy_step, lr=0.05)
+    os.makedirs(config["fname_start"], exist_ok=True)
 
-    # Observe that all parameters are being optimized
-    #TODO Fix this for tranasfer learning . Reduce rate
-    # if config["transfer_imagenet"] == True:
-        # optimizer_ft = optim.Adam(model_ft.parameters(), lr=3e-5)
-    # else:
-        # optimizer_ft = optim.Adam(model_ft.parameters(), lr=3e-4)
-    optimizer_ft = optim.Adam(model_ft.parameters(), lr=1e-3)
-
-    # Decay LR 
-    # exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=10, gamma=0.1)
-    # exp_lr_scheduler = lr_scheduler.ReduceLROnPlateau(optimizer_ft, verbose = True)
-    exp_lr_scheduler = lr_scheduler.CosineAnnealingLR(optimizer_ft, len(dataloaders["train"]))
-    trained_model = train_model(
-        model_ft,
-        criterion,
-        optimizer_ft,
-        exp_lr_scheduler,
-        dataloaders,
-        dataset_sizes,
-        num_epochs=num_epochs,
-        config=config,
-        proxy_step=proxy_step,
+    trainer = Trainer(
+        max_epochs=num_epochs,
+        default_root_dir=config["checkpoint_path"],
+        accelerator="auto",
+        devices=1 if torch.cuda.is_available() else None,  # limiting got iPython runs
+        logger=TensorBoardLogger("tb_logs", name=config["fname_start"]),
+        log_every_n_steps=2,
+        callbacks=[
+            LearningRateMonitor(logging_interval="step"),
+            TQDMProgressBar(refresh_rate=10),
+            TuneReportCallback(
+                {"loss": "ptl/val_loss", "mean_accuracy": "ptl/val_acc"},
+                on="validation_end",
+            ),
+            ModelCheckpoint(
+            save_last=True,
+            monitor="step",
+            mode="max",
+            dirpath=config["checkpoint_path"],
+            filename="full_train",
+            ),
+            StochasticWeightAveraging(swa_lrs=1e-2)
+        ],
+        accumulate_grad_batches=4,  # number of batches to accumulate gradients over
+        precision=16,  # enables mixed precision training with 16-bit floating point precision
+        resume_from_checkpoint=chk,
     )
+    model.validation_step_end = None
+    model.validation_epoch_end = None
+
+    # try:
+    #     chks_list = [
+    #         x
+    #         for x in os.listdir(
+    #             Path(config["checkpoint_path"]) / "version_0/checkpoints"
+    #         )
+    #         if "ckpt" in x
+    #     ]
+    #     trainer.fit(
+    #         model,
+    #         dataloaders["train"],
+    #         dataloaders["val"],
+    #         ckpt_path=config["checkpoint_path"] / chks_list[-1],
+    #     )
+    #     print("Restored checkpoint")
+    # except:
+    if config["chk"] is not None:
+        trainer.fit(model, dataloaders["train"], dataloaders["val"], ckpt_path=config["chk"])
+    else:
+        trainer.fit(model, dataloaders["train"], dataloaders["val"])
+    # trainer.test(model)
 
 
+# %%
 def train_proxy_steps(config):
     assert torch.cuda.is_available()
 
@@ -378,13 +352,18 @@ def train_proxy_steps(config):
 
     config["fname_start"] = fname_start
     config["global_run_count"] = 0
-    
 
-    for step in config["proxy_steps"]:
+    config["checkpoint_path"] = fname_start
+
+    for i, step in enumerate(config["proxy_steps"]):
+        chk = get_last_checkpoint(config["checkpoint_path"]) if i > 0 else None
+        config["chk"] = chk
         if step == "p":
-            setup_train_round(config=config, proxy_step=True, num_epochs=1)
+            # config["load_proxy_data"] = True
+            setup_train_round(config=config, proxy_step=True, num_epochs=1+i, chk=chk)
         else:
-            setup_train_round(config=config, proxy_step=False, num_epochs=step)
+            # config["load_proxy_data"] = False
+            setup_train_round(config=config, proxy_step=False, num_epochs=step+i, chk=chk)
 
         if config["clear_every_step"] == True:
             clear_proxy_images(config=config)  # Clean directory
@@ -401,12 +380,15 @@ def hyperparam_tune(config):
         reduction_factor=2,
     )
 
-    reporter = CLIReporter(metric_columns=["loss", "accuracy", "training_iteration"])
+    reporter = CLIReporter(metric_columns=["ptl/val_acc", "training_iteration"])
 
     tuner = tune.Tuner(
         tune.with_resources(
             tune.with_parameters(train_proxy_steps),
-            resources={"cpu": config["num_cpu"], "gpu": config["num_gpu"],},
+            resources={
+                "cpu": config["num_cpu"],
+                "gpu": config["num_gpu"],
+            },
         ),
         tune_config=tune.TuneConfig(
             metric="loss",
@@ -419,7 +401,6 @@ def hyperparam_tune(config):
         param_space=config,
     )
     result = tuner.fit()
-
 
     df_res = result.get_dataframe()
     df_res.to_csv(Path(config["fname_start"] + "result_log.csv"))

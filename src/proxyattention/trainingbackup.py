@@ -45,8 +45,8 @@ from torch.utils.tensorboard import SummaryWriter
 from torchvision import transforms
 from tqdm import tqdm
 
-from proxyattention.data_utils import clear_proxy_images, create_dls, create_folds
-from proxyattention.meta_utils import get_files, save_pickle, read_pickle
+from .data_utils import clear_proxy_images, create_dls, create_folds
+from .meta_utils import get_files, save_pickle, read_pickle
 
 # sns.set()
 
@@ -96,6 +96,31 @@ def choose_network(config):
     model.train()
     return model
 #%%
+
+def perform_proxy_step(cam, input_wrong, config):
+    grads = cam(input_tensor=input_wrong, targets=None)
+    grads = (
+        torch.Tensor(grads).to("cuda").unsqueeze(1).expand(-1, 3, -1, -1)
+    )
+    normalized_inps = inv_normalize(input_wrong)
+    if config["pixel_replacement_method"] != "blended":
+        return torch.where(
+            grads > config["proxy_threshold"],
+            dict_decide_change[config["pixel_replacement_method"]](grads),
+            normalized_inps,
+        )
+    else:
+        #TODO Fix this
+        return torch.where(
+            grads > config["proxy_threshold"],
+            (1- 0.2 * grads) * normalized_inps,
+            normalized_inps,
+        )
+        # return torch.clamp(torch.where(
+        #     grads > config["proxy_threshold"],
+        #     grads * normalized_inps,
+        #     normalized_inps,
+        # ), max = 255.0, min = 0.0)
 
 
 
@@ -154,6 +179,7 @@ def train_model(
         input_wrong = []
         label_wrong = []
         for phase in ["train", "val"]:
+            logging.info(f"[INFO] Phase = {phase}")
             if phase == "train":
                 model.train()  # Set model to training mode
             else:
@@ -215,6 +241,7 @@ def train_model(
 
             if proxy_step == True and phase == "train":
                 logging.info("Performing Proxy step")
+                print("Performing Proxy step")
                 # TODO Save Classwise fraction
                 chosen_inds = int(np.ceil(config["change_subset_attention"] * len(label_wrong)))
                 # TODO some sort of decay?
@@ -242,6 +269,8 @@ def train_model(
                     # input_wrong,
                     config["global_run_count"],
                 )
+
+                # save_pickle((cam, input_wrong, config,tfm))
                 
                 # TODO run over all the batches
                 thresholded_ims= perform_proxy_step(cam, input_wrong, config)
@@ -323,9 +352,9 @@ def setup_train_round(config, proxy_step=False, num_epochs=1):
     optimizer_ft = optim.Adam(model_ft.parameters(), lr=1e-3)
 
     # Decay LR 
-    # exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=10, gamma=0.1)
+    exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=10, gamma=0.1)
     # exp_lr_scheduler = lr_scheduler.ReduceLROnPlateau(optimizer_ft, verbose = True)
-    exp_lr_scheduler = lr_scheduler.CosineAnnealingLR(optimizer_ft, len(dataloaders["train"]))
+    # exp_lr_scheduler = lr_scheduler.CosineAnnealingLR(optimizer_ft, len(dataloaders["train"]))
     trained_model = train_model(
         model_ft,
         criterion,
@@ -394,32 +423,3 @@ def hyperparam_tune(config):
     df_res = result.get_dataframe()
     df_res.to_csv(Path(config["fname_start"] + "result_log.csv"))
     # best_trial = result.get_best_result("loss", "min", "last")
-#%%
-
-cam, input_wrong, config,tfm = read_pickle()[0]
-#%%
-def perform_proxy_step(cam, input_wrong, config):
-    grads = cam(input_tensor=input_wrong, targets=None)
-    grads = (
-        torch.Tensor(grads).to("cuda").unsqueeze(1).expand(-1, 3, -1, -1)
-    )
-    normalized_inps = inv_normalize(input_wrong)
-    if config["pixel_replacement_method"] != "blended":
-        return torch.where(
-            grads > config["proxy_threshold"],
-            dict_decide_change[config["pixel_replacement_method"]](grads),
-            normalized_inps,
-        )
-    else:
-        #TODO Fix this
-        return torch.where(
-            grads > config["proxy_threshold"],
-            (1- 0.2 * grads) * normalized_inps,
-            normalized_inps,
-        )
-
-
-#%%
-thresholded_ims= perform_proxy_step(cam, input_wrong, config)
-#%%
-tfm(thresholded_ims[10])

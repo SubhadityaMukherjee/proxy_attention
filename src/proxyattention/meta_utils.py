@@ -1,7 +1,7 @@
 import mimetypes
 from pathlib import Path
 from typing import Generator, Iterable
-
+import pickle
 import seaborn as sns
 
 sns.set()
@@ -94,3 +94,12 @@ def get_files(path, extensions=None, recurse=True, folders=None, followlinks=Tru
         f = [o.name for o in os.scandir(path) if o.is_file()]
         res = _get_files(path, f, extensions)
     return res
+
+def save_pickle(*args):
+    with open('/mnt/e/CODE/Github/improving_robotics_datasets/src/pickler.pkl', 'wb') as f:
+        pickle.dump(args, f)
+
+def read_pickle():
+    with open('/mnt/e/CODE/Github/improving_robotics_datasets/src/pickler.pkl', 'rb') as f:
+        obj = pickle.load(f)
+    return obj
