@@ -207,7 +207,7 @@ class LitModel(LightningModule):
             self.log(f"ptl/{stage}_loss", loss, prog_bar=True)
             self.log(f"ptl/{stage}_acc", acc, prog_bar=True)
 
-        if stage == "train" and self.proxy_step == True:
+        if self.proxy_step == True:
             wrong_indices = (y != preds).nonzero()
             self.input_wrong.extend(x[wrong_indices])
             self.label_wrong.extend(x[wrong_indices])
@@ -237,8 +237,9 @@ class LitModel(LightningModule):
                 self.label_wrong = torch.squeeze(self.label_wrong)
             
             # TODO fix this
-            self.logger.log_image(
-                "original_images", self.inv_normalize(self.input_wrong)
+            tb_logger = None
+            self.logger.experiment.add_image(
+                "original_images", self.inv_normalize(self.input_wrong),self.global_step
             )
 
             self.thresholded_ims = self.perform_proxy_step(
@@ -246,7 +247,7 @@ class LitModel(LightningModule):
             )
 
             # TODO fix this
-            self.logger.log_image("converted_images", self.thresholded_ims)
+            self.logger.experiment.add_image("converted_images", self.thresholded_ims, self.global_step)
 
             for ind in tqdm(range(len(self.label_wrong)), total=len(self.label_wrong)):
                 label = self.config["label_map"][self.label_wrong[ind].item()]
@@ -339,9 +340,10 @@ def setup_train_round(config, proxy_step=False, num_epochs=1, chk=None):
     # except:
     if config["chk"] is not None:
         trainer.fit(model, dataloaders["train"], dataloaders["val"], ckpt_path=config["chk"])
+        trainer.validate(model, dataloaders["val"], ckpt_path=config["chk"])
     else:
         trainer.fit(model, dataloaders["train"], dataloaders["val"])
-    # trainer.test(model)
+        trainer.validate(model, dataloaders["val"])
 
 
 # %%
