@@ -112,30 +112,31 @@ os.environ["TORCH_HOME"] = "/mnt/e/Datasets/"
 #     "clear_every_step": True,
 # }
 
-dataset_info = {
-    "asl": {"path": Path("/mnt/e/Datasets/asl/asl_alphabet_train/asl_alphabet_train") , "name_fn": proxyattention.data_utils.get_parent_name},
-    "imagenette": {"path": Path("/mnt/e/Datasets/imagenette2-320/train") , "name_fn": proxyattention.data_utils.get_parent_name},
-}
 
 config = {
-    "experiment_name": "ignore",
-    "ds_name": "asl",
+    "experiment_name": "blend_test",
+    "ds_name": tune.grid_search(['asl', 'imagenette']),
     "image_size": 224,
     "batch_size": 32,
     "enable_proxy_attention": True,
-    "change_subset_attention": tune.grid_search([0.8]),
+    # "change_subset_attention": tune.grid_search([0.8]),
+    "change_subset_attention": tune.grid_search([0.3, 0.5, 0.8]),
     "num_gpu": 1,
     "num_cpu": 10,
-    "transfer_imagenet": tune.grid_search([True]),
+    "transfer_imagenet": tune.grid_search([False]),
     "subset_images": 8000,
-    "proxy_threshold": 0.85,
-    "pixel_replacement_method": tune.grid_search(["max", "blended"]), 
-    "model": tune.grid_search(["resnet18"]),
-    # "proxy_steps": tune.grid_search([[10,"p",10], [21]]),
-    "proxy_steps": tune.grid_search([[1,"p"]]),
+    # "proxy_threshold": 0.85,
+    "proxy_threshold": tune.loguniform(0.8, .95),
+    "proxy_image_weight" : tune.loguniform(0.1, 0.8),
+    "pixel_replacement_method": tune.grid_search(["blended"]), 
+    "model": tune.grid_search(["resnet18", "xception"]),
+    "proxy_steps": tune.grid_search([[20,"p",10], [31]]),
+    # "proxy_steps": tune.grid_search([[1, "p"]]),
     "load_proxy_data": False,
     "gradient_method": "gradcamplusplus",
-    "clear_every_step": False,
+    # "gradient_method": tune.grid_search(["gradcam", "eigencam"]),
+    # "clear_every_step": False,
+    "clear_every_step": tune.grid_search([True]),
 }
 
 # Test config
@@ -159,8 +160,6 @@ config = {
 #     "load_proxy_data": False,
 # }
 
-config["ds_path"] = dataset_info[config["ds_name"]]["path"]
-config["name_fn"] = dataset_info[config["ds_name"]]["name_fn"]
 
 # Make dirs
 logging.info("Directories made/checked")
@@ -178,7 +177,6 @@ config["device"] = torch.device("cuda:0" if torch.cuda.is_available() else "cpu"
 
 #%%
 
-proxyattention.data_utils.clear_proxy_images(config=config)
 proxyattention.training.hyperparam_tune(config=config)
 
 # %%
