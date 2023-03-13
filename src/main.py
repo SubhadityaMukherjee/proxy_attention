@@ -40,8 +40,6 @@ import torch.optim as optim
 import torchvision
 from albumentations.core.composition import Compose
 from albumentations.pytorch import ToTensorV2
-from captum.attr import DeepLift, IntegratedGradients, NoiseTunnel, Saliency
-from captum.attr import visualization as viz
 from sklearn import metrics, model_selection, preprocessing
 from sklearn.model_selection import StratifiedKFold
 from torch import nn
@@ -177,6 +175,7 @@ logging.basicConfig(filename=fname_start, encoding="utf-8", level=logging.DEBUG)
 logging.info(f"[INFO] : File name = {fname_start}")
 print(f"[INFO] : File name = {fname_start}")
 
+#torch.backends.mps.is_available()
 config["device"] = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 # %%
 
