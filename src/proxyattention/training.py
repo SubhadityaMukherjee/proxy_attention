@@ -91,7 +91,7 @@ def reset_params(model):
 def choose_network(config):
     # vit_tiny_patch16_224.augreg_in21k_ft_in1k
     if config["model"] == "vision_transformer":
-        config["model"] = "vit_tiny_patch16_224.augreg_in21k_ft_in1k"
+        config["model"] = "vit_small_patch32_224"
     # Define the number of classes
     model = timm.create_model(
         config["model"],
@@ -164,7 +164,7 @@ def train_model(
         target_layers = model.features[-1]
     elif config["model"] == "mnasnet1_0":
         target_layers = model.layers[-1]
-    elif config["model"] == "ViT":
+    elif config["model"] == "vit_small_patch32_224":
         target_layers = model.blocks[-1].norm1
     elif config["model"] == "SwinT":
         target_layers = model.layers[-1].blocks[-1].norm1
@@ -429,7 +429,7 @@ def hyperparam_tune(config):
             mode="min",
             scheduler=scheduler,
             # search_alg=OptunaSearch(),
-            max_concurrent_trials=5,
+            max_concurrent_trials=2,
         ),
         run_config=ray.air.RunConfig(progress_reporter=reporter),
         param_space=config,
