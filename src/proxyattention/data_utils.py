@@ -17,7 +17,6 @@ from torch.utils.data import Dataset
 import random
 
 from .meta_utils import get_files
-os.environ["TORCH_HOME"] = "/media/hdd/Datasets/"
 cudnn.benchmark = True
 
 # %%

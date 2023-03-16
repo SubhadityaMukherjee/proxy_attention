@@ -136,3 +136,5 @@ events.out*
 *.tfrecord
 runs/
 *.pkl
+results/
+results/*

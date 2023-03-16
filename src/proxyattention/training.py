@@ -50,15 +50,10 @@ from .meta_utils import get_files, save_pickle, read_pickle
 
 # sns.set()
 
-os.environ["TORCH_HOME"] = "/mnt/e/Datasets/"
 cudnn.benchmark = True
 
 # %%
 
-dataset_info = {
-    "asl": {"path": Path("/mnt/e/Datasets/asl/asl_alphabet_train/asl_alphabet_train") , "name_fn": get_parent_name},
-    "imagenette": {"path": Path("/mnt/e/Datasets/imagenette2-320/train") , "name_fn": get_parent_name},
-}
 
 
 dict_decide_change = {
@@ -89,7 +84,6 @@ def reset_params(model):
 
 #TODO find some models to use from the repo
 def choose_network(config):
-    # vit_tiny_patch16_224.augreg_in21k_ft_in1k
     if config["model"] == "vision_transformer":
         config["model"] = "vit_small_patch32_224"
     # Define the number of classes
@@ -352,6 +346,11 @@ def setup_train_round(config, proxy_step=False, num_epochs=1, load_check = None)
     model_ft = choose_network(config)
     criterion = nn.CrossEntropyLoss()
 
+    # Check this as well
+    if torch.cuda.device_count() > 1:
+        print("Multi GPU : ", torch.cuda.device_count(), "GPUs")
+        model_ft = nn.DataParallel(model_ft)
+
     # Observe that all parameters are being optimized
     #TODO Fix this for tranasfer learning . Reduce rate
     # if config["transfer_imagenet"] == True:
@@ -381,11 +380,11 @@ def setup_train_round(config, proxy_step=False, num_epochs=1, load_check = None)
 def train_proxy_steps(config):
     assert torch.cuda.is_available()
 
-    fname_start = f'/mnt/e/CODE/Github/improving_robotics_datasets/src/runs/{config["ds_name"]}_{config["experiment_name"]}+{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}_ps-{str(config["proxy_steps"])}_gradient-{str(config["gradient_method"])}_px-{str(config["pixel_replacement_method"])}-subs-{str(config["change_subset_attention"])}_pt-{str(config["proxy_threshold"])}_cs-{str(config["clear_every_step"])}'
+    fname_start = f'{config["main_run_dir"]}{config["ds_name"]}_{config["experiment_name"]}+{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}_ps-{str(config["proxy_steps"])}_gradient-{str(config["gradient_method"])}_px-{str(config["pixel_replacement_method"])}-subs-{str(config["change_subset_attention"])}_pt-{str(config["proxy_threshold"])}_cs-{str(config["clear_every_step"])}'
 
 
-    config["ds_path"] = dataset_info[config["ds_name"]]["path"]
-    config["name_fn"] = dataset_info[config["ds_name"]]["name_fn"]
+    config["ds_path"] = config["dataset_info"][config["ds_name"]]["path"]
+    config["name_fn"] = config["dataset_info"][config["ds_name"]]["name_fn"]
 
 
     clear_proxy_images(config=config)
@@ -427,7 +426,7 @@ def hyperparam_tune(config):
         tune_config=tune.TuneConfig(
             metric="loss",
             mode="min",
-            scheduler=scheduler,
+            # scheduler=scheduler,
             # search_alg=OptunaSearch(),
             max_concurrent_trials=2,
         ),
