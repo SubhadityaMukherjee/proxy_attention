@@ -61,11 +61,10 @@ from torchvision.utils import save_image
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
-
+print("Done imports")
 
 # sns.set()
 
-os.environ["TORCH_HOME"] = "/mnt/e/Datasets/"
 
 # %%
 # Config
@@ -129,11 +128,12 @@ config = {
     "proxy_threshold": tune.grid_search([np.random.random() for _ in range(50)]),
     # "proxy_image_weight" : tune.loguniform(0.1, 0.8),
     # "proxy_image_weight" : tune.loguniform(0.1, 0.8),
-    "proxy_image_weight" : 0.4,
+    # "proxy_image_weight" : 0.4,
+    "proxy_image_weight" : tune.grid_search([0.1, 0.2, 0.4, 0.8, 0.95]),
     "pixel_replacement_method": tune.grid_search(["blended"]), 
     "model": tune.grid_search(["resnet18"]),
-    # "proxy_steps": tune.grid_search([[10,"p",10], [21]]),
-    "proxy_steps": tune.grid_search([[10,"p",10]]),
+    "proxy_steps": tune.grid_search([[10,"p",10], [21]]),
+    # "proxy_steps": tune.grid_search([[10,"p",10]]),
     # "proxy_steps": tune.grid_search([[1, "p"]]),
     "load_proxy_data": False,
     "gradient_method": "gradcamplusplus",
@@ -163,22 +163,37 @@ config = {
 #     "load_proxy_data": False,
 # }
 
+computer_choice = "pc"
+# pc, mac, cluster
 
 # Make dirs
+if computer_choice == "pc":
+    main_run_dir = "/mnt/e/CODE/Github/improving_robotics_datasets/src/runs/"
+    main_ds_dir = "/mnt/e/Datasets/"
+    config["device"] = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+elif computer_choice == "mac":
+    main_run_dir = "/Users/eragon/Documents/CODE/Github/improving_robotics_datasets/src/runs/"
+    main_ds_dir = "/Users/eragon/Documents/CODE/Datasets/"
+    config["device"] = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+
+os.environ["TORCH_HOME"] = main_ds_dir
+dataset_info = {
+    "asl": {"path": Path(f"{main_ds_dir}asl/asl_alphabet_train/asl_alphabet_train") , "name_fn": proxyattention.data_utils.get_parent_name},
+    "imagenette": {"path": Path(f"{main_ds_dir}/imagenette2-320/train") , "name_fn": proxyattention.data_utils.get_parent_name},
+}
+
+
 logging.info("Directories made/checked")
-os.makedirs(f"/mnt/e/CODE/Github/improving_robotics_datasets/src/runs/", exist_ok=True)
-fname_start = f'/mnt/e/CODE/Github/improving_robotics_datasets/src/runs/{config["ds_name"]}_{config["experiment_name"]}+{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}_ps-{str(config["proxy_steps"])}'
+os.makedirs(main_run_dir, exist_ok=True)
+fname_start = f'{main_run_dir}{config["ds_name"]}_{config["experiment_name"]}+{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}_ps-{str(config["proxy_steps"])}'
 
 config["fname_start"] = fname_start
+config["dataset_info"] = dataset_info
+config["main_run_dir"] = main_run_dir
 
 logging.basicConfig(filename=fname_start, encoding="utf-8", level=logging.DEBUG)
 logging.info(f"[INFO] : File name = {fname_start}")
 print(f"[INFO] : File name = {fname_start}")
-
-#torch.backends.mps.is_available()
-config["device"] = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-# %%
-
 #%%
 
 proxyattention.training.hyperparam_tune(config=config)
