@@ -58,10 +58,13 @@ def process_runs(main_path):
     all_files = get_event_files(main_path=main_path)
     all_dict = {}
     for files in tqdm(all_files, total=len(all_files)):
-        event_acc = EventAccumulator(files)
-        event_acc.Reload()
-        temp_dict = process_event_acc(event_acc)
-        all_dict[files] = temp_dict
+        try:
+            event_acc = EventAccumulator(files)
+            event_acc.Reload()
+            temp_dict = process_event_acc(event_acc)
+            all_dict[files] = temp_dict
+        except IndexError:
+            pass
     return pd.DataFrame.from_records(all_dict).T.reset_index()
 
 

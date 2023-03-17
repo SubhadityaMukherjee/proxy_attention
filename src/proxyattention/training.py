@@ -36,10 +36,12 @@ from pytorch_grad_cam.utils.image import (
     preprocess_image,
     show_cam_on_image,
 )
-from ray import tune
-from ray.tune import CLIReporter
-from ray.tune.schedulers import ASHAScheduler
-from ray.tune.search.optuna import OptunaSearch
+# from ray import tune
+# from ray.tune import CLIReporter
+# from ray.tune.schedulers import ASHAScheduler
+# from ray.tune.search.optuna import OptunaSearch
+import optuna
+from optuna.storages import RetryFailedTrialCallback
 from torch.optim import lr_scheduler
 from torch.utils.tensorboard import SummaryWriter
 from torchvision import transforms
@@ -47,12 +49,20 @@ from tqdm import tqdm
 
 from .data_utils import clear_proxy_images, create_dls, create_folds, get_parent_name
 from .meta_utils import get_files, save_pickle, read_pickle
+import time
 
 # sns.set()
 
 cudnn.benchmark = True
 
 # %%
+set_batch_size_dict = {
+    "vgg16": 16,
+    "vit_base_patch16_224": 16,
+    "resnet18": 16, 
+    "resnet50" : 16
+}
+
 
 
 
@@ -121,6 +131,7 @@ def perform_proxy_step(cam, input_wrong, config):
 
 
 def train_model(
+    trial, 
     model,
     criterion,
     optimizer,
@@ -154,14 +165,15 @@ def train_model(
         target_layers = [model.layer4[-1].conv2]
     elif config["model"] == "FasterRCNN":
         target_layers = model.backbone
-    elif config["model"] == "VGG" or config["model"] == "densenet161":
-        target_layers = model.features[-1]
+    elif config["model"] == "vgg16" or config["model"] == "densenet161":
+        target_layers = [model.features[-3]]
     elif config["model"] == "mnasnet1_0":
         target_layers = model.layers[-1]
-    elif config["model"] == "vit_small_patch32_224":
-        target_layers = model.blocks[-1].norm1
-    elif config["model"] == "SwinT":
-        target_layers = model.layers[-1].blocks[-1].norm1
+    # elif config["model"] == "vit_small_patch32_224":
+        # target_layers = [model.norm]
+    elif config["model"] == "vit_base_patch16_224":
+        target_layers = [model.norm]
+        # target_layers = model.layers[-1].blocks[-1].norm1
     else:
         raise ValueError("Unsupported model type!")
 
@@ -208,7 +220,7 @@ def train_model(
                         _, preds = torch.max(outputs, 1)
                         loss = criterion(outputs, labels)
                         if proxy_step == True and phase == "train":
-                            logging.info("[INFO] : Proxy")
+                            # logging.info("[INFO] : Proxy")
                             wrong_indices = (labels != preds).nonzero()
                             # input_wrong = input_wrong.stack(inputs[wrong_indices])
                             input_wrong.extend(inputs[wrong_indices])
@@ -309,17 +321,18 @@ def train_model(
             if phase == "val":
                 writer.add_scalar("Loss/Val", epoch_loss, config["global_run_count"])
                 writer.add_scalar("Acc/Val", epoch_acc, config["global_run_count"])
-                with tune.checkpoint_dir(config["global_run_count"]) as checkpoint_dir:
-                    save_path = Path(config["fname_start"]) / "checkpoint"
-                    config["save_path"] = save_path
-                    torch.save({
-                        'epoch': config["global_run_count"],
-                        'model_state_dict': model.state_dict(),
-                        'optimizer_state_dict': optimizer.state_dict(),
-                        'loss': epoch_loss,
-                    }, save_path)
+                save_path = Path(config["fname_start"]) / "checkpoint"
+                config["save_path"] = save_path
+                torch.save({
+                    'config' : config,
+                    'epoch': config["global_run_count"],
+                    'model_state_dict': model.state_dict(),
+                    'optimizer_state_dict': optimizer.state_dict(),
+                    'loss': epoch_loss,
+                }, save_path)
 
-                tune.report(loss=epoch_loss, accuracy=epoch_acc)
+                trial.report(epoch_acc, config["global_run_count"])
+                config["final_acc"] = epoch_acc
 
             # deep copy the model
             if phase == "val" and epoch_acc > best_acc:
@@ -336,7 +349,7 @@ def train_model(
 
 # %%
 #TODO Better transfer learning params. more trainable layers
-def setup_train_round(config, proxy_step=False, num_epochs=1, load_check = None):
+def setup_train_round(trial, config, proxy_step=False, num_epochs=1, load_check = None):
     # Data part
     train, val = create_folds(config)
     image_datasets, dataloaders, dataset_sizes = create_dls(train, val, config)
@@ -364,6 +377,7 @@ def setup_train_round(config, proxy_step=False, num_epochs=1, load_check = None)
     # exp_lr_scheduler = lr_scheduler.ReduceLROnPlateau(optimizer_ft, verbose = True)
     exp_lr_scheduler = lr_scheduler.CosineAnnealingLR(optimizer_ft, len(dataloaders["train"]))
     train_model(
+        trial, 
         model_ft,
         criterion,
         optimizer_ft,
@@ -377,18 +391,33 @@ def setup_train_round(config, proxy_step=False, num_epochs=1, load_check = None)
     )
 
 
-def train_proxy_steps(config):
+def train_proxy_steps(trial, config):
     assert torch.cuda.is_available()
+    torch.cuda.empty_cache()
+    # tune.utils.wait_for_gpu(target_util = 0.03)
+    # time.sleep(60)
+    config["change_subset_attention"] = trial.suggest_float("change_subset_attention", 0.1, 1.0)
+    config["proxy_image_weight"] = trial.suggest_float("proxy_image_weight", 0.1, 1.0)
+    config["proxy_threshold"] = trial.suggest_float("proxy_threshold", 0.1, 1.0)
+    config["model"] = trial.suggest_categorical("model", ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"])
+    config["gradient_method"] = trial.suggest_categorical("gradient_method", ["gradcamplusplus", "gradcam", "eigencam"])
+    config["ds_name"] = trial.suggest_categorical("ds_name", ["asl", "imagenette"])
 
-    fname_start = f'{config["main_run_dir"]}{config["ds_name"]}_{config["experiment_name"]}+{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}_ps-{str(config["proxy_steps"])}_gradient-{str(config["gradient_method"])}_px-{str(config["pixel_replacement_method"])}-subs-{str(config["change_subset_attention"])}_pt-{str(config["proxy_threshold"])}_cs-{str(config["clear_every_step"])}'
+    fname_start = f'{config["main_run_dir"]}{config["experiment_name"]}_{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}'
+    config["fname_start"] = fname_start
+
+
+    # fname_start = f'{config["main_run_dir"]}{config["ds_name"]}_{config["experiment_name"]}+{datetime.datetime.now().strftime("%d%m%Y_%H:%M:%S")}_ps-{str(config["proxy_steps"])}_gradient-{str(config["gradient_method"])}_px-{str(config["pixel_replacement_method"])}-subs-{str(config["change_subset_attention"])}_pt-{str(config["proxy_threshold"])}_cs-{str(config["clear_every_step"])}'
 
 
     config["ds_path"] = config["dataset_info"][config["ds_name"]]["path"]
     config["name_fn"] = config["dataset_info"][config["ds_name"]]["name_fn"]
 
+    config["batch_size"] = set_batch_size_dict[config["model"]]
+
 
     clear_proxy_images(config=config)
-    config["fname_start"] = fname_start
+    # config["fname_start"] = fname_start
     config["global_run_count"] = 0
     
 
@@ -396,46 +425,15 @@ def train_proxy_steps(config):
         load_check = i > 0
         if step == "p":
             # config["load_proxy_data"] = True
-            setup_train_round(config=config, proxy_step=True, num_epochs=1, load_check = load_check)
+            setup_train_round(trial, config=config, proxy_step=True, num_epochs=1, load_check = load_check)
         else:
             # config["load_proxy_data"] = False
-            setup_train_round(config=config, proxy_step=False, num_epochs=step, load_check = load_check)
+            setup_train_round(trial, config=config, proxy_step=False, num_epochs=step, load_check = load_check)
 
         if config["clear_every_step"] == True:
             clear_proxy_images(config=config)  # Clean directory
 
     if config["clear_every_step"] == False:
         clear_proxy_images(config=config)  # Clean directory
-
-
-def hyperparam_tune(config):
-    ray.init()
-    scheduler = ASHAScheduler(
-        max_t=30,
-        grace_period=10,
-        reduction_factor=2,
-    )
-
-    reporter = CLIReporter(metric_columns=["loss", "accuracy", "training_iteration"])
-
-    tuner = tune.Tuner(
-        tune.with_resources(
-            tune.with_parameters(train_proxy_steps),
-            resources={"cpu": config["num_cpu"], "gpu": config["num_gpu"],},
-        ),
-        tune_config=tune.TuneConfig(
-            metric="loss",
-            mode="min",
-            # scheduler=scheduler,
-            # search_alg=OptunaSearch(),
-            max_concurrent_trials=2,
-        ),
-        run_config=ray.air.RunConfig(progress_reporter=reporter),
-        param_space=config,
-    )
-    result = tuner.fit()
-
-
-    df_res = result.get_dataframe()
-    df_res.to_csv(Path(config["fname_start"] + "result_log.csv"))
-    # best_trial = result.get_best_result("loss", "min", "last")
+    
+    return config["final_acc"]
