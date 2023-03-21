@@ -155,17 +155,13 @@ def proxy_callback(config, all_wrong_input, all_wrong_input_label):
     # TODO Remove min and batchify
     # chosen_inds = min(config["batch_size"], chosen_inds)
 
-    # config["writer"].add_scalar(
-        # "Number_Chosen", chosen_inds, config["global_run_count"]
-    # )
+    config["writer"].add_scalar(
+        "Number_Chosen", chosen_inds, config["global_run_count"]
+    )
     logging.info(f"{chosen_inds} images chosen to run proxy on")
 
     input_wrong = all_wrong_input[:chosen_inds]
     label_wrong = all_wrong_input_label[:chosen_inds]
-    # new_dls = DataLoader(zip(all_wrong_input, all_wrong_input_label), bs = max(len(all_wrong_input), config["batch_size"]))
-    # print(len(new_dls))
-
-    # for i, (input_wrong, label_wrong) in tqdm(enumerate(new_dls), total = len(new_dls)):
 
     try:
         input_wrong = torch.squeeze(torch.stack(input_wrong, dim=1))

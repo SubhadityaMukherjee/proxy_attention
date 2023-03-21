@@ -56,6 +56,8 @@ from torchvision.utils import save_image
 import optuna
 from optuna.storages import RetryFailedTrialCallback
 
+from fastai.vision.all import *
+
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
@@ -65,39 +67,41 @@ print("Done imports")
 
 
 config = {
-    "experiment_name" : "baseline_run",
-    "image_size" : 224,
-    "batch_size" : 32,
-    "enable_proxy_attention" : True,
-    "transfer_imagenet" : True,
-    "subset_images" : 9000,
-    "pixel_replacement_method" : "blended",
-    "proxy_steps" : [1, "p"],
-    "clear_every_step" : True,
-    "load_proxy_data" : False,
+    "experiment_name": "baseline_run",
+    "image_size": 224,
+    "batch_size": 32,
+    "enable_proxy_attention": True,
+    "transfer_imagenet": True,
+    "subset_images": 8000,
+    "pixel_replacement_method": "blended",
+    "proxy_steps": [1, "p"],
+    "load_proxy_data": False,
 }
 
 # Proxy search space
-# search_space = {
-#     "change_subset_attention" : [0.8, 0.5, 0.2],
-#     # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
-#     "model": ["resnet18", "vgg16", "resnet50"],
-#     "proxy_image_weight" : [0.1, 0.2, 0.4, 0.8, 0.95],
-#     "proxy_threshold": [0.85],
-#     "gradient_method" : ["gradcamplusplus"],
-#     "ds_name" : ["asl", "imagenette", "caltech256"]
-# }
-
-# No proxy search space
 search_space = {
-    "change_subset_attention" : [0.8],
+    "change_subset_attention" : [0.8, 0.5, 0.2],
     # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
-    "model": ["resnet18", "vgg16", "resnet50"],
-    "proxy_image_weight" : [0.1],
+    # "model": ["resnet18", "vgg16", "resnet50"],
+    "model": ["resnet18"],
+    "proxy_image_weight" : [0.1, 0.2, 0.4, 0.8, 0.95],
     "proxy_threshold": [0.85],
     "gradient_method" : ["gradcamplusplus"],
-    "ds_name" : ["asl", "imagenette"]
+    "ds_name" : ["asl", "imagenette", "caltech256"],
+    "clear_every_step": [True, False],
 }
+
+# No proxy search space
+# search_space = {
+#     "change_subset_attention": [0.8],
+#     # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
+#     "model": ["resnet18", "vgg16", "resnet50"],
+#     "proxy_image_weight": [0.1],
+#     "proxy_threshold": [0.85],
+#     "gradient_method": ["gradcamplusplus"],
+#     "ds_name": ["asl", "imagenette"],
+#     "clear_every_step": True,
+# }
 
 
 def get_approx_trial_count(search_space):
@@ -105,6 +109,7 @@ def get_approx_trial_count(search_space):
     for key in search_space.keys():
         total *= len(search_space[key])
     return total
+
 
 logging.info(f"[INFO]: Approx trial count = {get_approx_trial_count(search_space)}")
 
@@ -119,9 +124,18 @@ if computer_choice == "pc":
 
 os.environ["TORCH_HOME"] = main_ds_dir
 dataset_info = {
-    "asl": {"path": Path(f"{main_ds_dir}asl/asl_alphabet_train/asl_alphabet_train") , "name_fn": proxyattention.data_utils.get_parent_name},
-    "imagenette": {"path": Path(f"{main_ds_dir}/imagenette2-320/train") , "name_fn": proxyattention.data_utils.get_parent_name},
-    "caltech256": {"path": Path(f"{main_ds_dir}/caltech256/train") , "name_fn": proxyattention.data_utils.get_parent_name},
+    "asl": {
+        "path": Path(f"{main_ds_dir}asl/asl_alphabet_train/asl_alphabet_train"),
+        "name_fn": proxyattention.data_utils.get_parent_name,
+    },
+    "imagenette": {
+        "path": Path(f"{main_ds_dir}/imagenette2-320/train"),
+        "name_fn": proxyattention.data_utils.get_parent_name,
+    },
+    "caltech256": {
+        "path": Path(f"{main_ds_dir}/caltech256/train"),
+        "name_fn": proxyattention.data_utils.get_parent_name,
+    },
 }
 
 
@@ -132,20 +146,28 @@ config["dataset_info"] = dataset_info
 config["main_run_dir"] = main_run_dir
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     storage = optuna.storages.RDBStorage(
-        "sqlite:///training_save.db",
+        f"sqlite:///{config['experiment_name']}.db",
         heartbeat_interval=1,
         failed_trial_callback=RetryFailedTrialCallback(),
     )
     pruner = optuna.pruners.NopPruner()
 
-    sampler=optuna.samplers.GridSampler(search_space)
+    sampler = optuna.samplers.GridSampler(search_space)
     study = optuna.create_study(
-        storage=storage, study_name=config["experiment_name"], direction="maximize", load_if_exists=True, pruner=pruner, sampler=sampler
+        storage=storage,
+        study_name=config["experiment_name"],
+        direction="maximize",
+        load_if_exists=True,
+        pruner=pruner,
+        sampler=sampler,
     )
 
-    
-    study.optimize(partial(proxyattention.training.train_single_round, config = config), n_trials=None, timeout=None)
+    study.optimize(
+        partial(proxyattention.training.train_single_round, config=config),
+        n_trials=None,
+        timeout=None,
+    )
 
 # %%
