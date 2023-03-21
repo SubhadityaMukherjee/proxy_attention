@@ -15,8 +15,8 @@ import os
 
 main_ds_dir = "/mnt/e/Datasets/"
 os.environ["TORCH_HOME"] = main_ds_dir
-# model_chosen = "vit_base_patch16_224"
-model_chosen = "resnet50"
+model_chosen = "vit_base_patch16_224"
+# model_chosen = "vgg16"
 model = timm.create_model(model_chosen, pretrained = True, num_classes = 256)
 # print(model.norm)
 # print(model.layer4[-1].conv2)
@@ -62,4 +62,4 @@ def get_batch_size(
     return batch_size
 
 
-print(get_batch_size(model, "cuda:0", input_shape = (3, 224, 224), output_shape = (256,), dataset_size = 8000))
+print(get_batch_size(model, "cuda:0", input_shape = (3, 224, 224), output_shape = (256,), dataset_size = 9000))
