@@ -14,7 +14,10 @@ from albumentations.pytorch import ToTensorV2
 from sklearn import preprocessing
 from sklearn.model_selection import StratifiedKFold
 from torch.utils.data import Dataset
+# from PIL import Image
+from torchvision.io import read_image
 import random
+from tqdm import tqdm
 
 from .meta_utils import get_files
 cudnn.benchmark = True
@@ -38,8 +41,12 @@ class ImageClassDs(Dataset):
 
     def __getitem__(self, index):
         im_path = self.df.iloc[index]["image_id"]
-        x = cv2.imread(str(im_path), cv2.IMREAD_COLOR)
+        try:
+            x = cv2.imread(str(im_path), cv2.IMREAD_COLOR)
+        except:
+            print(im_path)
         x = cv2.cvtColor(x, cv2.COLOR_BGR2RGB)
+        # x = Image(im_path)
 
         if self.transforms:
             x = self.transforms(image=x)["image"]
@@ -68,6 +75,7 @@ def create_folds(config):
         all_files = all_files[: config["subset_images"]]
     if config["load_proxy_data"] is False:
         all_files = [x for x in all_files if "proxy" not in str(x)]
+    # all_files = [x for x in tqdm(all_files, total = len(all_files), desc = "Verifying image files") if Image.verify(x)]
 
     # Put them in a data frame for encoding
     df = pd.DataFrame.from_dict(
@@ -152,13 +160,13 @@ def create_dls(train, val, config):
             image_datasets["train"],
             batch_size=config["batch_size"],
             shuffle=True,
-            num_workers=5,
+            num_workers=3,
         ),
         "val": torch.utils.data.DataLoader(
             image_datasets["val"],
             batch_size=config["batch_size"],
             shuffle=False,
-            num_workers=5,
+            num_workers=3,
         ),
     }
 

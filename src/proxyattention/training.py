@@ -49,19 +49,21 @@ from .meta_utils import get_files, save_pickle, read_pickle
 import time
 import gc
 import copy
+import argparse as ap
+import ast
 
 # sns.set()
 
 cudnn.benchmark = True
 logging.basicConfig(level=logging.ERROR)
-
+#%%
 
 # %%
 set_batch_size_dict = {
-    "vgg16": 64,
+    "vgg16": 32,
     "vit_base_patch16_224": 32,
-    "resnet18": 64,
-    "resnet50": 64,
+    "resnet18": 32,
+    "resnet50": 32,
 }
 
 
@@ -102,7 +104,8 @@ def choose_network(config):
         config["model"],
         pretrained=config["transfer_imagenet"],
         num_classes=config["num_classes"],
-    )
+    ).to(config["device"])
+    model.train()
     return model
 
 
@@ -111,7 +114,7 @@ def choose_network(config):
 
 def proxy_one_batch(config, input_wrong):
     grads = config["cam"](input_tensor=input_wrong, targets=None)
-    grads = torch.Tensor(grads).to("cuda").unsqueeze(1).expand(-1, 3, -1, -1)
+    grads = torch.Tensor(grads).to(config["device"]).unsqueeze(1).expand(-1, 3, -1, -1)
     normalized_inps = inv_normalize(input_wrong)
     if config["pixel_replacement_method"] != "blended":
         return torch.where(
@@ -524,7 +527,7 @@ def setup_train_round(
     train, val = create_folds(config)
     image_datasets, dataloaders, dataset_sizes = create_dls(train, val, config)
     class_names = image_datasets["train"].classes
-    # config["num_classes"] = len(config["label_map"].keys())
+    config["num_classes"] = len(config["label_map"].keys())
     config["dataset_sizes"] = dataset_sizes
 
     config["criterion"] = nn.CrossEntropyLoss()
@@ -566,12 +569,21 @@ def setup_train_round(
         total=num_epochs,
     )
     
-    for _ in pbar: one_epoch(config, pbar, model, optimizer,dataloaders)
+    prof = torch.profiler.profile(
+        schedule=torch.profiler.schedule(wait=1, warmup=1, active=3, repeat=1),
+        on_trace_ready=torch.profiler.tensorboard_trace_handler(config["fname_start"]),
+        record_shapes=True,
+        with_stack=True)
+    prof.start()
+    for _ in pbar:
+        one_epoch(config, pbar, model, optimizer,dataloaders)
+        prof.step()
+    prof.stop()
 
     # Clean up after training
-    del model, dataloaders, optimizer, image_datasets, train, val
+    del model
     torch.cuda.empty_cache()
-    gc.collect()
+    # gc.collect()
     print("GPU freed")
 
 
@@ -602,7 +614,7 @@ def train_proxy_steps( config):
 
     config["ds_path"] = config["dataset_info"][config["ds_name"]]["path"]
     config["name_fn"] = config["dataset_info"][config["ds_name"]]["name_fn"]
-    config["num_classes"] = config["dataset_info"][config["ds_name"]]["num_classes"]
+    # config["num_classes"] = config["dataset_info"][config["ds_name"]]["num_classes"]
 
     config["batch_size"] = set_batch_size_dict[config["model"]]
     # config["num_accum"] = 4 #gradient accum
@@ -650,6 +662,9 @@ def train_proxy_steps( config):
 
     return config["final_acc"]
 
-
+# ags = ap.ArgumentParser()
+# ags.add_argument("-c")
+# aps = ags.parse_args()
+# train_proxy_steps(ast.literal_eval(aps.c))
 def train_single_round(config):
     return train_proxy_steps(config)

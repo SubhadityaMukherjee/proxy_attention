@@ -65,7 +65,8 @@ print("Done imports")
 
 
 config = {
-    "experiment_name": "baseline_run",
+    # "experiment_name": "baseline_run",
+    "experiment_name": "ignore",
     "image_size": 224,
     "batch_size": 32,
     "enable_proxy_attention": True,
@@ -73,7 +74,7 @@ config = {
     "subset_images": 9000,
     "pixel_replacement_method": "blended",
     # "proxy_steps": [1, "p"],
-    "proxy_steps": [20],
+    "proxy_steps": [3],
     "load_proxy_data": False,
     "proxy_step": False
 }
@@ -95,7 +96,8 @@ config = {
 search_space = {
     "change_subset_attention": [0.8],
     # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
-    "model": ["resnet18", "vgg16", "resnet50"],
+    # "model": ["vgg16", "resnet50", "vit_base_patch16_224"],
+    "model" : ["resnet18"],
     "proxy_image_weight": [0.1],
     "proxy_threshold": [0.85],
     "gradient_method": ["gradcamplusplus"],
@@ -155,8 +157,8 @@ if __name__ == "__main__":
     resume_broken = False
 
     if resume_broken == True:
-        i, combinations = proxyattention.meta_utils.read_pickle("combination_train.pkl")
-        combinations[i::]
+        i, combinations = proxyattention.meta_utils.read_pickle("combination_train.pkl")[0]
+        combinations = combinations[i::]
 
     else:
         search_space_values = list(search_space.values())
