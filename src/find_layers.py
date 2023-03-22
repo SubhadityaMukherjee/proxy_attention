@@ -13,7 +13,7 @@ from time import sleep
 import timm
 import os
 
-main_ds_dir = "/mnt/e/Datasets/"
+main_ds_dir = "/media/eragon/HDD/Datasets/"
 os.environ["TORCH_HOME"] = main_ds_dir
 model_chosen = "vit_base_patch16_224"
 # model_chosen = "vgg16"
@@ -44,14 +44,21 @@ def get_batch_size(
             batch_size = batch_size // 2
             break
         try:
+
+            scaler = torch.cuda.amp.GradScaler()
             for _ in tqdm(range(num_iterations), total = num_iterations):
+
                 # dummy inputs and targets
                 inputs = torch.rand(*(batch_size, *input_shape), device=device)
                 targets = torch.rand(*(batch_size, *output_shape), device=device)
-                outputs = model(inputs)
-                loss = F.mse_loss(targets, outputs)
-                loss.backward()
-                optimizer.step()
+                with torch.cuda.amp.autocast():
+                    outputs = model(inputs)
+                    loss = F.mse_loss(targets, outputs)
+                # loss.backward()
+
+                scaler.scale(loss).backward()
+                scaler.step(optimizer)
+                scaler.update()
                 optimizer.zero_grad()
             batch_size *= 2
         except RuntimeError:

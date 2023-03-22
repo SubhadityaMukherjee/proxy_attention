@@ -159,7 +159,7 @@ def create_dls(train, val, config):
         "train": torch.utils.data.DataLoader(
             image_datasets["train"],
             batch_size=config["batch_size"],
-            shuffle=True,
+            shuffle=False,
             num_workers=3,
         ),
         "val": torch.utils.data.DataLoader(

@@ -1,35 +1,16 @@
+import torch
+from torch.utils.data import DataLoader, TensorDataset
 
-import itertools
+def process_batches(tensors_list, batch_size, tx = None):
+    # dataset = TensorDataset(torch.Tensor(tensors_list), torch.Tensor([1 for _ in range(len(tensors_list))]))
+    # dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
-search_space = {
-    "change_subset_attention": [0.8],
-    # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
-    "model": ["resnet18", "vgg16", "resnet50"],
-    "proxy_image_weight": [0.1],
-    "proxy_threshold": [0.85],
-    "gradient_method": ["gradcamplusplus"],
-    "ds_name": ["asl", "imagenette", "caltech256"],
-    # "ds_name": ["caltech256"],
-    "clear_every_step": [True],
-}
+    # for batch in dataloader:
+    #     print(batch)
+    #     print(batch.size())
+    for i in range(0, len(tensors_list), batch_size):
+        print(len(tensors_list[i:i+batch_size]))
+        
+test_tensor = [torch.rand(10, 3, 224, 224) for x in range(10)]
 
-search_space = {
-    "change_subset_attention" : [0.8, 0.5, 0.2],
-    # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
-    # "model": ["resnet18", "vgg16", "resnet50"],
-    "model": ["resnet18"],
-    "proxy_image_weight" : [0.1, 0.2, 0.4, 0.8, 0.95],
-    "proxy_threshold": [0.85],
-    "gradient_method" : ["gradcamplusplus"],
-    "ds_name" : ["asl", "imagenette", "caltech256"],
-    "clear_every_step": [True, False],
-}
-
-
-# Get all combinations of the values from the search_space dictionary
-search_space_values = list(search_space.values())
-combinations = list(itertools.product(*search_space_values))
-config = {}
-for combination in combinations:
-    params = dict(zip(search_space.keys(), combination))
-    
+process_batches(test_tensor, 3)

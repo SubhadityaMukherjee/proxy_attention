@@ -36,21 +36,53 @@ def process_event_acc(event_acc):
     for tag in all_tags.keys():
         if tag == "scalars":
             for subtag in all_tags[tag]:
-                temp_dict[subtag] = [tag[-1] for tag in event_acc.Scalars(tag=subtag)][
+                # print(subtag)
+                try:
+                    temp_dict[subtag] = [tag[-1] for tag in event_acc.Scalars(tag=subtag)][
                     -1
-                ]
+                ].value
+                except:
+                    temp_dict[subtag] = [tag for tag in event_acc.Scalars(tag=subtag)][
+                    -1
+                ].value
+
         if tag == "tensors":
             for subtag in all_tags[tag]:
+                # temp_tags = []
+                # for tag in event_acc.Tensors(tag = subtag):
+                #     try:
+                #         temp_tags.append(tag[-1])
+                #     except TypeError:
+                #         temp_tags.append(tag)
+                # try:
+                #     temp = temp_tags[0].tensor_proto.string_val
+                #     print(temp)
+                # except AttributeError:
+                #     print(temp_tags[-1])
+                # try:
                 temp_dict[subtag.replace("/text_summary", "")] = (
-                    [tag[-1] for tag in event_acc.Tensors(tag=subtag)][0]
+                    [tag.tensor_proto for tag in event_acc.Tensors(tag=subtag)][0]
                     .string_val[0]
                     .decode("ascii")
                 )
+                # except:
+                #     temp_dict[subtag.replace("/text_summary", "")] = (
+                #         [tag for tag in event_acc.Tensors(tag=subtag)][0]
+                #         .string_val[0]
+                #         .decode("ascii")
+                #     )
+
         if tag == "images":
             for subtag in all_tags[tag]:
-                temp_dict[subtag] = Image.open(
-                    BytesIO(event_acc.Images(subtag)[1].encoded_image_string)
-                )
+                try:
+                    temp_dict[subtag] = Image.open(
+                        BytesIO(event_acc.Images(subtag)[1].encoded_image_string)
+                    )
+                except:
+                    temp_dict[subtag] = Image.open(
+                        BytesIO(event_acc.Images(subtag).encoded_image_string)
+                    )
+
     return temp_dict
 
 

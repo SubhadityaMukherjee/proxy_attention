@@ -1,6 +1,6 @@
 # %%
 # Imports
-
+import torchsnooper
 import matplotlib
 import matplotlib.pyplot as plt
 
@@ -53,8 +53,7 @@ from functools import partial
 import proxyattention
 from PIL import Image
 from torchvision.utils import save_image
-import optuna
-from optuna.storages import RetryFailedTrialCallback
+import subprocess
 
 import logging
 
@@ -65,8 +64,8 @@ print("Done imports")
 
 
 config = {
-    # "experiment_name": "baseline_run",
-    "experiment_name": "ignore",
+    "experiment_name": "baseline_run",
+    # "experiment_name": "ignore",
     "image_size": 224,
     "batch_size": 32,
     "enable_proxy_attention": True,
@@ -74,9 +73,12 @@ config = {
     "subset_images": 9000,
     "pixel_replacement_method": "blended",
     # "proxy_steps": [1, "p"],
-    "proxy_steps": [3],
+    "proxy_steps": [20],
+    # "proxy_steps": [4],
     "load_proxy_data": False,
-    "proxy_step": False
+    "proxy_step": False,
+    "log_every": 2
+
 }
 
 # Proxy search space
@@ -96,13 +98,14 @@ config = {
 search_space = {
     "change_subset_attention": [0.8],
     # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
-    # "model": ["vgg16", "resnet50", "vit_base_patch16_224"],
-    "model" : ["resnet18"],
+    "model": ["resnet18","vgg16", "resnet50", "vit_base_patch16_224"],
+    # "model" : ["vgg16"],
     "proxy_image_weight": [0.1],
     "proxy_threshold": [0.85],
     "gradient_method": ["gradcamplusplus"],
-    "ds_name": ["asl", "imagenette", "caltech256"],
-    # "ds_name": ["caltech256"],
+    # "ds_name": ["asl", "imagenette", "caltech256"],
+    "ds_name": ["asl", "imagenette"],
+    # "ds_name": ["imagenette"],
     "clear_every_step": [True],
 }
 
@@ -121,8 +124,8 @@ computer_choice = "pc"
 
 # Make dirs
 if computer_choice == "pc":
-    main_run_dir = "/mnt/e/CODE/Github/improving_robotics_datasets/src/runs/"
-    main_ds_dir = "/mnt/e/Datasets/"
+    main_run_dir = "/run/media/eragon/HDD/CODE/Github/improving_robotics_datasets/src/runs/"
+    main_ds_dir = "/run/media/eragon/HDD/Datasets/"
     config["device"] = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 os.environ["TORCH_HOME"] = main_ds_dir
@@ -168,7 +171,7 @@ if __name__ == "__main__":
         proxyattention.meta_utils.save_pickle((i, combinations), fname = "combination_train.pkl")
         params = dict(zip(search_space.keys(), combination))
         config = {**config, ** params}
-        print(config)
-        proxyattention.training.train_single_round(config=config)
+        proxyattention.meta_utils.save_pickle(config, fname= "current_config.pkl")
+        subprocess.run(["python", "./proxyattention/training.py"])
 
 # %%
