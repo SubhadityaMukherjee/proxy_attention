@@ -1,6 +1,5 @@
 # %%
 # Imports
-import torchsnooper
 import matplotlib
 import matplotlib.pyplot as plt
 
@@ -65,16 +64,12 @@ print("Done imports")
 
 config = {
     "experiment_name": "baseline_run",
-    # "experiment_name": "ignore",
     "image_size": 224,
     "batch_size": 32,
     "enable_proxy_attention": True,
     "transfer_imagenet": True,
     "subset_images": 9000,
     "pixel_replacement_method": "blended",
-    # "proxy_steps": [1, "p"],
-    "proxy_steps": [20],
-    # "proxy_steps": [4],
     "load_proxy_data": False,
     "proxy_step": False,
     "log_every": 2
@@ -107,6 +102,7 @@ search_space = {
     "ds_name": ["asl", "imagenette"],
     # "ds_name": ["imagenette"],
     "clear_every_step": [True],
+    "proxy_steps": [20],
 }
 
 
@@ -171,7 +167,7 @@ if __name__ == "__main__":
         proxyattention.meta_utils.save_pickle((i, combinations), fname = "combination_train.pkl")
         params = dict(zip(search_space.keys(), combination))
         config = {**config, ** params}
-        proxyattention.meta_utils.save_pickle(config, fname= "current_config.pkl")
+        proxyattention.meta_utils.save_pickle(config, fname= f"current_config.pkl")
         subprocess.run(["python", "./proxyattention/training.py"])
 
 # %%

@@ -5,6 +5,13 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[a4paper,11pt]{book}
+\usepackage{lipsum}
+\usepackage[Lenny]{fncychap}
+\ChNameUpperCase
+\ChTitleUpperCase
+\ChNumVar{\fontsize{40}{42}\usefont{OT1}{ptm}{m}{n}\selectfont}
+% \ChTitleVar{\Large\sc}
+
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
@@ -21,6 +28,22 @@
 \usepackage{pslatex}	% Use PostScript Fonts
 \usepackage{fancyhdr} % Use headers
 \usepackage{float}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Source: http://en.wikibooks.org/wiki/LaTeX/Hyperlinks %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+% \usepackage{biblatex}
+
+\usepackage[
+	top    = 1.5cm,
+	bottom = 1.80cm,
+	left   = 2.00cm,
+	right  = 2.00cm,
+	includeheadfoot]{geometry} % Use similar margins to the Word Template
+\setlength{\parindent}{0pt}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -38,6 +61,7 @@
 % 'dedication' environment: To add a dedication paragraph at the start of book %
 % Source: http://www.tug.org/pipermail/texhax/2010-June/015184.html            %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\let\cleardoublepage\clearpage
 \newenvironment{dedication}
 {
    \cleardoublepage
@@ -56,15 +80,15 @@
 % Chapter quote at the start of chapter        %
 % Source: http://tex.stackexchange.com/a/53380 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\makeatletter
-\renewcommand{\@chapapp}{}% Not necessary...
-\newenvironment{chapquote}[2][2em]
-  {\setlength{\@tempdima}{#1}%
-   \def\chapquote@author{#2}%
-   \parshape 1 \@tempdima \dimexpr\textwidth-2\@tempdima\relax%
-   \itshape}
-  {\par\normalfont\hfill--\ \chapquote@author\hspace*{\@tempdima}\par\bigskip}
-\makeatother
+% \makeatletter
+% \renewcommand{\@chapapp}{}% Not necessary...
+% \newenvironment{chapquote}[2][2em]
+%   {\setlength{\@tempdima}{#1}%
+%    \def\chapquote@author{#2}%
+%    \parshape 1 \@tempdima \dimexpr\textwidth-2\@tempdima\relax%
+%    \itshape}
+%   {\par\normalfont\hfill--\ \chapquote@author\hspace*{\@tempdima}\par\bigskip}
+% \makeatother
 
 
 % Define the page styles
@@ -82,10 +106,10 @@
 \fancypagestyle{body}{
     \fancyhf{}
     \fancyhead[C]{\includegraphics[width=.8\textwidth]{images/banner.png}}
-    % \setlength{\headsep}{1pt}
-    % \addtolength{\topmargin}{-45.11401pt}
-    % \setlength{\headheight}{77.11401pt}
-    % \fancyhead[LE,RO]{\thepage}
+    \setlength{\headsep}{1pt}
+    \addtolength{\topmargin}{-45.11401pt}
+    \setlength{\headheight}{77.11401pt}
+    \fancyhead[LE,RO]{\thepage}
     \renewcommand{\headrulewidth}{.8pt}
 
     % \fancyhead[RE,LO]{Chapter \leftmark}
@@ -93,15 +117,33 @@
 }
 
 \fancypagestyle{contents}{
+    % \fancyhf{}
+    % \fancyhead[LE,RO]{\thepage}
+    % \fancyhead[RE,LO]{\leftmark}
     \fancyhf{}
+    \fancyhead[C]{\includegraphics[width=.8\textwidth]{images/banner.png}}
+    \setlength{\headsep}{1pt}
+    \addtolength{\topmargin}{-45.11401pt}
+    \setlength{\headheight}{77.11401pt}
     \fancyhead[LE,RO]{\thepage}
-    \fancyhead[RE,LO]{\leftmark}
+    \renewcommand{\headrulewidth}{.8pt}
+
+
 }
 
 \fancypagestyle{appendix}{
+    % \fancyhf{}
+    % \fancyhead[LE,RO]{\thepage}
+    % \fancyhead[RE,LO]{APPENDICES}
     \fancyhf{}
+    \fancyhead[C]{\includegraphics[width=.8\textwidth]{images/banner.png}}
+    \setlength{\headsep}{1pt}
+    \addtolength{\topmargin}{-45.11401pt}
+    \setlength{\headheight}{77.11401pt}
     \fancyhead[LE,RO]{\thepage}
-    \fancyhead[RE,LO]{APPENDICES}
+    \renewcommand{\headrulewidth}{.8pt}
+
+
 }
 
 \fancypagestyle{acknowledgements}{
@@ -126,7 +168,9 @@
 % % Author
 % \author{\textsc{First-name Last-name}\thanks{\url{www.example.com}}}
 \title{
-    \vspace{1cm}
+    % \vspace{1cm}
+    \centering\includegraphics[width=\textwidth]{images/banner.png}
+    \vspace{5mm}
         {\bf
         {\Huge Proxy Attention : Comparing and Combining Augmentation with Attention\\
         % \vspace{2mm}Som\\
@@ -134,42 +178,52 @@
         }
         \vspace{4mm}Graduation Project Proposal\\(Computational Intelligence and Robotics)\\
         \vspace{4mm}Subhaditya Mukherjee (s4747925)\\Oct 25 2022\\
-        \vspace{10cm}{\LARGE Internal Supervisor(s): S.H. Mohades Kasaei, PhD (Artificial Intelligence, University of Groningen)}\\
+        \vspace{5cm}{\LARGE Internal Supervisor(s): S.H. Mohades Kasaei, PhD (Artificial Intelligence, University of Groningen)}\\
         {\bf {Artificial Intelligence\\University of Groningen, The Netherlands}}
 }
 \date{}
 
-\maketitle
-\thispagestyle{titlepage}
-
-
-
 \begin{document}
 
-\frontmatter
 \maketitle
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Add a dedication paragraph to dedicate your book to someone %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{dedication}
-\end{dedication}
+% \setlength{\headheight}{32pt}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Auto-generated table of contents, list of figures and list of tables %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\thispagestyle{body}
 \tableofcontents
+
+\thispagestyle{body}
 \listoffigures
+
+\thispagestyle{body}
 \listoftables
 
-\mainmatter
-\include{chapters/introduction.tex}
-\include{chapters/background.tex}
-\include{chapters/sota.tex}
-\include{chapters/proposed.tex}
-\include{chapters/implementation.tex}
-\include{chapters/evaluation.tex}
-\include{chapters/conclusions.tex}
-\include{chapters/appendix.tex}
-\printbibliography[heading=bibnumbered]
+
+% \thispagestyle{acknowledgements}    % remove this if you want `CONTENTS' to appear in the header of the first Contents page
+% \include{chapters/contents}
+
+% \include{chapters/acknowledgements}
+\thispagestyle{body}
+\input{chapters/introduction.tex}
+\thispagestyle{body}
+\input{chapters/background.tex}
+\thispagestyle{body}
+\input{chapters/sota.tex}
+\thispagestyle{body}
+\input{chapters/proposed.tex}
+\thispagestyle{body}
+\input{chapters/implementation.tex}
+\thispagestyle{body}
+\input{chapters/evaluation.tex}
+\thispagestyle{body}
+\input{chapters/conclusions.tex}
+\thispagestyle{body}
+\input{chapters/appendix.tex}
+\thispagestyle{body}
+
+% \bibliographystyle{ieeetr}
+% \bibliography{biblio}
+
+% \include{chapters/appendix}
+\printbibliography
 \end{document}
