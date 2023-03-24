@@ -111,7 +111,7 @@ def choose_network(config):
 
 def proxy_one_batch(config, input_wrong):
     grads = config["cam"](input_tensor=input_wrong, targets=None)
-    grads = torch.Tensor(grads, device= config["device"]).unsqueeze(1).expand(-1, 3, -1, -1).detach()
+    grads = torch.Tensor(grads).to(config["device"]).unsqueeze(1).expand(-1, 3, -1, -1)
     normalized_inps = inv_normalize(input_wrong)
     
     if config["pixel_replacement_method"] != "blended":
@@ -126,9 +126,9 @@ def proxy_one_batch(config, input_wrong):
             (1 - config["proxy_image_weight"] * grads) * normalized_inps,
             normalized_inps,
         )
-    del grads
-    torch.cuda.empty_cache()
-    gc.collect()
+    # del grads
+    # torch.cuda.empty_cache()
+    # gc.col
 
     return output
 
@@ -242,8 +242,8 @@ def one_epoch(config, pbar, model, optimizer, dataloaders):
                         # logging.info("[INFO] : Proxy")
                         wrong_indices = (labels != preds).nonzero()
                         # input_wrong = input_wrong.stack(inputs[wrong_indices])
-                        input_wrong.extend(inputs[wrong_indices].detach())
-                        label_wrong.extend(labels[wrong_indices].detach())
+                        input_wrong.extend(inputs[wrong_indices])
+                        label_wrong.extend(labels[wrong_indices])
 
                 # backward + optimize only if in training phase
                 if phase == "train":

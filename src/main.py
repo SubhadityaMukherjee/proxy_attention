@@ -56,6 +56,7 @@ from torchvision.utils import save_image
 import subprocess
 
 import logging
+import argparse
 
 logging.basicConfig(level=logging.DEBUG)
 print("Done imports")
@@ -64,7 +65,8 @@ print("Done imports")
 
 
 config = {
-    "experiment_name": "baseline_run",
+    "experiment_name": "proxy_run",
+    # "experiment_name": "baseline_run",
     # "experiment_name": "ignore",
     "image_size": 224,
     "batch_size": 32,
@@ -72,8 +74,8 @@ config = {
     "transfer_imagenet": True,
     "subset_images": 9000,
     "pixel_replacement_method": "blended",
-    # "proxy_steps": [1, "p"],
-    "proxy_steps": [20],
+    "proxy_steps": [10, "p",9],
+    # "proxy_steps": [20],
     # "proxy_steps": [4],
     "load_proxy_data": False,
     "proxy_step": False,
@@ -82,32 +84,34 @@ config = {
 }
 
 # Proxy search space
-# search_space = {
-#     "change_subset_attention" : [0.8, 0.5, 0.2],
-#     # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
-#     # "model": ["resnet18", "vgg16", "resnet50"],
-#     "model": ["resnet18"],
-#     "proxy_image_weight" : [0.1, 0.2, 0.4, 0.8, 0.95],
-#     "proxy_threshold": [0.85],
-#     "gradient_method" : ["gradcamplusplus"],
-#     "ds_name" : ["asl", "imagenette", "caltech256"],
-#     "clear_every_step": [True, False],
-# }
-
-# No proxy search space
 search_space = {
-    "change_subset_attention": [0.8],
+    "change_subset_attention" : [0.8, 0.5, 0.2],
     # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
-    "model": ["resnet18","vgg16", "resnet50", "vit_base_patch16_224"],
-    # "model" : ["vgg16"],
-    "proxy_image_weight": [0.1],
-    "proxy_threshold": [0.85],
-    "gradient_method": ["gradcamplusplus"],
-    # "ds_name": ["asl", "imagenette", "caltech256"],
-    "ds_name": ["asl", "imagenette"],
-    # "ds_name": ["imagenette"],
+    "model": ["resnet18", "vgg16", "resnet50"],
+    # "model": ["resnet18"],
+    "proxy_image_weight" : [0.1, 0.2, 0.4, 0.8, 0.95],
+    "proxy_threshold": [0.1, 0.2, 0.4, 0.8, 0.85],
+    "gradient_method" : ["gradcamplusplus"],
+    # "ds_name" : ["asl", "imagenette", "caltech256"],
+    "ds_name" : ["asl", "imagenette"],
+    # "clear_every_step": [True, False],
     "clear_every_step": [True],
 }
+
+# No proxy search space
+# search_space = {
+#     "change_subset_attention": [0.8],
+#     # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
+#     "model": ["resnet18","vgg16", "resnet50", "vit_base_patch16_224"],
+#     # "model" : ["vgg16"],
+#     "proxy_image_weight": [0.1],
+#     "proxy_threshold": [0.85],
+#     "gradient_method": ["gradcamplusplus"],
+#     # "ds_name": ["asl", "imagenette", "caltech256"],
+#     "ds_name": ["asl", "imagenette"],
+#     # "ds_name": ["imagenette"],
+#     "clear_every_step": [True],
+# }
 
 
 def get_approx_trial_count(search_space):
@@ -146,6 +150,12 @@ dataset_info = {
         "name_fn": proxyattention.data_utils.get_parent_name,
         "num_classes" : 256
     },
+    "tinyimagenet": {
+        "path": Path(f"{main_ds_dir}/tiny-imagenet-200/train"),
+        "name_fn": proxyattention.data_utils.get_parent_name,
+        "num_classes" : 200
+    },
+
 }
 
 
@@ -157,9 +167,14 @@ config["main_run_dir"] = main_run_dir
 
 
 if __name__ == "__main__":
-    resume_broken = False
+    parser = argparse.ArgumentParser(description='Process some training options.')
 
-    if resume_broken == True:
+    parser.add_argument('-r', '--resume-broken', action='store_true', help='Resume broken trials')
+    parser.add_argument('-c', '--continue-training', action='store_true', help='Continue the training from where it left off.')
+
+    args = parser.parse_args()
+
+    if args.r:
         i, combinations = proxyattention.meta_utils.read_pickle("combination_train.pkl")[0]
         combinations = combinations[i::]
 
@@ -172,6 +187,4 @@ if __name__ == "__main__":
         params = dict(zip(search_space.keys(), combination))
         config = {**config, ** params}
         proxyattention.meta_utils.save_pickle(config, fname= "current_config.pkl")
-        subprocess.run(["python", "./proxyattention/training.py"])
-
-# %%
+        subprocess.run(["python", "runner.py"])
