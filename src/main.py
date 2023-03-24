@@ -1,6 +1,5 @@
 # %%
 # Imports
-import torchsnooper
 import matplotlib
 import matplotlib.pyplot as plt
 
@@ -67,7 +66,6 @@ print("Done imports")
 config = {
     "experiment_name": "proxy_run",
     # "experiment_name": "baseline_run",
-    # "experiment_name": "ignore",
     "image_size": 224,
     "batch_size": 32,
     "enable_proxy_attention": True,
@@ -84,6 +82,37 @@ config = {
 }
 
 # Proxy search space
+search_space = {
+    "change_subset_attention" : [0.8, 0.5, 0.2],
+    # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
+    "model": ["resnet18", "vgg16", "resnet50"],
+    # "model": ["resnet18"],
+    "proxy_image_weight" : [0.1, 0.2, 0.4, 0.8, 0.95],
+    "proxy_threshold": [0.1, 0.2, 0.4, 0.8, 0.85],
+    "gradient_method" : ["gradcamplusplus"],
+    # "ds_name" : ["asl", "imagenette", "caltech256"],
+    "ds_name" : ["asl", "imagenette"],
+    # "clear_every_step": [True, False],
+    "clear_every_step": [True],
+    "proxy_steps": [20],
+}
+
+# No proxy search space
+# search_space = {
+#     "change_subset_attention": [0.8],
+#     # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
+#     "model": ["resnet18","vgg16", "resnet50", "vit_base_patch16_224"],
+#     # "model" : ["vgg16"],
+#     "proxy_image_weight": [0.1],
+#     "proxy_threshold": [0.85],
+#     "gradient_method": ["gradcamplusplus"],
+#     # "ds_name": ["asl", "imagenette", "caltech256"],
+#     "ds_name": ["asl", "imagenette"],
+#     # "ds_name": ["imagenette"],
+#     "clear_every_step": [True],
+# }
+
+# No proxy search space
 search_space = {
     "change_subset_attention" : [0.8, 0.5, 0.2],
     # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
@@ -186,5 +215,5 @@ if __name__ == "__main__":
         proxyattention.meta_utils.save_pickle((i, combinations), fname = "combination_train.pkl")
         params = dict(zip(search_space.keys(), combination))
         config = {**config, ** params}
-        proxyattention.meta_utils.save_pickle(config, fname= "current_config.pkl")
+        proxyattention.meta_utils.save_pickle(config, fname= f"current_config.pkl")
         subprocess.run(["python", "runner.py"])
