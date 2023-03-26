@@ -59,4 +59,5 @@ import logging
 # %%
 if __name__ == "__main__":
     config = proxyattention.meta_utils.read_pickle(fname="current_config.pkl")[0]
+    print(config)
     proxyattention.training.train_single_round(config=config)

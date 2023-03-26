@@ -5,16 +5,17 @@ import logging
 import os
 from pathlib import Path
 
-import albumentations as A
+# import albumentations as A
 import cv2
 import pandas as pd
 import torch
 import torch.backends.cudnn as cudnn
-from albumentations.pytorch import ToTensorV2
+# from albumentations.pytorch import ToTensorV2
+from torchvision import transforms
 from sklearn import preprocessing
 from sklearn.model_selection import StratifiedKFold
 from torch.utils.data import Dataset
-# from PIL import Image
+from PIL import Image
 from torchvision.io import read_image
 import random
 from tqdm import tqdm
@@ -34,24 +35,28 @@ class ImageClassDs(Dataset):
         self, df: pd.DataFrame, imfolder: str, train: bool = True, transforms=None
     ):
         self.df = df
+        self.x , self.y = self.df["image_id"].values, self.df["label"].values
         self.imfolder = imfolder
         self.train = train
         self.transforms = transforms
         self.classes = self.df["label"]
 
     def __getitem__(self, index):
-        im_path = self.df.iloc[index]["image_id"]
-        try:
-            x = cv2.imread(str(im_path), cv2.IMREAD_COLOR)
-        except:
-            print(im_path)
-        x = cv2.cvtColor(x, cv2.COLOR_BGR2RGB)
-        # x = Image(im_path)
+        # im_path = self.df.iloc[index]["image_id"]
+        im_path = self.x[index]
+        # try:
+        #     x = cv2.imread(str(im_path), cv2.IMREAD_COLOR)
+        # except:
+        #     print(im_path)
+        # x = cv2.cvtColor(x, cv2.COLOR_BGR2RGB)
+        # # x = Image(im_path)
 
+        x = Image.open(im_path)
         if self.transforms:
-            x = self.transforms(image=x)["image"]
+            x = self.transforms(x)
 
-        y = self.df.iloc[index]["label"]
+        # y = self.df.iloc[index]["label"]
+        y = self.y[index]
         return {
             "x": x,
             "y": y,
@@ -116,57 +121,65 @@ def create_folds(config):
 # %%
 def create_dls(train, val, config):
     # TODO Compare with other augmentation techniques
-    data_transforms = {
-        "train": A.Compose(
-            [
-                A.RandomResizedCrop(config["image_size"], config["image_size"], p=1.0),
-                A.Normalize(
-                    mean=[0.485, 0.456, 0.406],
-                    std=[0.229, 0.224, 0.225],
-                    max_pixel_value=255.0,
-                    p=1.0,
-                ),
-                ToTensorV2(p=1.0),
-            ],
-            p=1.0,
-        ),
-        "val": A.Compose(
-            [
-                A.Resize(config["image_size"], config["image_size"]),
-                A.CenterCrop(config["image_size"], config["image_size"], p=1.0),
-                A.Normalize(
-                    mean=[0.485, 0.456, 0.406],
-                    std=[0.229, 0.224, 0.225],
-                    max_pixel_value=255.0,
-                    p=1.0,
-                ),
-                ToTensorV2(p=1.0),
-            ],
-            p=1.0,
-        ),
-    }
+    # data_transforms = {
+    #     "train": A.Compose(
+    #         [
+
+    #             A.Resize(config["image_size"], config["image_size"]),
+    #             # A.RandomResizedCrop(config["image_size"], config["image_size"], p=1.0),
+    #             A.Normalize(
+    #                 mean=[0.485, 0.456, 0.406],
+    #                 std=[0.229, 0.224, 0.225],
+    #                 max_pixel_value=255.0,
+    #                 p=1.0,
+    #             ),
+    #             ToTensorV2(p=1.0),
+    #         ],
+    #         p=1.0,
+    #     ),
+    #     "val": A.Compose(
+    #         [
+    #             A.Resize(config["image_size"], config["image_size"]),
+    #             # A.CenterCrop(config["image_size"], config["image_size"], p=1.0),
+    #             A.Normalize(
+    #                 mean=[0.485, 0.456, 0.406],
+    #                 std=[0.229, 0.224, 0.225],
+    #                 max_pixel_value=255.0,
+    #                 p=1.0,
+    #             ),
+    #             ToTensorV2(p=1.0),
+    #         ],
+    #         p=1.0,
+    #     ),
+    # }
+    data_transforms = transforms.Compose([
+    transforms.Resize((config["image_size"], config["image_size"])),
+    transforms.ToTensor() # use ToTensor() last to get everything between 0 & 1
+        ])
 
     image_datasets = {
         "train": ImageClassDs(
-            train, config["ds_path"], train=True, transforms=data_transforms["train"]
+            train, config["ds_path"], train=True, transforms=data_transforms
         ),
         "val": ImageClassDs(
-            val, config["ds_path"], train=False, transforms=data_transforms["val"]
+            val, config["ds_path"], train=False, transforms=data_transforms
         ),
     }
-
+    num_work = 4
     dataloaders = {
         "train": torch.utils.data.DataLoader(
             image_datasets["train"],
             batch_size=config["batch_size"],
             shuffle=False,
-            num_workers=3,
+            num_workers=num_work,
+            pin_memory = True,
         ),
         "val": torch.utils.data.DataLoader(
             image_datasets["val"],
             batch_size=config["batch_size"],
             shuffle=False,
-            num_workers=3,
+            num_workers=num_work,
+            pin_memory = True,
         ),
     }
 

@@ -36,7 +36,9 @@ from pytorch_grad_cam.utils.image import (
     show_cam_on_image,
 )
 from torch.optim import lr_scheduler
-from torch.utils.tensorboard import SummaryWriter
+# from torch.utils.tensorboard import SummaryWriter
+from tensorboardX import SummaryWriter
+
 from torchvision import transforms
 from tqdm import tqdm
 from operator import attrgetter
@@ -48,19 +50,44 @@ import gc
 import copy
 import argparse as ap
 import ast
+from operator import itemgetter
+from pytorch_memlab import LineProfiler, profile
+import torchsnooper
+# import pytorch_lightning as pl
+# from lightning.pytorch import LightningModule, Trainer, seed_everything, LightningDataModule
+# from lightning.pytorch.callbacks import LearningRateMonitor, StochasticWeightAveraging, ModelCheckpoint
+# from lightning.pytorch.callbacks.progress import TQDMProgressBar
+# from lightning.pytorch.loggers import CSVLogger# torch.autograd.set_detect_anomaly(True)
+# from lightning.pytorch.loggers.tensorboard import TensorBoardLogger
+from torch.utils.data import DataLoader
+from torchmetrics import Accuracy
+from torchvision.datasets import ImageFolder
+from torch.utils.data import Subset
+from sklearn.model_selection import train_test_split
+from itertools import combinations
+import numpy as np
+import itertools
+# from lightning.pytorch.loggers import TensorBoardLogger
+
+# from multiprocessing import Pool
+# from torch.multiprocessing import Pool
+import torch.multiprocessing as mp
+
+# from pympler import tracker
 
 # sns.set()
 
 cudnn.benchmark = True
 logging.basicConfig(level=logging.ERROR)
 #%%
-
+import sys
 # %%
 set_batch_size_dict = {
-    "vgg16": 32,
+    "vgg16": 16,
     "vit_base_patch16_224": 32,
     "resnet18": 32,
     "resnet50": 32,
+    "efficientnet_b0" : 32,
 }
 
 
@@ -101,7 +128,7 @@ def choose_network(config):
         config["model"],
         pretrained=config["transfer_imagenet"],
         num_classes=config["num_classes"],
-    ).to(config["device"])
+    ).to(config["device"], non_blocking = True)
     model.train()
     return model
 
@@ -110,7 +137,8 @@ def choose_network(config):
 
 
 def proxy_one_batch(config, input_wrong):
-    grads = config["cam"](input_tensor=input_wrong, targets=None)
+    # print(input_wrong)
+    grads = config["cam"](input_tensor=input_wrong.to(config["device"]), targets=None)
     grads = torch.Tensor(grads).to(config["device"]).unsqueeze(1).expand(-1, 3, -1, -1)
     normalized_inps = inv_normalize(input_wrong)
     
@@ -132,8 +160,15 @@ def proxy_one_batch(config, input_wrong):
 
     return output
 
+# def save_image(ind, processed_labels,processed_thresholds, config):
+#     label = config["label_map"][processed_labels[ind].cpu().detach().item()]
+#     save_name = (
+#         config["ds_path"] / label / f"proxy-{ind}-{config['global_run_count']}.jpeg"
+#     )
+#     tfm(processed_thresholds[ind].cpu().detach()).save(save_name)
 
 def proxy_callback(config, input_wrong_full, label_wrong_full):
+    writer = config["writer"]
     logging.info("Performing Proxy step")
 
     # TODO Save Classwise fraction
@@ -142,11 +177,12 @@ def proxy_callback(config, input_wrong_full, label_wrong_full):
     # TODO Remove min and batchify
 
     # chosen_inds = min(config["batch_size"], chosen_inds)
+    chosen_inds = 50
 
-    config["writer"].add_scalar(
+    writer.add_scalar(
         "Number_Chosen", chosen_inds, config["global_run_count"]
     )
-    logging.info(f"{chosen_inds} images chosen to run proxy on")
+    # print(f"{chosen_inds} images chosen to run proxy on")
 
     input_wrong_full = input_wrong_full[:chosen_inds]
     label_wrong_full = label_wrong_full[:chosen_inds]
@@ -155,7 +191,7 @@ def proxy_callback(config, input_wrong_full, label_wrong_full):
     processed_thresholds = []
     logging.info("[INFO] Started proxy batches")
 
-    for i in tqdm(range(0, len(input_wrong_full), config["batch_size"])):
+    for i in tqdm(range(0, len(input_wrong_full), config["batch_size"]), desc="Running proxy"):
         input_wrong = input_wrong_full[i:i+config["batch_size"]]
         label_wrong = label_wrong_full[i:i+config["batch_size"]]
 
@@ -165,13 +201,14 @@ def proxy_callback(config, input_wrong_full, label_wrong_full):
         except:
             input_wrong = torch.squeeze(input_wrong)
             label_wrong = torch.squeeze(label_wrong)
-
-        config["writer"].add_images(
-            "original_images",
-            inv_normalize(input_wrong),
-            # input_wrong,
-            config["global_run_count"],
-        )
+        
+        if i == 0:
+            writer.add_images(
+                "original_images",
+                inv_normalize(input_wrong),
+                # input_wrong,
+                config["global_run_count"],
+            )
 
         # save_pickle((cam, input_wrong, config,tfm))
 
@@ -182,28 +219,70 @@ def proxy_callback(config, input_wrong_full, label_wrong_full):
 
 
         logging.info("[INFO] Ran proxy step")
-        config["writer"].add_images(
-            "converted_proxy",
-            thresholded_ims,
-            config["global_run_count"],
-        )
+        if i == 0:
+            writer.add_images(
+                "converted_proxy",
+                thresholded_ims,
+                config["global_run_count"],
+            )
 
         logging.info("[INFO] Saving the images")
 
-    for ind in tqdm(range(len(processed_labels)), total=len(processed_labels)):
+    # def save_image(ind):
+    #     label = config["label_map"][processed_labels[ind].item()]
+    #     save_name = (
+    #         config["ds_path"] / label / f"proxy-{ind}-{config['global_run_count']}.jpeg"
+    #     )
+    #     tfm(processed_thresholds[ind]).save(save_name)
+    
+    # with Pool() as p:
+    #     list(tqdm(p.imap(save_image, range(len(processed_labels))), total=len(processed_labels), desc="Saving images"))
+
+    processed_thresholds = torch.stack(processed_thresholds, dim = 0).detach().cpu()
+    batch_size = processed_thresholds.size(0)
+
+
+    for ind in tqdm(range(batch_size), total=batch_size, desc="Saving images"):
         label = config["label_map"][processed_labels[ind].item()]
         save_name = (
-            config["ds_path"] / label / f"proxy-{ind}-{config['global_run_count']}.png"
+            config["ds_path"] / label / f"proxy-{ind}-{config['global_run_count']}.jpeg"
         )
-        tfm(processed_thresholds[ind]).save(save_name)
+        # tfm(processed_thresholds[ind]).save(save_name)
+        # processed_thresholds[ind].save(save_name)
+        tfm(processed_thresholds[ind, :, :, :]).save(save_name)
+
+    # with Pool() as p:
+    #     list(tqdm(p.map(save_image, [(ind, processed_labels, config, processed_thresholds) for ind in range(len(processed_labels))]), total=len(processed_labels), desc="Saving images"))
+    # print("Saving images")
+    # ctx = mp.get_context('spawn')
+    # # queue = ctx.Queue()
+    # processes = []
+    # for ind in range(len(processed_labels)):
+    #     p = ctx.Process(target=save_image, args=(ind, config["label_map"], config["ds_path"], config["global_run_count"], processed_labels, processed_thresholds))
+    #     processes.append(p)
+    #     p.start()
+    # for p in processes:
+    #     p.join()
+    # # results = [queue.get() for _ in range(len(processed_labels))]
 
 
-# %%
+
 def one_epoch(config, pbar, model, optimizer, dataloaders):
+    writer = config["writer"]
+    # mem = tracker.SummaryTracker()
     config["global_run_count"] += 1
+    # scheduler = config["scheduler"]
+
+    # input_wrong = torch.Tensor().to(config["device"], non_blocking = True)
+    # label_wrong = torch.Tensor().to(config["device"], non_blocking = True)
 
     input_wrong = []
     label_wrong = []
+
+
+    scheduler = lr_scheduler.CosineAnnealingLR(optimizer, len(dataloaders["train"]))
+
+    criterion = nn.CrossEntropyLoss()
 
     for phase in ["train", "val"]:
         # logging.info(f"[INFO] Phase = {phase}")
@@ -211,90 +290,75 @@ def one_epoch(config, pbar, model, optimizer, dataloaders):
             model.train()  # Set model to training mode
         else:
             model.eval()  # Set model to evaluate mode
-
         running_loss = 0.0
         running_corrects = 0
 
-        # Iterate over data.
-
-        optimizer.zero_grad(set_to_none=True)
         scaler = torch.cuda.amp.GradScaler()
         for i, inps in tqdm(
-            enumerate(dataloaders[phase]), total=len(dataloaders[phase]), leave=False
-        ):
+                enumerate(dataloaders[phase]), total=len(dataloaders[phase]), leave=False
+            ):
+
             inputs = inps["x"].to(config["device"], non_blocking=True)
             labels = inps["y"].to(config["device"], non_blocking=True)
 
-            # forward
-            # track history if only in train
+            optimizer.zero_grad(set_to_none=True)
             with torch.set_grad_enabled(phase == "train"):
                 with torch.cuda.amp.autocast():
                     if phase == "train":
                         outputs = model(inputs)
+
                     else:
                         with torch.no_grad():
                             outputs = model(inputs)
-                    _, preds = torch.max(outputs, 1)
-                    loss = config["criterion"](outputs, labels)
-                    # loss = loss / config["num_accum"]
+                    _, preds = torch.max(outputs.data.detach(), 1)
+                    loss = criterion(outputs, labels)
+                
+                running_loss += loss.item()
+                running_corrects += (preds == labels).sum().item()
 
-                    if config["proxy_step"] == True and phase == "train":
-                        # logging.info("[INFO] : Proxy")
-                        wrong_indices = (labels != preds).nonzero()
-                        # input_wrong = input_wrong.stack(inputs[wrong_indices])
-                        input_wrong.extend(inputs[wrong_indices])
-                        label_wrong.extend(labels[wrong_indices])
-
-                # backward + optimize only if in training phase
                 if phase == "train":
                     scaler.scale(loss).backward()
-                    # optimizer.step()
-                    # if (i + 1) % config["num_accum"] == 0:
-
                     scaler.step(optimizer)
                     scaler.update()
-                    optimizer.zero_grad(set_to_none=True)
 
-            # statistics
-            running_loss += loss.item() * inputs.size(0)
-            running_corrects += torch.sum(preds == labels.data)
-            pbar.set_postfix(
+            if config["proxy_step"] == True and phase == "train":
+                # logging.info("[INFO] : Proxy")
+                wrong_indices = (labels != preds).nonzero()
+                # input_wrong = input_wrong.stack(inputs[wrong_indices])
+                input_wrong.extend(inputs[wrong_indices])
+                label_wrong.extend(labels[wrong_indices])
+                # input_wrong = torch.cat((input_wrong, inputs[wrong_indices]))
+                # label_wrong = torch.cat((label_wrong, labels[wrong_indices]))
+            
+                
+        if config["proxy_step"] == True and phase == 'train':
+            proxy_callback(config, input_wrong, label_wrong)
+            writer.add_scalar("proxy_step", True, config["global_run_count"])
+        else:
+            # pass
+            writer.add_scalar("proxy_step", False, config["global_run_count"])
+        
+        epoch_loss = running_loss / len(dataloaders[phase].dataset)
+        epoch_acc = 100. * running_corrects/len(dataloaders[phase].dataset)
+        pbar.set_postfix(
                 {
                     "Phase": "running",
-                    "Loss": running_loss / config["dataset_sizes"][phase],
+                    "Loss": epoch_loss
                     # 'Acc' : running_corrects.double() / dataset_sizes[phase],
                 }
             )
-
         if phase == "train":
-            config["scheduler"].step()
-
-        if config["proxy_step"] == True and phase == 'train':
-            proxy_callback(config, input_wrong, label_wrong)
-            config["writer"].add_scalar("proxy_step", True, config["global_run_count"])
-        else:
-            config["writer"].add_scalar("proxy_step", False, config["global_run_count"])
-
-        epoch_loss = running_loss / config["dataset_sizes"][phase]
-        epoch_acc = running_corrects.double() / config["dataset_sizes"][phase]
-
-        pbar.set_postfix({"Phase": phase, "Loss": epoch_loss, "Acc": epoch_acc})
-
-        # TODO Add more loss functions
-        # TODO Classwise accuracy
-
-        if phase == "train":
-            config["writer"].add_scalar(
+            writer.add_scalar(
                 "Loss/Train", epoch_loss, config["global_run_count"]
             )
-            config["writer"].add_scalar(
+            writer.add_scalar(
                 "Acc/Train", epoch_acc, config["global_run_count"]
             )
         if phase == "val":
-            config["writer"].add_scalar(
+            writer.add_scalar(
                 "Loss/Val", epoch_loss, config["global_run_count"]
             )
-            config["writer"].add_scalar(
+            writer.add_scalar(
                 "Acc/Val", epoch_acc, config["global_run_count"]
             )
 
@@ -314,11 +378,9 @@ def one_epoch(config, pbar, model, optimizer, dataloaders):
 
             # trial.report(epoch_acc, config["global_run_count"])
             config["final_acc"] = epoch_acc
-
-        # deep copy the model
-        # if phase == "val" and epoch_acc > best_acc:
-        #     best_acc = epoch_acc
-            # best_model_wts = copy.deepcopy(model.state_dict())
+        writer.add_scalar(
+            "global_run_count", config["global_run_count"], config["global_run_count"]
+        )
 
 
 def find_target_layer(config, model):
@@ -326,6 +388,8 @@ def find_target_layer(config, model):
         return [model.layer4[-1].conv2]
     elif config["model"] == "resnet50":
         return [model.layer4[-1].conv2]
+    elif config["model"] == "efficientnet_b0":
+        return [model.conv_head]
     elif config["model"] == "FasterRCNN":
         return model.backbone
     elif config["model"] == "vgg16" or config["model"] == "densenet161":
@@ -343,10 +407,17 @@ def find_target_layer(config, model):
 
 # %%
 # TODO Better transfer learning params. more trainable layers
+
+# @profile
 def setup_train_round(
     config,model = None, num_epochs=1, load_check=None
 ):
-    # Data part
+
+    # logger = TensorBoardLogger(config["fname_start"], name=config["fname_start"])
+    config["writer"] = SummaryWriter(
+        log_dir=config["fname_start"], comment=config["fname_start"]
+    )
+
     train, val = create_folds(config)
     image_datasets, dataloaders, dataset_sizes = create_dls(train, val, config)
     class_names = image_datasets["train"].classes
@@ -356,33 +427,43 @@ def setup_train_round(
     config["criterion"] = nn.CrossEntropyLoss()
 
     model = choose_network(config)
+
+    # data = DataModule(
+    #         root_dir=config["ds_path"],
+    #         img_size=config["image_size"],
+    #         batch_size=32,
+    #         num_workers=4,
+    #         subset = config["subset_images"]
+    #     )
+    # model = Model(
+    #         model_name=config["model"], pretrained=config["transfer_imagenet"], num_classes=len(data.classes), config=config
+    #     )
+    # model = torch.compile(model)
+
+    # config["num_classes"] = len(data.classes)
     # Check this as well
-    if torch.cuda.device_count() > 1:
-        print("Multi GPU : ", torch.cuda.device_count(), "GPUs")
-        model = nn.DataParallel(model)
+    # if torch.cuda.device_count() > 1:
+    #     print("Multi GPU : ", torch.cuda.device_count(), "GPUs")
+    #     model = nn.DataParallel(model)
 
-    config["lr"] = 1e-3
+    # config["lr"] = 1e-3
     optimizer = optim.Adam(model.parameters(), lr = 3e-4)
-    config["scheduler"] = lr_scheduler.CosineAnnealingLR(optimizer, len(dataloaders["train"]))
+    # config["scheduler"] = lr_scheduler.CosineAnnealingLR(optimizer, len(dataloaders["train"]))
 
-    config["writer"] = SummaryWriter(
-        log_dir=config["fname_start"], comment=config["fname_start"]
-    )
-
+    
     # Save config info to tensorboard
-    for key, value in config.items():
-        config["writer"].add_text(key, str(value))
-    since = time.time()
+        # since = time.time()
 
     if load_check == True:
-        chk = torch.load(config["save_path"])
-        model.load_state_dict(chk["model_state_dict"])
-        optimizer.load_state_dict(chk["optimizer_state_dict"])
+        chk = torch.load(config["save_path"], map_location = config["device"])
+        model.load_state_dict(chk["model_state_dict"], map_location = config["device"])
+        optimizer.load_state_dict(chk["optimizer_state_dict"], map_location = config["device"])
 
     # best_model_wts = copy.deepcopy(model.state_dict())
-    best_acc = 0.0
+    # best_acc = 0.0
 
     target_layers = find_target_layer(config, model)
+    # target_layers = model.target_layer
     config["cam"] = dict_gradient_method[config["gradient_method"]](
         model=model, target_layers=target_layers, use_cuda=True
     )
@@ -405,33 +486,27 @@ def setup_train_round(
         # prof.step()
     # prof.stop()
 
+    # config["num_epoch"] = num_epochs
+    # trainer = get_trainer(config, logger)
+
+    # config["writer"] = logger.experiment
+    for key, value in config.items():
+        config["writer"].add_text(key, str(value))
+
+
+    # trainer.fit(model, data)
+
+    # config["writer"].close()
+
     # Clean up after training
     # del model
     # torch.cuda.empty_cache()
     # gc.collect()
     print("GPU freed")
 
-
 def train_proxy_steps( config):
     assert torch.cuda.is_available()
     torch.cuda.empty_cache()
-    # tune.utils.wait_for_gpu(target_util = 0.03)
-    # time.sleep(60)
-    # config["change_subset_attention"] = trial.suggest_float(
-    #     "change_subset_attention", 0.1, 1.0
-    # )
-    # config["proxy_image_weight"] = trial.suggest_float("proxy_image_weight", 0.1, 1.0)
-    # config["proxy_threshold"] = trial.suggest_float("proxy_threshold", 0.1, 1.0)
-    # config["model"] = trial.suggest_categorical(
-    #     "model", ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"]
-    # )
-    # config["gradient_method"] = trial.suggest_categorical(
-    #     "gradient_method", ["gradcamplusplus", "gradcam", "eigencam"]
-    # )
-    # config["ds_name"] = trial.suggest_categorical(
-    #     "ds_name", ["asl", "imagenette", "caltech256"]
-    # )
-    # config["clear_every_step"] = trial.suggest_categorical("clear_every_step", [True, False])
 
     fname_start = f'{config["main_run_dir"]}{config["experiment_name"]}_{datetime.now().strftime("%d%m%Y_%H%M%S")}'
     config["fname_start"] = fname_start
@@ -456,7 +531,7 @@ def train_proxy_steps( config):
     #     record_shapes=True,
     #     with_stack=True)
     # prof.start()
-
+    
 
     for i, step in enumerate(config["proxy_steps"]):
         # model = copy.deepcopy(backup_model).to(config["device"])
@@ -493,6 +568,10 @@ def train_proxy_steps( config):
     if config["clear_every_step"] == False:
         clear_proxy_images(config=config)  # Clean directory
     # prof.stop()
+
+    # for name, size in sorted(((name, sys.getsizeof(value)) for name, value in list(locals().items())), key= lambda x: -x[1])[:20]:
+    #     print("{:>30}: {:>8}".format(name, sizeof_fmt(size)))
+
     return config["final_acc"]
 
 # ags = ap.ArgumentParser()

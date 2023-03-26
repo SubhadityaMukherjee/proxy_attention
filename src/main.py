@@ -64,38 +64,40 @@ print("Done imports")
 
 
 config = {
-    "experiment_name": "proxy_run",
+    # "experiment_name": "proxy_run",
     # "experiment_name": "baseline_run",
+    "experiment_name": "ignore",
     "image_size": 224,
     "batch_size": 32,
     "enable_proxy_attention": True,
     "transfer_imagenet": True,
-    "subset_images": 9000,
+    "subset_images": 1000,
     "pixel_replacement_method": "blended",
-    "proxy_steps": [10, "p",9],
-    # "proxy_steps": [20],
-    # "proxy_steps": [4],
+    # "proxy_steps": [10, "p",9],
+    # "proxy_steps": [3],
+    # "proxy_steps": [5],
+    "proxy_steps": ["p"],
     "load_proxy_data": False,
     "proxy_step": False,
     "log_every": 2
 
 }
 
-# Proxy search space
-search_space = {
-    "change_subset_attention" : [0.8, 0.5, 0.2],
-    # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
-    "model": ["resnet18", "vgg16", "resnet50"],
-    # "model": ["resnet18"],
-    "proxy_image_weight" : [0.1, 0.2, 0.4, 0.8, 0.95],
-    "proxy_threshold": [0.1, 0.2, 0.4, 0.8, 0.85],
-    "gradient_method" : ["gradcamplusplus"],
-    # "ds_name" : ["asl", "imagenette", "caltech256"],
-    "ds_name" : ["asl", "imagenette"],
-    # "clear_every_step": [True, False],
-    "clear_every_step": [True],
-    "proxy_steps": [20],
-}
+# # Proxy search space
+# search_space = {
+#     "change_subset_attention" : [0.8, 0.5, 0.2],
+#     # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
+#     "model": ["resnet18", "vgg16", "resnet50"],
+#     # "model": ["resnet18"],
+#     "proxy_image_weight" : [0.1, 0.2, 0.4, 0.8, 0.95],
+#     "proxy_threshold": [0.1, 0.2, 0.4, 0.8, 0.85],
+#     "gradient_method" : ["gradcamplusplus"],
+#     # "ds_name" : ["asl", "imagenette", "caltech256"],
+#     "ds_name" : ["asl", "imagenette"],
+#     # "clear_every_step": [True, False],
+#     "clear_every_step": [True],
+#     "proxy_steps": [20],
+# }
 
 # No proxy search space
 # search_space = {
@@ -112,35 +114,36 @@ search_space = {
 #     "clear_every_step": [True],
 # }
 
-# No proxy search space
-search_space = {
-    "change_subset_attention" : [0.8, 0.5, 0.2],
-    # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
-    "model": ["resnet18", "vgg16", "resnet50"],
-    # "model": ["resnet18"],
-    "proxy_image_weight" : [0.1, 0.2, 0.4, 0.8, 0.95],
-    "proxy_threshold": [0.1, 0.2, 0.4, 0.8, 0.85],
-    "gradient_method" : ["gradcamplusplus"],
-    # "ds_name" : ["asl", "imagenette", "caltech256"],
-    "ds_name" : ["asl", "imagenette"],
-    # "clear_every_step": [True, False],
-    "clear_every_step": [True],
-}
-
-# No proxy search space
 # search_space = {
-#     "change_subset_attention": [0.8],
+#     "change_subset_attention" : [0.8, 0.5, 0.2],
 #     # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
-#     "model": ["resnet18","vgg16", "resnet50", "vit_base_patch16_224"],
-#     # "model" : ["vgg16"],
-#     "proxy_image_weight": [0.1],
-#     "proxy_threshold": [0.85],
-#     "gradient_method": ["gradcamplusplus"],
-#     # "ds_name": ["asl", "imagenette", "caltech256"],
-#     "ds_name": ["asl", "imagenette"],
-#     # "ds_name": ["imagenette"],
+#     "model": ["resnet18", "vgg16", "resnet50"],
+#     # "model": ["resnet18"],
+#     "proxy_image_weight" : [0.1, 0.2, 0.4, 0.8, 0.95],
+#     "proxy_threshold": [0.1, 0.2, 0.4, 0.8, 0.85],
+#     "gradient_method" : ["gradcamplusplus"],
+#     # "ds_name" : ["asl", "imagenette", "caltech256"],
+#     "ds_name" : ["asl", "imagenette"],
+#     # "clear_every_step": [True, False],
 #     "clear_every_step": [True],
 # }
+
+# No proxy search space
+search_space = {
+    "change_subset_attention": [0.8],
+    # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
+    # "model": ["resnet18","vgg16", "resnet50", "vit_base_patch16_224"],
+    "model": ["vgg16","efficientnet_b0","resnet18","resnet50", "vit_base_patch16_224"],
+    # "model" : ["vgg16"],
+    "proxy_image_weight": [0.1],
+    "proxy_threshold": [0.85],
+    "gradient_method": ["gradcamplusplus"],
+    # "ds_name": ["asl", "imagenette", "caltech256"],
+    # "ds_name": ["asl", "imagenette"],
+    "ds_name": ["cifar100", "dogs", "caltech101", "asl", "imagenette"],
+    # "ds_name": ["imagenette"],
+    "clear_every_step": [True],
+}
 
 
 def get_approx_trial_count(search_space):
@@ -184,6 +187,22 @@ dataset_info = {
         "name_fn": proxyattention.data_utils.get_parent_name,
         "num_classes" : 200
     },
+    "cifar100": {
+        "path": Path(f"{main_ds_dir}/CIFAR-100/train"),
+        "name_fn": proxyattention.data_utils.get_parent_name,
+        "num_classes" : 100
+    },
+    "dogs": {
+        "path": Path(f"{main_ds_dir}/dogs/images/Images"),
+        "name_fn": proxyattention.data_utils.get_parent_name,
+        "num_classes" : 120
+    },
+    "caltech101": {
+        "path": Path(f"{main_ds_dir}/caltech-101"),
+        "name_fn": proxyattention.data_utils.get_parent_name,
+        "num_classes" : 101
+    }
+
 
 }
 
@@ -198,12 +217,13 @@ config["main_run_dir"] = main_run_dir
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process some training options.')
 
-    parser.add_argument('-r', '--resume-broken', action='store_true', help='Resume broken trials')
-    parser.add_argument('-c', '--continue-training', action='store_true', help='Continue the training from where it left off.')
+    parser.add_argument('-r', '--resume_broken', action='store_true', help='Resume broken trials')
+    parser.add_argument('-c', '--continue_training', action='store_true', help='Continue the training from where it left off.')
 
     args = parser.parse_args()
+    print(args)
 
-    if args.r:
+    if args.resume_broken:
         i, combinations = proxyattention.meta_utils.read_pickle("combination_train.pkl")[0]
         combinations = combinations[i::]
 
@@ -215,5 +235,7 @@ if __name__ == "__main__":
         proxyattention.meta_utils.save_pickle((i, combinations), fname = "combination_train.pkl")
         params = dict(zip(search_space.keys(), combination))
         config = {**config, ** params}
+        if config["ds_name"] == "caltech-101":
+            config["ds_name"] = "caltech101"
         proxyattention.meta_utils.save_pickle(config, fname= f"current_config.pkl")
-        subprocess.run(["python", "runner.py"])
+        subprocess.run(["python", "runner.py"], check=True)
