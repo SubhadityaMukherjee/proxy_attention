@@ -136,7 +136,7 @@ search_space = {
     # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
     # "model": ["resnet18","vgg16", "resnet50", "vit_base_patch16_224"],
     # "model": ["vgg16","efficientnet_b0","resnet18","resnet50", "vit_base_patch16_224"],
-    "model": ["resnet18", "efficientnet_b0", "resnet50", "vit_base_path16_224", "vgg16"],
+    "model": ["resnet18", "efficientnet_b0", "resnet50", "vit_base_patch16_224", "vgg16"],
     # "model" : ["vgg16"],
     "proxy_image_weight": [0.1],
     "proxy_threshold": [0.85],
@@ -229,6 +229,7 @@ if __name__ == "__main__":
     if args.resume_broken:
         i, combinations = proxyattention.meta_utils.read_pickle("combination_train.pkl")[0]
         combinations = combinations[i::]
+        print("Resuming broken trials")
 
     else:
         search_space_values = list(search_space.values())
@@ -240,5 +241,8 @@ if __name__ == "__main__":
         config = {**config, ** params}
         if config["ds_name"] == "caltech-101":
             config["ds_name"] = "caltech101"
+        if config["model"] == "vit_base_path16_224":
+            config["model"] = "vit_base_patch16_224"
+
         proxyattention.meta_utils.save_pickle(config, fname= f"current_config.pkl")
         subprocess.run(["python", "runner.py"], check=True)

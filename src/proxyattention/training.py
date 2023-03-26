@@ -142,16 +142,20 @@ def choose_network(config):
         num_classes=config["num_classes"],
     )
     # ).to(config["device"], non_blocking=True)
-    model.train()
+    # model.train()
     return model
 
 
 # %%
 
 
-def proxy_one_batch(config, input_wrong):
+def proxy_one_batch(config, input_wrong, model, target_layers, fabric):
     # print(input_wrong)
-    grads = config["cam"](input_tensor=input_wrong.to(config["device"]), targets=None)
+    cam = dict_gradient_method[config["gradient_method"]](
+        model=model, target_layers=target_layers, use_cuda=True
+    )
+
+    grads = cam(input_tensor=input_wrong.to(config["device"]), targets=None)
     grads = torch.Tensor(grads).to(config["device"]).unsqueeze(1).expand(-1, 3, -1, -1)
     normalized_inps = inv_normalize(input_wrong)
 
@@ -182,7 +186,7 @@ def proxy_one_batch(config, input_wrong):
 #     tfm(processed_thresholds[ind].cpu().detach()).save(save_name)
 
 
-def proxy_callback(config, input_wrong_full, label_wrong_full):
+def proxy_callback(config, input_wrong_full, label_wrong_full, model, target_layers, fabric):
     writer = config["writer"]
     logging.info("Performing Proxy step")
 
@@ -230,7 +234,7 @@ def proxy_callback(config, input_wrong_full, label_wrong_full):
         # save_pickle((cam, input_wrong, config,tfm))
 
         # TODO run over all the batches
-        thresholded_ims = proxy_one_batch(config, input_wrong)
+        thresholded_ims = proxy_one_batch(config, input_wrong, model, target_layers, fabric)
         processed_thresholds.extend(thresholded_ims)
         processed_labels.extend(label_wrong)
 
@@ -303,6 +307,7 @@ def one_epoch(config, pbar, model, optimizer,scheduler, dataloaders, fabric):
             model.train()  # Set model to training mode
         else:
             model.eval()  # Set model to evaluate mode
+        model.to(fabric.device)
         running_loss = 0.0
         running_corrects = 0
 
@@ -328,6 +333,8 @@ def one_epoch(config, pbar, model, optimizer,scheduler, dataloaders, fabric):
                             with torch.no_grad():
                                 outputs = model(inputs)
                         _, preds = torch.max(outputs.data.detach(), 1)
+                        optimizer.zero_grad(set_to_none=True)
+
                         loss = criterion(outputs, labels)
 
                 running_loss += loss.item()
@@ -352,14 +359,15 @@ def one_epoch(config, pbar, model, optimizer,scheduler, dataloaders, fabric):
                 # input_wrong = torch.cat((input_wrong, inputs[wrong_indices]))
                 # label_wrong = torch.cat((label_wrong, labels[wrong_indices]))
 
-        if config["proxy_step"] == True and phase == "train":
-            proxy_callback(config, input_wrong, label_wrong)
-            writer.add_scalar("proxy_step", True, config["global_run_count"])
-        else:
-            # pass
-            writer.add_scalar("proxy_step", False, config["global_run_count"])
-
+        
         with torch.set_grad_enabled(phase == "train"):
+            if config["proxy_step"] == True and phase == "train":
+                proxy_callback(config, input_wrong, label_wrong, model, optimizer, scheduler, fabric)
+                writer.add_scalar("proxy_step", True, config["global_run_count"])
+            else:
+                # pass
+                writer.add_scalar("proxy_step", False, config["global_run_count"])
+
             epoch_loss = running_loss / len(dataloaders[phase].dataset)
             epoch_acc = 100.0 * running_corrects / len(dataloaders[phase].dataset)
             pbar.set_postfix(
@@ -395,6 +403,8 @@ def one_epoch(config, pbar, model, optimizer,scheduler, dataloaders, fabric):
             writer.add_scalar(
                 "global_run_count", config["global_run_count"], config["global_run_count"]
             )
+        del inputs, labels, outputs, preds
+        torch.cuda.empty_cache()
 
 
 def find_target_layer(config, model):
@@ -473,10 +483,10 @@ def setup_train_round(config, model=None, num_epochs=1, load_check=None):
     # since = time.time()
 
     if load_check == True:
-        chk = torch.load(config["save_path"], map_location=config["device"])
-        model.load_state_dict(chk["model_state_dict"], map_location=config["device"])
+        chk = torch.load(config["save_path"], map_location=fabric.device)
+        model.load_state_dict(chk["model_state_dict"], map_location=fabric.device)
         optimizer.load_state_dict(
-            chk["optimizer_state_dict"], map_location=config["device"]
+            chk["optimizer_state_dict"], map_location=fabric.device
         )
 
     # best_model_wts = copy.deepcopy(model.state_dict())
@@ -484,9 +494,9 @@ def setup_train_round(config, model=None, num_epochs=1, load_check=None):
 
     target_layers = find_target_layer(config, model)
     # target_layers = model.target_layer
-    config["cam"] = dict_gradient_method[config["gradient_method"]](
-        model=model, target_layers=target_layers, use_cuda=True
-    )
+    # config["cam"] = dict_gradient_method[config["gradient_method"]](
+    #     model=model, target_layers=target_layers, use_cuda=True
+    # )
 
     pbar = tqdm(
         range(config["global_run_count"], config["global_run_count"] + num_epochs),
