@@ -1,4 +1,4 @@
-#%%
+# %%
 import copy
 from datetime import datetime
 import logging
@@ -52,35 +52,35 @@ import ast
 
 cudnn.benchmark = True
 
-#%%
+# %%
 train, val = create_folds(config)
 image_datasets, dataloaders, dataset_sizes = create_dls(train, val, config)
 class_names = image_datasets["train"].classes
 config["num_classes"] = len(config["label_map"].keys())
 
-#%%
+# %%
 
 model = choose_network(config)
 model.eval()  # Set model to evaluate mode
 chk = torch.load(config["save_path"])
 model.load_state_dict(chk["model_state_dict"])
 
-#%%
+# %%
 with torch.no_grad():
     outputs = model(inputs)
     _, preds = torch.max(outputs, 1)
 
 
-#%%
+# %%
 for i, inps in tqdm(
-        enumerate(dataloaders[phase]), total=len(dataloaders[phase]), leave=False
-    ):
-        inputs = inps["x"].to(config["device"], non_blocking=True)
-        labels = inps["y"].to(config["device"], non_blocking=True)
+    enumerate(dataloaders[phase]), total=len(dataloaders[phase]), leave=False
+):
+    inputs = inps["x"].to(config["device"], non_blocking=True)
+    labels = inps["y"].to(config["device"], non_blocking=True)
 
 target_layers = find_target_layer(config, model)
 config["cam"] = dict_gradient_method[config["gradient_method"]](
-        model=model, target_layers=target_layers, use_cuda=True
+    model=model, target_layers=target_layers, use_cuda=True
 )
 
 try:
@@ -92,16 +92,28 @@ except:
 
 
 grayscale_cams = config["cam"](input_tensor=input_wrong, targets=None)
-grads = torch.Tensor(grayscale_cams, device= config["device"]).unsqueeze(1).expand(-1, 3, -1, -1).detach()
+grads = (
+    torch.Tensor(grayscale_cams, device=config["device"])
+    .unsqueeze(1)
+    .expand(-1, 3, -1, -1)
+    .detach()
+)
 normalized_inps = inv_normalize(input_wrong)
 
 from pytorch_grad_cam.metrics.road import ROADMostRelevantFirst, ROADLeastRelevantFirst
+
 cam_metric = ROADMostRelevantFirst(percentile=75)
-scores, perturbation_visualizations = cam_metric(input_tensor, 
-  grayscale_cams, targets, model, return_visualization=True)
+scores, perturbation_visualizations = cam_metric(
+    input_tensor, grayscale_cams, targets, model, return_visualization=True
+)
 
 # You can also average accross different percentiles, and combine
 # (LeastRelevantFirst - MostRelevantFirst) / 2
-from pytorch_grad_cam.metrics.road import ROADMostRelevantFirstAverage,ROADLeastRelevantFirstAverage,ROADCombined
+from pytorch_grad_cam.metrics.road import (
+    ROADMostRelevantFirstAverage,
+    ROADLeastRelevantFirstAverage,
+    ROADCombined,
+)
+
 cam_metric = ROADCombined(percentiles=[20, 40, 60, 80])
 scores = cam_metric(input_tensor, grayscale_cams, targets, model)

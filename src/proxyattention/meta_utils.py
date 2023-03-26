@@ -95,11 +95,13 @@ def get_files(path, extensions=None, recurse=True, folders=None, followlinks=Tru
         res = _get_files(path, f, extensions)
     return res
 
-def save_pickle(*args, fname = "pickler.pkl"):
-    with open(fname, 'wb') as f:
+
+def save_pickle(*args, fname="pickler.pkl"):
+    with open(fname, "wb") as f:
         pickle.dump(args, f)
 
-def read_pickle(fname = "pickler.pkl"):
-    with open(fname, 'rb') as f:
+
+def read_pickle(fname="pickler.pkl"):
+    with open(fname, "rb") as f:
         obj = pickle.load(f)
     return obj

@@ -10,6 +10,7 @@ import cv2
 import pandas as pd
 import torch
 import torch.backends.cudnn as cudnn
+
 # from albumentations.pytorch import ToTensorV2
 from torchvision import transforms
 from sklearn import preprocessing
@@ -21,11 +22,14 @@ import random
 from tqdm import tqdm
 
 from .meta_utils import get_files
+
 cudnn.benchmark = True
+
 
 # %%
 def get_parent_name(x):
     return str(x).split("/")[-2]
+
 
 # %%
 # TODO Create dataset loader for tabular
@@ -35,7 +39,7 @@ class ImageClassDs(Dataset):
         self, df: pd.DataFrame, imfolder: str, train: bool = True, transforms=None
     ):
         self.df = df
-        self.x , self.y = self.df["image_id"].values, self.df["label"].values
+        self.x, self.y = self.df["image_id"].values, self.df["label"].values
         self.imfolder = imfolder
         self.train = train
         self.transforms = transforms
@@ -50,8 +54,11 @@ class ImageClassDs(Dataset):
         #     print(im_path)
         # x = cv2.cvtColor(x, cv2.COLOR_BGR2RGB)
         # # x = Image(im_path)
-
         x = Image.open(im_path)
+        if len(x.getbands()) != 3:
+            x = x.convert("RGB")
+
+        # x = Image.open(im_path).convert("RGB")
         if self.transforms:
             x = self.transforms(x)
 
@@ -152,17 +159,31 @@ def create_dls(train, val, config):
     #         p=1.0,
     #     ),
     # }
-    data_transforms = transforms.Compose([
-    transforms.Resize((config["image_size"], config["image_size"])),
-    transforms.ToTensor() # use ToTensor() last to get everything between 0 & 1
-        ])
+    data_transforms_train = transforms.Compose(
+        [
+            transforms.Resize((config["image_size"], config["image_size"])),
+            transforms.ColorJitter(hue=.05, saturation=.05),
+            transforms.RandomHorizontalFlip(),
+            transforms.RandomRotation(20, interpolation=Image.BILINEAR),
+            transforms.ToTensor(),  # use ToTensor() last to get everything between 0 & 1
+        ]
+    )
+
+    data_transforms_val = transforms.Compose(
+        [
+            transforms.Resize((config["image_size"], config["image_size"])),
+            transforms.ToTensor(),  # use ToTensor() last to get everything between 0 & 1
+        ]
+    )
+    # data_transforms_train = torch.jit.script(data_transforms_train)
+    # data_transforms_val = torch.jit.script(data_transforms_val)
 
     image_datasets = {
         "train": ImageClassDs(
-            train, config["ds_path"], train=True, transforms=data_transforms
+            train, config["ds_path"], train=True, transforms=data_transforms_train
         ),
         "val": ImageClassDs(
-            val, config["ds_path"], train=False, transforms=data_transforms
+            val, config["ds_path"], train=False, transforms=data_transforms_val
         ),
     }
     num_work = 4
@@ -170,16 +191,16 @@ def create_dls(train, val, config):
         "train": torch.utils.data.DataLoader(
             image_datasets["train"],
             batch_size=config["batch_size"],
-            shuffle=False,
+            shuffle=True,
             num_workers=num_work,
-            pin_memory = True,
+            pin_memory=True,
         ),
         "val": torch.utils.data.DataLoader(
             image_datasets["val"],
             batch_size=config["batch_size"],
             shuffle=False,
             num_workers=num_work,
-            pin_memory = True,
+            pin_memory=True,
         ),
     }
 
@@ -188,7 +209,7 @@ def create_dls(train, val, config):
     return image_datasets, dataloaders, dataset_sizes
 
 
-#%%
+# %%
 def batchify(dataset, idxs):
     "Return a list of items for the supplied dataset and idxs"
     tss = [dataset[i][0] for i in idxs]
