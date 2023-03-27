@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex main"] 1679659471 "main.aux" "main.bbl" "main" 1679659471 0
+["bibtex main"] 1679911605 "main.aux" "main.bbl" "main" 1679911605 0
   "./biblio.bib" 1670330581 35577 dc06862834893cec00ef5fd7c572cc3d ""
   "/usr/local/texlive/2022basic/texmf-dist/bibtex/bst/base/ieeetr.bst" 1292289607 18361 1a00e58565e7f19bf2b3e1bfb82254ae ""
-  "main.aux" 1679659471 4194 c7019e11cdf23bd9002192088b03b78a "pdflatex"
+  "main.aux" 1679911605 4194 c7019e11cdf23bd9002192088b03b78a "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1679659471 "/Users/eragon/Documents/CODE/Github/proxy_attention/writing/proposal/main.tex" "main.pdf" "main" 1679659471 0
+["pdflatex"] 1679911605 "/Users/eragon/Documents/CODE/Github/proxy_attention/writing/proposal/main.tex" "main.pdf" "main" 1679911605 0
   "/Users/eragon/Documents/CODE/Github/proxy_attention/writing/proposal/main.tex" 1679659470 4512 967c23eecc41e047b0b260c4fc76720c ""
   "/usr/local/texlive/2022basic/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2022basic/texmf-dist/fonts/tfm/adobe/symbol/psyr.tfm" 1136768653 1408 5937f58aa508ea2cea4901c07d10f5fe ""
@@ -109,7 +109,7 @@
   "/usr/local/texlive/2022basic/texmf-dist/tex/latex/wrapfig/wrapfig.sty" 1137111090 26220 3701aebf80ccdef248c0c20dd062fea9 ""
   "/usr/local/texlive/2022basic/texmf-dist/tex/latex/xcolor/xcolor.sty" 1655066402 56148 51a9a8571c07b9921892ae11063ae853 ""
   "/usr/local/texlive/2022basic/texmf-dist/web2c/texmf.cnf" 1677365944 40745 87bb86a62d462f93a1efc6b0c65c872e ""
-  "/usr/local/texlive/2022basic/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1679484053 360084 cf4f6a33078ae662804e9636fcac9bd7 ""
+  "/usr/local/texlive/2022basic/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1679660174 360084 cf4f6a33078ae662804e9636fcac9bd7 ""
   "/usr/local/texlive/2022basic/texmf-var/web2c/pdftex/pdflatex.fmt" 1679484067 7200393 5f726645929ada2ebcfc48f3f0cfb462 ""
   "/usr/local/texlive/2022basic/texmf.cnf" 1647274000 628 5a32b7ea7dd5bed632a871bee125276d ""
   "chapters/framework.tex" 1673606783 5064 c28ac2747c300b1c3d557998c1ae3710 ""
@@ -117,13 +117,13 @@
   "chapters/methods.tex" 1673606804 5960 fa36a575705ad1cf75b2df31ff125a31 ""
   "chapters/plan.tex" 1673606817 1820 f7d884677c9a8f266644f89a5316e33d ""
   "chapters/relevance.tex" 1673606827 1288 19a8489279dd6f2c74bb51b71a935c3d ""
-  "chapters/researchq.tex" 1673606835 549 e5e66a908d824cc748cbd98522ec3583 ""
+  "chapters/researchq.tex" 1679911603 549 e5e66a908d824cc748cbd98522ec3583 ""
   "images/banner.png" 1670330581 12386 47e4c7ee17a3d77036a48ed53deccd86 ""
   "images/gantt_chart.pdf" 1670330581 26373 d06a6c0afda819100379295e3bfda0a9 ""
   "images/thesis_report.drawio.png" 1670330581 1528266 e44ef991d18e5872e451fb30e4261761 ""
-  "main.aux" 1679659471 4194 c7019e11cdf23bd9002192088b03b78a "pdflatex"
-  "main.bbl" 1679659471 4021 a4373dfa83d5baaf22b8189bb726c2e8 "bibtex main"
-  "main.out" 1679659471 1799 4adf4829f667e03ae2e67896f5156355 "pdflatex"
+  "main.aux" 1679911605 4194 c7019e11cdf23bd9002192088b03b78a "pdflatex"
+  "main.bbl" 1679911605 4021 a4373dfa83d5baaf22b8189bb726c2e8 "bibtex main"
+  "main.out" 1679911605 1799 4adf4829f667e03ae2e67896f5156355 "pdflatex"
   "main.tex" 1679659470 4512 967c23eecc41e047b0b260c4fc76720c ""
   (generated)
   "main.aux"
