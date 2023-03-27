@@ -16,5 +16,477 @@
   {}
 \endgroup
 
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global}
+    \entry{krizhevskyLearningMultipleLayers}{article}{}
+      \name{author}{1}{}{%
+        {{hash=c5e3a676e2ac1164b3afcd539c131fc9}{%
+           family={Krizhevsky},
+           familyi={K\bibinitperiod},
+           given={Alex},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{c5e3a676e2ac1164b3afcd539c131fc9}
+      \strng{fullhash}{c5e3a676e2ac1164b3afcd539c131fc9}
+      \strng{bibnamehash}{c5e3a676e2ac1164b3afcd539c131fc9}
+      \strng{authorbibnamehash}{c5e3a676e2ac1164b3afcd539c131fc9}
+      \strng{authornamehash}{c5e3a676e2ac1164b3afcd539c131fc9}
+      \strng{authorfullhash}{c5e3a676e2ac1164b3afcd539c131fc9}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{langid}{english}
+      \field{title}{Learning {{Multiple Layers}} of {{Features}} from {{Tiny Images}}}
+      \verb{file}
+      \verb /Users/eragon/Zotero/storage/T2BXLVFU/Krizhevsky - Learning Multiple Layers of Features from Tiny Ima.pdf
+      \endverb
+    \endentry
+    \entry{wangScoreCAMScoreWeightedVisual2020}{online}{}
+      \name{author}{8}{}{%
+        {{hash=2af57f63f16bd5ef869fcd7a0764dae5}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Haofan},
+           giveni={H\bibinitperiod}}}%
+        {{hash=5ddb055abfa86a367168a9254a94cdfb}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Zifan},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=9beacda51637cbdae2180aeebe90f31c}{%
+           family={Du},
+           familyi={D\bibinitperiod},
+           given={Mengnan},
+           giveni={M\bibinitperiod}}}%
+        {{hash=bac6a7a5d8c835c2ebe5288a6fe722b4}{%
+           family={Yang},
+           familyi={Y\bibinitperiod},
+           given={Fan},
+           giveni={F\bibinitperiod}}}%
+        {{hash=53f90aa659ae14734c307d61aeefc1ef}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Zijian},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=5c252be48d12323ae5c070ca0b2acb8b}{%
+           family={Ding},
+           familyi={D\bibinitperiod},
+           given={Sirui},
+           giveni={S\bibinitperiod}}}%
+        {{hash=36b04db0da7f3f385e92a82ac5ba3937}{%
+           family={Mardziel},
+           familyi={M\bibinitperiod},
+           given={Piotr},
+           giveni={P\bibinitperiod}}}%
+        {{hash=13be76d254e7c2f65cfc92bc75bb18fd}{%
+           family={Hu},
+           familyi={H\bibinitperiod},
+           given={Xia},
+           giveni={X\bibinitperiod}}}%
+      }
+      \strng{namehash}{55ae1ccb8bbf87a087f74443354c001d}
+      \strng{fullhash}{f53bdf3685e73e4a9d3578229d6e07a6}
+      \strng{bibnamehash}{55ae1ccb8bbf87a087f74443354c001d}
+      \strng{authorbibnamehash}{55ae1ccb8bbf87a087f74443354c001d}
+      \strng{authornamehash}{55ae1ccb8bbf87a087f74443354c001d}
+      \strng{authorfullhash}{f53bdf3685e73e4a9d3578229d6e07a6}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Recently, increasing attention has been drawn to the internal mechanisms of convolutional neural networks, and the reason why the network makes specific decisions. In this paper, we develop a novel post-hoc visual explanation method called Score-CAM based on class activation mapping. Unlike previous class activation mapping based approaches, Score-CAM gets rid of the dependence on gradients by obtaining the weight of each activation map through its forward passing score on target class, the final result is obtained by a linear combination of weights and activation maps. We demonstrate that Score-CAM achieves better visual performance and fairness for interpreting the decision making process. Our approach outperforms previous methods on both recognition and localization tasks, it also passes the sanity check. We also indicate its application as debugging tools. Official code has been released.}
+      \field{day}{13}
+      \field{eprinttype}{arxiv}
+      \field{month}{4}
+      \field{number}{arXiv:1910.01279}
+      \field{pubstate}{preprint}
+      \field{shorttitle}{Score-{{CAM}}}
+      \field{title}{Score-{{CAM}}: {{Score-Weighted Visual Explanations}} for {{Convolutional Neural Networks}}}
+      \field{urlday}{16}
+      \field{urlmonth}{2}
+      \field{urlyear}{2023}
+      \field{version}{2}
+      \field{year}{2020}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{eprint}
+      \verb arXiv:1910.01279
+      \endverb
+      \verb{file}
+      \verb /Users/eragon/Zotero/storage/AR2AG5TE/Wang et al. - 2020 - Score-CAM Score-Weighted Visual Explanations for .pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/1910.01279
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/1910.01279
+      \endverb
+      \keyw{Computer Science - Computer Vision and Pattern Recognition}
+    \endentry
+    \entry{hendrycksAugMixSimpleData2020}{online}{}
+      \name{author}{6}{}{%
+        {{hash=86d0b4ecd6b6066d49e7aecde6e5e630}{%
+           family={Hendrycks},
+           familyi={H\bibinitperiod},
+           given={Dan},
+           giveni={D\bibinitperiod}}}%
+        {{hash=d0a09a44bc951d42ed9a586a243998cb}{%
+           family={Mu},
+           familyi={M\bibinitperiod},
+           given={Norman},
+           giveni={N\bibinitperiod}}}%
+        {{hash=2fca729a4ff01c85c2e50c1fdf09b9f2}{%
+           family={Cubuk},
+           familyi={C\bibinitperiod},
+           given={Ekin\bibnamedelima D.},
+           giveni={E\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+        {{hash=91aafc93e68e8c6a55e8cd804c2acaf2}{%
+           family={Zoph},
+           familyi={Z\bibinitperiod},
+           given={Barret},
+           giveni={B\bibinitperiod}}}%
+        {{hash=4f550339f0337905aa634f39e1ba4833}{%
+           family={Gilmer},
+           familyi={G\bibinitperiod},
+           given={Justin},
+           giveni={J\bibinitperiod}}}%
+        {{hash=55c0a67ecb602e5a3063393ffee9c7fa}{%
+           family={Lakshminarayanan},
+           familyi={L\bibinitperiod},
+           given={Balaji},
+           giveni={B\bibinitperiod}}}%
+      }
+      \strng{namehash}{f461c117afa272374439d2db3ee67282}
+      \strng{fullhash}{23ffd230c8d2d79d5036bc3e3cdb2e01}
+      \strng{bibnamehash}{f461c117afa272374439d2db3ee67282}
+      \strng{authorbibnamehash}{f461c117afa272374439d2db3ee67282}
+      \strng{authornamehash}{f461c117afa272374439d2db3ee67282}
+      \strng{authorfullhash}{23ffd230c8d2d79d5036bc3e3cdb2e01}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Modern deep neural networks can achieve high accuracy when the training distribution and test distribution are identically distributed, but this assumption is frequently violated in practice. When the train and test distributions are mismatched, accuracy can plummet. Currently there are few techniques that improve robustness to unforeseen data shifts encountered during deployment. In this work, we propose a technique to improve the robustness and uncertainty estimates of image classifiers. We propose AUGMIX, a data processing technique that is simple to implement, adds limited computational overhead, and helps models withstand unforeseen corruptions. AUGMIX significantly improves robustness and uncertainty measures on challenging image classification benchmarks, closing the gap between previous methods and the best possible performance in some cases by more than half.}
+      \field{day}{17}
+      \field{eprinttype}{arxiv}
+      \field{langid}{english}
+      \field{month}{2}
+      \field{number}{arXiv:1912.02781}
+      \field{pubstate}{preprint}
+      \field{shorttitle}{{{AugMix}}}
+      \field{title}{{{AugMix}}: {{A Simple Data Processing Method}} to {{Improve Robustness}} and {{Uncertainty}}}
+      \field{urlday}{16}
+      \field{urlmonth}{1}
+      \field{urlyear}{2023}
+      \field{year}{2020}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{eprint}
+      \verb arXiv:1912.02781
+      \endverb
+      \verb{file}
+      \verb /Users/eragon/Zotero/storage/W3F6Q299/Hendrycks et al. - 2020 - AugMix A Simple Data Processing Method to Improve.pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/1912.02781
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/1912.02781
+      \endverb
+      \keyw{Computer Science - Computer Vision and Pattern Recognition,Computer Science - Machine Learning,Statistics - Machine Learning}
+    \endentry
+    \entry{linDivergenceMeasuresBased}{article}{}
+      \name{author}{1}{}{%
+        {{hash=c9ad66a38d11327f45f96280e5ece1dd}{%
+           family={Lin},
+           familyi={L\bibinitperiod},
+           given={Jianhua},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{c9ad66a38d11327f45f96280e5ece1dd}
+      \strng{fullhash}{c9ad66a38d11327f45f96280e5ece1dd}
+      \strng{bibnamehash}{c9ad66a38d11327f45f96280e5ece1dd}
+      \strng{authorbibnamehash}{c9ad66a38d11327f45f96280e5ece1dd}
+      \strng{authornamehash}{c9ad66a38d11327f45f96280e5ece1dd}
+      \strng{authorfullhash}{c9ad66a38d11327f45f96280e5ece1dd}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{A new class of information-theoretic divergence measures based on the Shannon entropy is introduced. Unlike the well-known Kullback divergences, the new measures do not require the condition of absolute continuity to be satisfied by the probability distributions involved. More importantly, their close relationship with the variational distance and the probability of misclassification error are established in terms of bounds. These bounds are crucial in many applications of divergence measures. The new measures are also well characterized by the properties of nonnegativity, finiteness, semiboundedness, and boundedness.}
+      \field{langid}{english}
+      \field{title}{Divergence {{Measures Based}} on the {{Shannon Entropy}}}
+      \verb{file}
+      \verb /Users/eragon/Zotero/storage/6U26YDRA/Lin - Divergence Measures Based on the Shannon Entropy.pdf
+      \endverb
+    \endentry
+    \entry{devriesImprovedRegularizationConvolutional2017}{online}{}
+      \name{author}{2}{}{%
+        {{hash=5f72faa67f3e3eeb5ab473ef067062aa}{%
+           family={DeVries},
+           familyi={D\bibinitperiod},
+           given={Terrance},
+           giveni={T\bibinitperiod}}}%
+        {{hash=8c57b78bacc3da92f8aa3623167ea5de}{%
+           family={Taylor},
+           familyi={T\bibinitperiod},
+           given={Graham\bibnamedelima W.},
+           giveni={G\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
+      }
+      \strng{namehash}{c654df171568208867bf898ab0b57ea8}
+      \strng{fullhash}{c654df171568208867bf898ab0b57ea8}
+      \strng{bibnamehash}{c654df171568208867bf898ab0b57ea8}
+      \strng{authorbibnamehash}{c654df171568208867bf898ab0b57ea8}
+      \strng{authornamehash}{c654df171568208867bf898ab0b57ea8}
+      \strng{authorfullhash}{c654df171568208867bf898ab0b57ea8}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Convolutional neural networks are capable of learning powerful representational spaces, which are necessary for tackling complex learning tasks. However, due to the model capacity required to capture such representations, they are often susceptible to overfitting and therefore require proper regularization in order to generalize well. In this paper, we show that the simple regularization technique of randomly masking out square regions of input during training, which we call cutout, can be used to improve the robustness and overall performance of convolutional neural networks. Not only is this method extremely easy to implement, but we also demonstrate that it can be used in conjunction with existing forms of data augmentation and other regularizers to further improve model performance. We evaluate this method by applying it to current state-of-the-art architectures on the CIFAR-10, CIFAR-100, and SVHN datasets, yielding new state-of-the-art results of 2.56\%, 15.20\%, and 1.30\% test error respectively. Code is available at https://github.com/uoguelph-mlrg/Cutout}
+      \field{day}{29}
+      \field{eprinttype}{arxiv}
+      \field{month}{11}
+      \field{number}{arXiv:1708.04552}
+      \field{pubstate}{preprint}
+      \field{title}{Improved {{Regularization}} of {{Convolutional Neural Networks}} with {{Cutout}}}
+      \field{urlday}{27}
+      \field{urlmonth}{3}
+      \field{urlyear}{2023}
+      \field{year}{2017}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.48550/arXiv.1708.04552
+      \endverb
+      \verb{eprint}
+      \verb arXiv:1708.04552
+      \endverb
+      \verb{file}
+      \verb /Users/eragon/Zotero/storage/6FFUVLAN/DeVries and Taylor - 2017 - Improved Regularization of Convolutional Neural Ne.pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/1708.04552
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/1708.04552
+      \endverb
+      \keyw{Computer Science - Computer Vision and Pattern Recognition}
+    \endentry
+    \entry{yunCutMixRegularizationStrategy2019}{inproceedings}{}
+      \name{author}{6}{}{%
+        {{hash=eb5683d5e1e58ddad99e436c69bb62e9}{%
+           family={Yun},
+           familyi={Y\bibinitperiod},
+           given={Sangdoo},
+           giveni={S\bibinitperiod}}}%
+        {{hash=9d2ac11de77065ae48b1a2661bb6c477}{%
+           family={Han},
+           familyi={H\bibinitperiod},
+           given={Dongyoon},
+           giveni={D\bibinitperiod}}}%
+        {{hash=0f548f5eee2626aa65c478015ad5770b}{%
+           family={Chun},
+           familyi={C\bibinitperiod},
+           given={Sanghyuk},
+           giveni={S\bibinitperiod}}}%
+        {{hash=a8d55c6ddfbc6c08c58e478684c8f374}{%
+           family={Oh},
+           familyi={O\bibinitperiod},
+           given={Seong\bibnamedelima Joon},
+           giveni={S\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=9dd4f82b368957654f651047565ef024}{%
+           family={Yoo},
+           familyi={Y\bibinitperiod},
+           given={Youngjoon},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=2229e018c11bac708e2bca90d081ada1}{%
+           family={Choe},
+           familyi={C\bibinitperiod},
+           given={Junsuk},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Seoul, Korea (South)}%
+      }
+      \list{publisher}{1}{%
+        {IEEE}%
+      }
+      \strng{namehash}{ecb5eb5d5b1aa17538b94ebea227bb51}
+      \strng{fullhash}{8ebe560361d59d3619ee16e63809c449}
+      \strng{bibnamehash}{ecb5eb5d5b1aa17538b94ebea227bb51}
+      \strng{authorbibnamehash}{ecb5eb5d5b1aa17538b94ebea227bb51}
+      \strng{authornamehash}{ecb5eb5d5b1aa17538b94ebea227bb51}
+      \strng{authorfullhash}{8ebe560361d59d3619ee16e63809c449}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Regional dropout strategies have been proposed to enhance the performance of convolutional neural network classifiers. They have proved to be effective for guiding the model to attend on less discriminative parts of objects (e.g. leg as opposed to head of a person), thereby letting the network generalize better and have better object localization capabilities. On the other hand, current methods for regional dropout remove informative pixels on training images by overlaying a patch of either black pixels or random noise. Such removal is not desirable because it leads to information loss and inefficiency during training. We therefore propose the CutMix augmentation strategy: patches are cut and pasted among training images where the ground truth labels are also mixed proportionally to the area of the patches. By making efficient use of training pixels and retaining the regularization effect of regional dropout, CutMix consistently outperforms the state-of-the-art augmentation strategies on CIFAR and ImageNet classification tasks, as well as on the ImageNet weakly-supervised localization task. Moreover, unlike previous augmentation methods, our CutMix-trained ImageNet classifier, when used as a pretrained model, results in consistent performance gains in Pascal detection and MS-COCO image captioning benchmarks. We also show that CutMix improves the model robustness against input corruptions and its out-of-distribution detection performances. Source code and pretrained models are available at https://github.com/clovaai/CutMix-PyTorch.}
+      \field{booktitle}{2019 {{IEEE}}/{{CVF International Conference}} on {{Computer Vision}} ({{ICCV}})}
+      \field{eventtitle}{2019 {{IEEE}}/{{CVF International Conference}} on {{Computer Vision}} ({{ICCV}})}
+      \field{isbn}{978-1-72814-803-8}
+      \field{langid}{english}
+      \field{month}{10}
+      \field{shorttitle}{{{CutMix}}}
+      \field{title}{{{CutMix}}: {{Regularization Strategy}} to {{Train Strong Classifiers With Localizable Features}}}
+      \field{urlday}{20}
+      \field{urlmonth}{2}
+      \field{urlyear}{2023}
+      \field{year}{2019}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{6022\bibrangedash 6031}
+      \range{pages}{10}
+      \verb{doi}
+      \verb 10.1109/ICCV.2019.00612
+      \endverb
+      \verb{file}
+      \verb /Users/eragon/Zotero/storage/RI2AY5CU/Yun et al. - 2019 - CutMix Regularization Strategy to Train Strong Cl.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://ieeexplore.ieee.org/document/9008296/
+      \endverb
+      \verb{url}
+      \verb https://ieeexplore.ieee.org/document/9008296/
+      \endverb
+    \endentry
+    \entry{zhangMixupEmpiricalRisk2018}{online}{}
+      \name{author}{4}{}{%
+        {{hash=2055fe99efa178d6f877d718047b0390}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Hongyi},
+           giveni={H\bibinitperiod}}}%
+        {{hash=c55edd870afd5174d08d32e8560235f0}{%
+           family={Cisse},
+           familyi={C\bibinitperiod},
+           given={Moustapha},
+           giveni={M\bibinitperiod}}}%
+        {{hash=ea1ca71b064fbb7ec15bd2e49e287ea9}{%
+           family={Dauphin},
+           familyi={D\bibinitperiod},
+           given={Yann\bibnamedelima N.},
+           giveni={Y\bibinitperiod\bibinitdelim N\bibinitperiod}}}%
+        {{hash=47d681c0cbae75196012a538c46ccc06}{%
+           family={Lopez-Paz},
+           familyi={L\bibinithyphendelim P\bibinitperiod},
+           given={David},
+           giveni={D\bibinitperiod}}}%
+      }
+      \strng{namehash}{47ed15e39b226ffdc3da65f48de59b1f}
+      \strng{fullhash}{99e17545100e06ee9db2c0f295e2db48}
+      \strng{bibnamehash}{47ed15e39b226ffdc3da65f48de59b1f}
+      \strng{authorbibnamehash}{47ed15e39b226ffdc3da65f48de59b1f}
+      \strng{authornamehash}{47ed15e39b226ffdc3da65f48de59b1f}
+      \strng{authorfullhash}{99e17545100e06ee9db2c0f295e2db48}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Large deep neural networks are powerful, but exhibit undesirable behaviors such as memorization and sensitivity to adversarial examples. In this work, we propose mixup, a simple learning principle to alleviate these issues. In essence, mixup trains a neural network on convex combinations of pairs of examples and their labels. By doing so, mixup regularizes the neural network to favor simple linear behavior in-between training examples. Our experiments on the ImageNet-2012, CIFAR-10, CIFAR-100, Google commands and UCI datasets show that mixup improves the generalization of state-of-the-art neural network architectures. We also find that mixup reduces the memorization of corrupt labels, increases the robustness to adversarial examples, and stabilizes the training of generative adversarial networks.}
+      \field{day}{27}
+      \field{eprinttype}{arxiv}
+      \field{month}{4}
+      \field{number}{arXiv:1710.09412}
+      \field{pubstate}{preprint}
+      \field{shorttitle}{Mixup}
+      \field{title}{Mixup: {{Beyond Empirical Risk Minimization}}}
+      \field{urlday}{27}
+      \field{urlmonth}{3}
+      \field{urlyear}{2023}
+      \field{year}{2018}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.48550/arXiv.1710.09412
+      \endverb
+      \verb{eprint}
+      \verb arXiv:1710.09412
+      \endverb
+      \verb{file}
+      \verb /Users/eragon/Zotero/storage/K2UFNUHC/Zhang et al. - 2018 - mixup Beyond Empirical Risk Minimization.pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/1710.09412
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/1710.09412
+      \endverb
+      \keyw{Computer Science - Machine Learning,Statistics - Machine Learning}
+    \endentry
+    \entry{singhHideandSeekDataAugmentation2018}{online}{}
+      \name{author}{5}{}{%
+        {{hash=b14c1e38525e58e809557d68d6fd5df3}{%
+           family={Singh},
+           familyi={S\bibinitperiod},
+           given={Krishna\bibnamedelima Kumar},
+           giveni={K\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+        {{hash=36c3a7c4b7df7f39ac811cd870a20dfa}{%
+           family={Yu},
+           familyi={Y\bibinitperiod},
+           given={Hao},
+           giveni={H\bibinitperiod}}}%
+        {{hash=450831fb561ed7e96754f10f8dec62de}{%
+           family={Sarmasi},
+           familyi={S\bibinitperiod},
+           given={Aron},
+           giveni={A\bibinitperiod}}}%
+        {{hash=a36125feaee54466bfd1d8e288625d05}{%
+           family={Pradeep},
+           familyi={P\bibinitperiod},
+           given={Gautam},
+           giveni={G\bibinitperiod}}}%
+        {{hash=0058780d2044b7ad95d263c45e1a1b15}{%
+           family={Lee},
+           familyi={L\bibinitperiod},
+           given={Yong\bibnamedelima Jae},
+           giveni={Y\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+      }
+      \strng{namehash}{da7ea9661525754a9e647bc6950a9f9d}
+      \strng{fullhash}{0ed6f8405cc8b34c03463bba041b9ab8}
+      \strng{bibnamehash}{da7ea9661525754a9e647bc6950a9f9d}
+      \strng{authorbibnamehash}{da7ea9661525754a9e647bc6950a9f9d}
+      \strng{authornamehash}{da7ea9661525754a9e647bc6950a9f9d}
+      \strng{authorfullhash}{0ed6f8405cc8b34c03463bba041b9ab8}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{We propose 'Hide-and-Seek' a general purpose data augmentation technique, which is complementary to existing data augmentation techniques and is beneficial for various visual recognition tasks. The key idea is to hide patches in a training image randomly, in order to force the network to seek other relevant content when the most discriminative content is hidden. Our approach only needs to modify the input image and can work with any network to improve its performance. During testing, it does not need to hide any patches. The main advantage of Hide-and-Seek over existing data augmentation techniques is its ability to improve object localization accuracy in the weakly-supervised setting, and we therefore use this task to motivate the approach. However, Hide-and-Seek is not tied only to the image localization task, and can generalize to other forms of visual input like videos, as well as other recognition tasks like image classification, temporal action localization, semantic segmentation, emotion recognition, age/gender estimation, and person re-identification. We perform extensive experiments to showcase the advantage of Hide-and-Seek on these various visual recognition problems.}
+      \field{day}{6}
+      \field{eprinttype}{arxiv}
+      \field{month}{11}
+      \field{number}{arXiv:1811.02545}
+      \field{pubstate}{preprint}
+      \field{shorttitle}{Hide-and-{{Seek}}}
+      \field{title}{Hide-and-{{Seek}}: {{A Data Augmentation Technique}} for {{Weakly-Supervised Localization}} and {{Beyond}}}
+      \field{urlday}{27}
+      \field{urlmonth}{3}
+      \field{urlyear}{2023}
+      \field{year}{2018}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.48550/arXiv.1811.02545
+      \endverb
+      \verb{eprint}
+      \verb arXiv:1811.02545
+      \endverb
+      \verb{file}
+      \verb /Users/eragon/Zotero/storage/LL5XKNP3/Singh et al. - 2018 - Hide-and-Seek A Data Augmentation Technique for W.pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/1811.02545
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/1811.02545
+      \endverb
+      \keyw{Computer Science - Computer Vision and Pattern Recognition}
+    \endentry
+  \enddatalist
+\endrefsection
 \endinput
 

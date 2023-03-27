@@ -54,9 +54,13 @@
 \usepackage[english]{babel}
 % \usepackage{biblatex}
 % \usepackage[refsection=chapter]{biblatex}
-\usepackage{biblatex}
+% \usepackage{biblatex}
+\usepackage[
+backend=biber,
+sorting=none
+]{biblatex}
 \addbibresource{My Library.bib}
-
+% \bibliographystyle{unsrt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 'dedication' environment: To add a dedication paragraph at the start of book %
 % Source: http://www.tug.org/pipermail/texhax/2010-June/015184.html            %
@@ -116,6 +120,7 @@
     
 }
 
+\pagestyle{plain}% Set page style to plain
 \fancypagestyle{contents}{
     % \fancyhf{}
     % \fancyhead[LE,RO]{\thepage}
@@ -176,9 +181,9 @@
         % \vspace{2mm}Som\\
         }
         }
-        \vspace{4mm}Graduation Project Proposal\\(Computational Intelligence and Robotics)\\
-        \vspace{4mm}Subhaditya Mukherjee (s4747925)\\Oct 25 2022\\
-        \vspace{5cm}{\LARGE Internal Supervisor(s): S.H. Mohades Kasaei, PhD (Artificial Intelligence, University of Groningen)}\\
+        \vspace{4mm}Graduation Project\\(Computational Intelligence and Robotics)\\
+        \vspace{4mm}Subhaditya Mukherjee (s4747925)\\ \today \\
+        \vspace{5cm}{\LARGE Internal Supervisor: S.H. Mohades Kasaei, PhD\\ Second Internal Supervisor: Matias Valdenegro, PhD\\ (Artificial Intelligence, University of Groningen)}\\
         {\bf {Artificial Intelligence\\University of Groningen, The Netherlands}}
 }
 \date{}
