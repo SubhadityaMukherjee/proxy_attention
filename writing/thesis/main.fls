@@ -1015,9 +1015,6 @@ INPUT ./images/cifar100.png
 INPUT images/cifar100.png
 INPUT ./images/cifar100.png
 INPUT ./images/cifar100.png
-INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/vf/adobe/times/ptmr8c.vf
-INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/vf/adobe/times/ptmb8t.vf
-INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/tfm/adobe/times/ptmb8r.tfm
 INPUT ./images/dogs.png
 INPUT ./images/dogs.png
 INPUT images/dogs.png
@@ -1041,6 +1038,9 @@ INPUT ./images/banner.png
 INPUT ./images/banner.png
 INPUT images/banner.png
 INPUT ./images/banner.png
+INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/vf/adobe/times/ptmr8c.vf
+INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/vf/adobe/times/ptmb8t.vf
+INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/tfm/adobe/times/ptmb8r.tfm
 INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/vf/adobe/times/zptmcmrm.vf
 INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/tfm/adobe/symbol/psyr.tfm
 INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/tfm/adobe/times/ptmri8r.tfm

@@ -12,10 +12,10 @@
 \contentsline {section}{\numberline {2.3}Augmentation}{7}{section.2.3}%
 \contentsline {section}{\numberline {2.4}Datasets}{7}{section.2.4}%
 \contentsline {subsection}{\numberline {2.4.1}CIFAR 100}{7}{subsection.2.4.1}%
-\contentsline {subsection}{\numberline {2.4.2}Stanford dogs}{8}{subsection.2.4.2}%
-\contentsline {subsection}{\numberline {2.4.3}Imagenette}{8}{subsection.2.4.3}%
-\contentsline {subsection}{\numberline {2.4.4}ASL}{9}{subsection.2.4.4}%
-\contentsline {subsection}{\numberline {2.4.5}Food-101}{9}{subsection.2.4.5}%
+\contentsline {subsection}{\numberline {2.4.2}Stanford dogs}{7}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.3}Imagenette}{7}{subsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.4.4}ASL}{7}{subsection.2.4.4}%
+\contentsline {subsection}{\numberline {2.4.5}Food-101}{7}{subsection.2.4.5}%
 \contentsline {chapter}{\numberline {3}State of the Art}{10}{chapter.3}%
 \contentsline {section}{\numberline {3.1}Gradient Based Explanations}{10}{section.3.1}%
 \contentsline {section}{\numberline {3.2}Augmentation}{11}{section.3.2}%
