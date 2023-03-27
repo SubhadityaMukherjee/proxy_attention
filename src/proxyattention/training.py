@@ -75,7 +75,6 @@ import itertools
 # from multiprocessing import Pool
 # from torch.multiprocessing import Pool
 import torch.multiprocessing as mp
-from lightning.fabric import Fabric
 
 # from pympler import tracker
 
@@ -86,23 +85,13 @@ logging.basicConfig(level=logging.ERROR)
 # %%
 import sys
 
-
-def sizeof_fmt(num, suffix="B"):
-    """by Fred Cirera,  https://stackoverflow.com/a/1094933/1870254, modified"""
-    for unit in ["", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"]:
-        if abs(num) < 1024.0:
-            return "%3.1f %s%s" % (num, unit, suffix)
-        num /= 1024.0
-    return "%.1f %s%s" % (num, "Yi", suffix)
-
-
 # %%
 set_batch_size_dict = {
-    "vgg16": 32,
+    "vgg16": 16,
     "vit_base_patch16_224": 32,
-    "resnet18": 64,
+    "resnet18": 32,
     "resnet50": 32,
-    "efficientnet_b0": 64,
+    "efficientnet_b0": 32,
 }
 
 
@@ -143,19 +132,18 @@ def choose_network(config):
         config["model"],
         pretrained=config["transfer_imagenet"],
         num_classes=config["num_classes"],
-    )
-    # ).to(config["device"], non_blocking=True)
-    # model.train()
+    ).to(config["device"], non_blocking=True)
+    model.train()
     return model
 
 
 # %%
 
 
-def proxy_one_batch(config, input_wrong, model, target_layers, fabric):
+def proxy_one_batch(config, input_wrong, model):
     # print(input_wrong)
     cam = dict_gradient_method[config["gradient_method"]](
-        model=model, target_layers=target_layers, use_cuda=True
+        model=model, target_layers=config["target_layers"], use_cuda=True
     )
 
     grads = cam(input_tensor=input_wrong.to(config["device"]), targets=None)
@@ -189,9 +177,7 @@ def proxy_one_batch(config, input_wrong, model, target_layers, fabric):
 #     tfm(processed_thresholds[ind].cpu().detach()).save(save_name)
 
 
-def proxy_callback(
-    config, input_wrong_full, label_wrong_full, model, target_layers, fabric
-):
+def proxy_callback(config, input_wrong_full, label_wrong_full, model):
     writer = config["writer"]
     logging.info("Performing Proxy step")
 
@@ -239,9 +225,7 @@ def proxy_callback(
         # save_pickle((cam, input_wrong, config,tfm))
 
         # TODO run over all the batches
-        thresholded_ims = proxy_one_batch(
-            config, input_wrong, model, target_layers, fabric
-        )
+        thresholded_ims = proxy_one_batch(config, input_wrong, model)
         processed_thresholds.extend(thresholded_ims)
         processed_labels.extend(label_wrong)
 
@@ -292,8 +276,7 @@ def proxy_callback(
     # # results = [queue.get() for _ in range(len(processed_labels))]
 
 
-# @profile
-def one_epoch(config, pbar, model, optimizer, scheduler, dataloaders, fabric):
+def one_epoch(config, pbar, model, optimizer, dataloaders, scheduler):
     writer = config["writer"]
     # mem = tracker.SummaryTracker()
     config["global_run_count"] += 1
@@ -315,25 +298,19 @@ def one_epoch(config, pbar, model, optimizer, scheduler, dataloaders, fabric):
             model.train()  # Set model to training mode
         else:
             model.eval()  # Set model to evaluate mode
-        model.to(fabric.device)
         running_loss = 0.0
         running_corrects = 0
 
-        # scaler = torch.cuda.amp.GradScaler()
+        scaler = torch.cuda.amp.GradScaler()
         for i, inps in tqdm(
             enumerate(dataloaders[phase]), total=len(dataloaders[phase]), leave=False
         ):
-            # inputs = inps["x"].to(config["device"], non_blocking=True)
-            # labels = inps["y"].to(config["device"], non_blocking=True)
-            inputs = inps["x"]
-            labels = inps["y"]
+            inputs = inps["x"].to(config["device"], non_blocking=True)
+            labels = inps["y"].to(config["device"], non_blocking=True)
 
             optimizer.zero_grad(set_to_none=True)
-            # is_accumulating = i % 4 != 0
             with torch.set_grad_enabled(phase == "train"):
-                # with fabric.no_backward_sync(model, enabled=is_accumulating):
-                # with torch.cuda.amp.autocast():
-                with fabric.autocast():
+                with torch.cuda.amp.autocast():
                     if phase == "train":
                         outputs = model(inputs)
 
@@ -341,21 +318,15 @@ def one_epoch(config, pbar, model, optimizer, scheduler, dataloaders, fabric):
                         with torch.no_grad():
                             outputs = model(inputs)
                     _, preds = torch.max(outputs.data.detach(), 1)
-                    optimizer.zero_grad(set_to_none=True)
-
                     loss = criterion(outputs, labels)
 
                 running_loss += loss.item()
                 running_corrects += (preds == labels).sum().item()
 
                 if phase == "train":
-                    # scaler.scale(loss).backward()
-                    # scaler.step(optimizer)
-                    # scaler.update()
-                    # scheduler.step()
-
-                    fabric.backward(loss)
-                    optimizer.step()
+                    scaler.scale(loss).backward()
+                    scaler.step(optimizer)
+                    scaler.update()
                     scheduler.step()
 
             if config["proxy_step"] == True and phase == "train":
@@ -367,61 +338,48 @@ def one_epoch(config, pbar, model, optimizer, scheduler, dataloaders, fabric):
                 # input_wrong = torch.cat((input_wrong, inputs[wrong_indices]))
                 # label_wrong = torch.cat((label_wrong, labels[wrong_indices]))
 
-        with torch.set_grad_enabled(phase == "train"):
-            if config["proxy_step"] == True and phase == "train":
-                proxy_callback(
-                    config,
-                    input_wrong,
-                    label_wrong,
-                    model,
-                    optimizer,
-                    scheduler,
-                    fabric,
+        if config["proxy_step"] == True and phase == "train":
+            proxy_callback(config, input_wrong, label_wrong, model)
+            writer.add_scalar("proxy_step", True, config["global_run_count"])
+        else:
+            # pass
+            writer.add_scalar("proxy_step", False, config["global_run_count"])
+
+        epoch_loss = running_loss / len(dataloaders[phase].dataset)
+        epoch_acc = 100.0 * running_corrects / len(dataloaders[phase].dataset)
+        pbar.set_postfix(
+            {
+                "Phase": "running",
+                "Loss": epoch_loss
+                # 'Acc' : running_corrects.double() / dataset_sizes[phase],
+            }
+        )
+        if phase == "train":
+            writer.add_scalar("Loss/Train", epoch_loss, config["global_run_count"])
+            writer.add_scalar("Acc/Train", epoch_acc, config["global_run_count"])
+        if phase == "val":
+            writer.add_scalar("Loss/Val", epoch_loss, config["global_run_count"])
+            writer.add_scalar("Acc/Val", epoch_acc, config["global_run_count"])
+
+            save_path = Path(config["fname_start"]) / "checkpoint"
+            config["save_path"] = save_path
+            if config["global_run_count"] % config["log_every"] == 0:
+                torch.save(
+                    {
+                        # "config": config,
+                        "epoch": config["global_run_count"],
+                        "model_state_dict": model.state_dict(),
+                        "optimizer_state_dict": optimizer.state_dict(),
+                        "loss": epoch_loss,
+                    },
+                    save_path,
                 )
-                writer.add_scalar("proxy_step", True, config["global_run_count"])
-            else:
-                # pass
-                writer.add_scalar("proxy_step", False, config["global_run_count"])
 
-            epoch_loss = running_loss / len(dataloaders[phase].dataset)
-            epoch_acc = 100.0 * running_corrects / len(dataloaders[phase].dataset)
-            pbar.set_postfix(
-                {
-                    "Phase": "running",
-                    "Loss": epoch_loss
-                    # 'Acc' : running_corrects.double() / dataset_sizes[phase],
-                }
-            )
-            if phase == "train":
-                writer.add_scalar("Loss/Train", epoch_loss, config["global_run_count"])
-                writer.add_scalar("Acc/Train", epoch_acc, config["global_run_count"])
-            if phase == "val":
-                writer.add_scalar("Loss/Val", epoch_loss, config["global_run_count"])
-                writer.add_scalar("Acc/Val", epoch_acc, config["global_run_count"])
-
-                save_path = Path(config["fname_start"]) / "checkpoint"
-                config["save_path"] = save_path
-                if config["global_run_count"] % config["log_every"] == 0:
-                    torch.save(
-                        {
-                            # "config": config,
-                            "epoch": config["global_run_count"],
-                            "model_state_dict": model.state_dict(),
-                            "optimizer_state_dict": optimizer.state_dict(),
-                            "loss": epoch_loss,
-                        },
-                        save_path,
-                    )
-
-                # trial.report(epoch_acc, config["global_run_count"])
-                config["final_acc"] = epoch_acc
-            writer.add_scalar(
-                "global_run_count",
-                config["global_run_count"],
-                config["global_run_count"],
-            )
-        del inputs, labels, outputs, preds
-        torch.cuda.empty_cache()
+            # trial.report(epoch_acc, config["global_run_count"])
+            config["final_acc"] = epoch_acc
+        writer.add_scalar(
+            "global_run_count", config["global_run_count"], config["global_run_count"]
+        )
 
 
 def find_target_layer(config, model):
@@ -452,8 +410,6 @@ def find_target_layer(config, model):
 
 # @profile
 def setup_train_round(config, model=None, num_epochs=1, load_check=None):
-    fabric = Fabric(precision="16-mixed")
-    fabric.launch()
     # logger = TensorBoardLogger(config["fname_start"], name=config["fname_start"])
     config["writer"] = SummaryWriter(
         log_dir=config["fname_start"], comment=config["fname_start"]
@@ -471,7 +427,7 @@ def setup_train_round(config, model=None, num_epochs=1, load_check=None):
 
     # data = DataModule(
     #         root_dir=config["ds_path"],
-    #         img_size=config["image_size"],
+    #         img_size=config["image3,_size"],
     #         batch_size=32,
     #         num_workers=4,
     #         subset = config["subset_images"]
@@ -488,23 +444,21 @@ def setup_train_round(config, model=None, num_epochs=1, load_check=None):
     #     model = nn.DataParallel(model)
 
     # config["lr"] = 1e-3
-    # optimizer = optim.Adam(model.parameters(), lr=3e-4)
+    # optimizer = optim.Adam(model.parameters(), lr = 3e-4)
+
     optimizer = optim.AdamW(model.parameters(), lr=1e-3, weight_decay=1e-5)
     # config["scheduler"] = lr_scheduler.CosineAnnealingLR(optimizer, len(dataloaders["train"]))
-    model, optimizer = fabric.setup(model, optimizer)
-    dataloaders["train"] = fabric.setup_dataloaders(dataloaders["train"])
-    dataloaders["val"] = fabric.setup_dataloaders(dataloaders["val"])
-    scheduler = lr_scheduler.OneCycleLR(
-        optimizer, 2e-3, epochs=num_epochs, steps_per_epoch=len(dataloaders["train"])
-    )
+    # config["scheduler"] = lr_scheduler.CosineAnnealingLR(optimizer, len(dataloaders["train"]))
 
     # Save config info to tensorboard
     # since = time.time()
 
     if load_check == True:
-        chk = torch.load(config["save_path"])
+        chk = torch.load(config["save_path"], map_location=config["device"])
         model.load_state_dict(chk["model_state_dict"])
-        optimizer.load_state_dict(chk["optimizer_state_dict"])
+        optimizer.load_state_dict(
+            chk["optimizer_state_dict"]
+        )
 
     # best_model_wts = copy.deepcopy(model.state_dict())
     # best_acc = 0.0
@@ -514,6 +468,7 @@ def setup_train_round(config, model=None, num_epochs=1, load_check=None):
     # config["cam"] = dict_gradient_method[config["gradient_method"]](
     #     model=model, target_layers=target_layers, use_cuda=True
     # )
+    config["target_layers"] = target_layers
 
     pbar = tqdm(
         range(config["global_run_count"], config["global_run_count"] + num_epochs),
@@ -526,9 +481,12 @@ def setup_train_round(config, model=None, num_epochs=1, load_check=None):
     #     record_shapes=True,
     #     with_stack=True)
     # prof.start()
+    scheduler = lr_scheduler.OneCycleLR(
+        optimizer, 2e-3, epochs=num_epochs, steps_per_epoch=len(dataloaders["train"])
+    )
 
     for _ in pbar:
-        one_epoch(config, pbar, model, optimizer, scheduler, dataloaders, fabric)
+        one_epoch(config, pbar, model, optimizer, dataloaders, scheduler)
         # prof.step()
     # prof.stop()
 
@@ -613,16 +571,8 @@ def train_proxy_steps(config):
         clear_proxy_images(config=config)  # Clean directory
     # prof.stop()
 
-    for name, size in sorted(
-        ((name, sys.getsizeof(value)) for name, value in list(locals().items())),
-        key=lambda x: -x[1],
-    )[:20]:
-        print("{:>30}: {:>8}".format(name, sizeof_fmt(size)))
-    for name, size in sorted(
-        ((name, sys.getsizeof(value)) for name, value in list(globals().items())),
-        key=lambda x: -x[1],
-    )[:20]:
-        print("{:>30}: {:>8}".format(name, sizeof_fmt(size)))
+    # for name, size in sorted(((name, sys.getsizeof(value)) for name, value in list(locals().items())), key= lambda x: -x[1])[:20]:
+    #     print("{:>30}: {:>8}".format(name, sizeof_fmt(size)))
 
     return config["final_acc"]
 
