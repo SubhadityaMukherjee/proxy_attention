@@ -1,61 +1,47 @@
 \chapter{State of the Art}
 \section{Gradient Based Explanations}
-
-Adaptive Whitening Saliency
-
-Bayesian Rule List
-
 Beware Of Inmates
-
-Cam
-
-Conductance
-
-Deconvnet
-
-Deep Fool
-
-Deep Inside Conv Nets
-
-Deep Lift
-
-Deep Visual Explanations
-
-Dynamic Visual Attention
-
-Embedding Knowledge Into Deep Attention Map
-
-Generalizing Adversarial Exp With Gradcam
-
-Gradcam++
-
-Graph Based Visual Saliency
-
-Guided Backprop
-
-Guided Gradcam
-
-Influence Of Image Class Acc On Saliency Map Esti
-
-Integrated Gradients
 
 Interpretation Is Fragile
 
-Lime
+Sanity Checks
 
-Lrp
+The Unreliability Of Saliency Methods
 
-Noise Tunnel
+There And Back Again
 
-Rise
+Influence Of Image Class Acc On Saliency Map Estimation
+
+Deconvnet
+
+Deep Inside Conv Nets
+
+Cam
+
+Gradcam++
+
+Guided Backprop
+
+% Scorecam
+In another paper, the authors propose a score weighted approach (ScoreCAM) to create saliency maps \cite{wangScoreCAMScoreWeightedVisual2020}. Like many other methods, the images are first passed through the network and the corresponding activations are obtained from the final convolutional layer. These activation maps are then upsampled and normalized to the range of [0,1]. The portions of the activation maps that were highlighted are then passed through a CNN with a SoftMax layer to obtain the score for each of the current classes. These scores are used to find the relative importance of all the activation maps. Finally the sum of all these maps is computed using a linear combination with the corresponding target score and then passed through a ReLU operation. These operations can be mathmaticaly represented as $L^{c}_{ScoreCAM} = ReLU(\underset{k}\Sigma w_{k}^{c}A^{k})$, where $k$ represents the index considered, $c$ represents the current class and $S_k$ represents the outputs of the aforementioned SoftMax layer. The authors find that the maps obtained using ScoreCAM are less noisy and using this method removes dependancy on unstable gradients as compared to other methods.
+
+Guided Gradcam
 
 Salience Map
 
+Noise Tunnel
+
+Integrated Gradients
+
 Sam Resnet
 
-Sanity Checks
+Conductance
 
-Scorecam
+Deep Fool
+
+Deep Lift
+
+Generalizing Adversarial Exp With Gradcam
 
 Shap
 
@@ -63,17 +49,33 @@ Smooth Grad
 
 Smooth Grad Square
 
+Lime
+
 Sp Lime
 
 Summit
 
-The Unreliability Of Saliency Methods
+Rise
 
-There And Back Again
+Lrp
 
 Var Grad
 
 Visualizing Impact Of Feature Attribution Baselines
+
+Adaptive Whitening Saliency
+
+Bayesian Rule List
+
+
+Deep Visual Explanations
+
+Dynamic Visual Attention
+
+Embedding Knowledge Into Deep Attention Map
+
+Graph Based Visual Saliency
+
 
 \section{Augmentation}
 Attentive Cutmix
@@ -83,14 +85,24 @@ Attributemix
 Augmentaiton with curriculum leanring
 
 Augmix
+Another augmentation strategy proposed by \cite{hendrycksAugMixSimpleData2020} first applies multiple transformations randomly and in parallel chains to each image. These transformations can include combinations of Translation, Rotation, Shearing etc. The outputs of these combinations are then mixed to form a new image, which is then further mixed with the original image to form the new image. This combination is done to improve performance in cases where data shifts are encountered in production. Once the images are mixed, a skip-connection is used to combine the results of the chains. AugMix also uses the Jensen-Shannon Divergence consistency loss \cite{linDivergenceMeasuresBased} to ensure that the images are stable across a range of inputs. Considering $KL$ to be Kullback-Leibler Divergence, the Jensen-Shannon Divergence can be defined as $
+JS(p_{orig}; p_{augmix1};p_{augmix2}) = \frac{1}{3}(KL[p_{orig}||M||]+KL[p_{augmix1}||M||]+KL[p_{augmix2}||M||])
+$, where $M$ is the mean of the three distributions $p_{orig}, p_{augmix1}, p_{augmix2}$.
+
+% Cutout
+Devries et al. in their paper \cite{devriesImprovedRegularizationConvolutional2017} propose an augmentation method they call Cutout. In this method, random sized square patches are removed from the images by replacing the corresponding pixels with a constant value (usually 0). Selecting the region involves picking a random pixel value and then creating a uniform sized square around the chosen pixel. The authors also find that Cutout performs better in combination with other methods rather than just being used by itself. Cutout can be expressed as an element-wise multiplication operation $x_{cutout} = x \odot M$,
+where $x$ is the original image, $M$ is a binary mask of the same size as $x$ with randomly chosen coordinates of a square patch of pixels to be cut out, and $\odot$ denotes element-wise multiplication.
 
 Co mixup
 
-Cut and mix
+% Cut and mix
+Unlike Cutout \cite{devriesImprovedRegularizationConvolutional2017}, where the chosen patch is replaced with zero pixels, in CutMix \cite{yunCutMixRegularizationStrategy2019} the chosen patch is replaced with a randomly chosen patch from a different region of the same image. Yun et al. propose this approach as multiple class labels can be learned with a single image.
+CutMix can be defined by the following operations $\overset{\sim}x = M \odot x_{A} + (1-M) \odot x_{B}$ ; $\overset{\sim}y = \lambda y_{A}+ (1- \lambda)y_{B}$. where $x$ is an RGB image, $y$ is the respective label, $M$ is a binary mask of the patch of the image that will be dropped and $\odot$ represents element wise multiplication. The new training sample $\overset{\sim}x , \overset{\sim}y$ is created by combining two other training samples $x_{A}, y_{A}$ and $x_{B} , y_{B}$. To control the combination ratio $\lambda$, a sample from the $\beta(1,1)$ distribution is chosen. This combination is quite similar to \cite{zhangMixupEmpiricalRisk2018} but differs in the sense that CutMix focuses on generating locally natural images.
+\nolinebreak
+% Hide and Seek
+In their paper Singh et al. \cite{singhHideandSeekDataAugmentation2018} propose a data augmentation method that takes an image as an input, and divides it into a grid. Each of the sub-grids are then turned off with a given probability. These sub-grids can be connected or independant of each other and the turned off grids are replaced by the average pixel value of all the images in the dataset.
 
 GridMask
-
-Hide and Seek
 
 Image Mixing and deletion
 
