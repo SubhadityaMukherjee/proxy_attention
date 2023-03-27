@@ -162,7 +162,7 @@ def create_dls(train, val, config):
     data_transforms_train = transforms.Compose(
         [
             transforms.Resize((config["image_size"], config["image_size"])),
-            transforms.ColorJitter(hue=.05, saturation=.05),
+            transforms.ColorJitter(hue=0.05, saturation=0.05),
             transforms.RandomHorizontalFlip(),
             transforms.RandomRotation(20, interpolation=Image.BILINEAR),
             transforms.ToTensor(),  # use ToTensor() last to get everything between 0 & 1

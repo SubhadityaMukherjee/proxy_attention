@@ -64,8 +64,8 @@ print("Done imports")
 
 
 config = {
-    # "experiment_name": "proxy_run",
-    "experiment_name": "baseline_run",
+    "experiment_name": "proxy_run",
+    # "experiment_name": "baseline_run",
     # "experiment_name": "ignore",
     "image_size": 224,
     "batch_size": 32,
@@ -74,9 +74,9 @@ config = {
     # "subset_images": 10000,
     "subset_images": 20000,
     "pixel_replacement_method": "blended",
-    # "proxy_steps": [10, "p",9],
+    "proxy_steps": [10, "p",9],
     # "proxy_steps": [3],
-    "proxy_steps": [20],
+    # "proxy_steps": [20],
     # "proxy_steps": [5],
     # "proxy_steps": ["p"],
     "load_proxy_data": False,
@@ -116,37 +116,43 @@ config = {
 #     "clear_every_step": [True],
 # }
 
-# search_space = {
-#     "change_subset_attention" : [0.8, 0.5, 0.2],
-#     # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
-#     "model": ["resnet18", "vgg16", "resnet50"],
-#     # "model": ["resnet18"],
-#     "proxy_image_weight" : [0.1, 0.2, 0.4, 0.8, 0.95],
-#     "proxy_threshold": [0.1, 0.2, 0.4, 0.8, 0.85],
-#     "gradient_method" : ["gradcamplusplus"],
-#     # "ds_name" : ["asl", "imagenette", "caltech256"],
-#     "ds_name" : ["asl", "imagenette"],
-#     # "clear_every_step": [True, False],
-#     "clear_every_step": [True],
-# }
-
-# No proxy search space
 search_space = {
-    "change_subset_attention": [0.8],
+    # "change_subset_attention" : [0.8, 0.5, 0.2],
+    "change_subset_attention" : [0.8,0.2],
     # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
-    # "model": ["resnet18","vgg16", "resnet50", "vit_base_patch16_224"],
-    # "model": ["vgg16","efficientnet_b0","resnet18","resnet50", "vit_base_patch16_224"],
-    "model": ["resnet18", "efficientnet_b0", "resnet50", "vit_base_patch16_224", "vgg16"],
-    # "model" : ["vgg16"],
-    "proxy_image_weight": [0.1],
-    "proxy_threshold": [0.85],
-    "gradient_method": ["gradcamplusplus"],
-    # "ds_name": ["asl", "imagenette", "caltech256"],
-    # "ds_name": ["asl", "imagenette"],
-    "ds_name": ["cifar100", "dogs", "caltech101", "asl", "imagenette"],
-    # "ds_name": ["imagenette"],
+    # "model": ["resnet18", "vgg16", "resnet50"],
+    # "model": ["resnet18", "efficientnet_b0", "resnet50"],
+    "model": ["resnet18"],
+    # "proxy_image_weight" : [0.1, 0.4, 0.8, 0.95],
+    "proxy_image_weight" : [0.2,0.95],
+    # "proxy_threshold": [0.1, 0.4, 0.8, 0.85],
+    "proxy_threshold": [0.1, 0.85],
+    "gradient_method" : ["gradcamplusplus"],
+    # "ds_name" : ["asl", "imagenette", "caltech256"],
+    # "ds_name" : ["asl", "imagenette"],
+    # "clear_every_step": [True, False],
+    "ds_name": ["cifar100"],
     "clear_every_step": [True],
 }
+
+# No proxy search space
+# search_space = {
+#     "change_subset_attention": [0.8],
+#     # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
+#     # "model": ["resnet18","vgg16", "resnet50", "vit_base_patch16_224"],
+#     # "model": ["vgg16","efficientnet_b0","resnet18","resnet50", "vit_base_patch16_224"],
+#     # "model": ["resnet18", "efficientnet_b0", "resnet50", "vit_base_patch16_224", "vgg16"],
+#     "model": ["resnet18", "efficientnet_b0", "resnet50"],
+#     # "model" : ["vgg16", "vit_base_patch16_224"],
+#     "proxy_image_weight": [0.1],
+#     "proxy_threshold": [0.85],
+#     "gradient_method": ["gradcamplusplus"],
+#     # "ds_name": ["asl", "imagenette", "caltech256"],
+#     # "ds_name": ["asl", "imagenette"],
+#     # "ds_name": ["cifar100", "dogs", "caltech101", "asl", "imagenette"],
+#     "ds_name": ["plantdisease"],
+#     "clear_every_step": [True],
+# }
 
 
 def get_approx_trial_count(search_space):
@@ -204,8 +210,12 @@ dataset_info = {
         "path": Path(f"{main_ds_dir}/caltech-101"),
         "name_fn": proxyattention.data_utils.get_parent_name,
         "num_classes" : 101
-    }
-
+    },
+    "plantdisease": {
+        "path": Path(f"{main_ds_dir}/plantdisease/Plant_leave_diseases_dataset_without_augmentation"),
+        "name_fn": proxyattention.data_utils.get_parent_name,
+        "num_classes" : 39
+    },
 
 }
 
