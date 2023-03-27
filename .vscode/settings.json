@@ -1,5 +1,5 @@
 {
     "jupyter.kernels.filter": [],
-    "python.formatting.provider": "black",
+    "python.formatting.provider": "autopep8",
     "todo-tree.tree.showBadges": true
 }
