@@ -138,3 +138,4 @@ runs/
 *.pkl
 results/
 results/*
+!current_config.pkl

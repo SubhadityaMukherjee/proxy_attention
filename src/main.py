@@ -75,8 +75,8 @@ config = {
     "subset_images": 20000,
     # "subset_images": 3000,
     "pixel_replacement_method": "blended",
-    # "proxy_steps": [10, "p", 10],
-    "proxy_steps": [1, "p", 1],
+    "proxy_steps": [10, "p", 10],
+    # "proxy_steps": [1, "p", 1],
     # "proxy_steps": [3],
     # "proxy_steps": [20],
     # "proxy_steps": [5],
@@ -134,7 +134,8 @@ search_space = {
     # "ds_name" : ["asl", "imagenette", "caltech256"],
     # "ds_name" : ["asl", "imagenette"],
     # "clear_every_step": [True, False],
-    "ds_name": ["cifar100"],
+    # "ds_name": ["cifar100"],
+    "ds_name": ["dogs", "caltech101", "asl", "imagenette", "plantdisease"],
     "clear_every_step": [True],
 }
 

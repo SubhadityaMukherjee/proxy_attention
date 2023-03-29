@@ -193,41 +193,44 @@ def proxy_callback(config, input_wrong_full, label_wrong_full, cam):
     logging.info("[INFO] Started proxy batches")
 
     for i in tqdm(range(0, len(input_wrong_full), config["batch_size"]), desc="Running proxy"):
-        input_wrong = input_wrong_full[i:i+config["batch_size"]]
-        label_wrong = label_wrong_full[i:i+config["batch_size"]]
-
         try:
-            input_wrong = torch.squeeze(torch.stack(input_wrong, dim=1))
-            label_wrong = torch.squeeze(torch.stack(label_wrong, dim=1))
-        except:
-            input_wrong = torch.squeeze(input_wrong)
-            label_wrong = torch.squeeze(label_wrong)
-        
-        if i == 0:
-            writer.add_images(
-                "original_images",
-                inv_normalize(input_wrong),
-                # input_wrong,
-                config["global_run_count"],
-            )
+            input_wrong = input_wrong_full[i:i+config["batch_size"]]
+            label_wrong = label_wrong_full[i:i+config["batch_size"]]
 
-        # save_pickle((cam, input_wrong, config,tfm))
+            try:
+                input_wrong = torch.squeeze(torch.stack(input_wrong, dim=1))
+                label_wrong = torch.squeeze(torch.stack(label_wrong, dim=1))
+            except:
+                input_wrong = torch.squeeze(input_wrong)
+                label_wrong = torch.squeeze(label_wrong)
+            
+            if i == 0:
+                writer.add_images(
+                    "original_images",
+                    inv_normalize(input_wrong),
+                    # input_wrong,
+                    config["global_run_count"],
+                )
 
-        # TODO run over all the batches
-        thresholded_ims = proxy_one_batch(config, input_wrong, cam)
-        processed_thresholds.extend(thresholded_ims)
-        processed_labels.extend(label_wrong)
+            # save_pickle((cam, input_wrong, config,tfm))
+
+            # TODO run over all the batches
+            thresholded_ims = proxy_one_batch(config, input_wrong, cam)
+            processed_thresholds.extend(thresholded_ims)
+            processed_labels.extend(label_wrong)
 
 
-        logging.info("[INFO] Ran proxy step")
-        if i == 0:
-            writer.add_images(
-                "converted_proxy",
-                thresholded_ims,
-                config["global_run_count"],
-            )
+            logging.info("[INFO] Ran proxy step")
+            if i == 0:
+                writer.add_images(
+                    "converted_proxy",
+                    thresholded_ims,
+                    config["global_run_count"],
+                )
 
-        logging.info("[INFO] Saving the images")
+            logging.info("[INFO] Saving the images")
+        except ValueError:
+            pass
 
     # def save_image(ind):
     #     label = config["label_map"][processed_labels[ind].item()]
