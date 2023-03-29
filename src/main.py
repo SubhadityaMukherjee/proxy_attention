@@ -123,9 +123,9 @@ search_space = {
     "change_subset_attention": [0.8, 0.2],
     # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
     # "model": ["resnet18", "vgg16", "resnet50"],
-    "model": ["resnet18", "efficientnet_b0", "resnet50"],
+    # "model": ["resnet18", "efficientnet_b0", "resnet50"],
     # "model": ["resnet18"],
-    # "model": ["efficientnet_b0"],
+    "model": ["efficientnet_b0"],
     # "proxy_image_weight" : [0.1, 0.4, 0.8, 0.95],
     "proxy_image_weight": [0.2, 0.95],
     # "proxy_threshold": [0.1, 0.4, 0.8, 0.85],
@@ -135,8 +135,9 @@ search_space = {
     # "ds_name" : ["asl", "imagenette"],
     # "clear_every_step": [True, False],
     # "ds_name": ["cifar100"],
-    "ds_name": ["dogs", "caltech101", "asl", "imagenette", "plantdisease"],
-    "clear_every_step": [True],
+    "ds_name": ["dogs"],
+    # "ds_name": ["dogs", "caltech101", "asl", "imagenette", "plantdisease"],
+    "clear_every_step": [True, False],
 }
 
 # No proxy search space

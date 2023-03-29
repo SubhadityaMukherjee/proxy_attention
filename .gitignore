@@ -139,3 +139,4 @@ runs/
 results/
 results/*
 !current_config.pkl
+!results/aggregated_runs.csv

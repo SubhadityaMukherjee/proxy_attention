@@ -38,7 +38,7 @@ def get_event_files(main_path, save_ims = False):
                 all_files.append(str(Path(root) / Path(filename)))
     return all_files
 
-@pysnooper.snoop()
+# @pysnooper.snoop()
 def process_event_acc(event_acc, save_ims = False):
     """Process the EventAccumulator and return a dictionary of tag values"""
     all_tags = event_acc.Tags()
