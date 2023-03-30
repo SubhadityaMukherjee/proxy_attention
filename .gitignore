@@ -138,3 +138,11 @@ runs/
 *.pkl
 !current_config.pkl
 !results/aggregated_runs.csv
+*.aux
+*.fls
+*.lof
+*.lot
+*.out
+*.fdb_latexmk
+*.bcf
+*.bbl
