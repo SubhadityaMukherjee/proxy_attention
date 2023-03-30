@@ -1067,6 +1067,13 @@ INPUT ./images/banner.png
 INPUT ./images/banner.png
 INPUT images/banner.png
 INPUT ./images/banner.png
+INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/vf/adobe/times/zptmcmrm.vf
+INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/tfm/adobe/symbol/psyr.tfm
+INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/tfm/adobe/times/ptmri8r.tfm
+INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/tfm/public/cm/cmmi10.tfm
+INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/vf/adobe/times/zptmcmr.vf
+INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/tfm/adobe/times/ptmr8r.tfm
+INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/tfm/public/cm/cmr10.tfm
 INPUT ./chapters/implementation.tex
 INPUT chapters/implementation.tex
 INPUT ./chapters/implementation.tex

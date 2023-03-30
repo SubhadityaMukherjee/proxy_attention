@@ -1,12 +1,12 @@
 # Fdb version 4
-["biber main"] 1679931273 "main.bcf" "main.bbl" "main" 1679931357 0
-  "My Library.bib" 1679930123 452551 1bc73ca67b558a3fe57705a2548caef1 ""
-  "main.bcf" 1679931357 107704 88ffe1564788b871b7d160035954a75f "pdflatex"
+["biber main"] 1680171282 "main.bcf" "main.bbl" "main" 1680171285 0
+  "My Library.bib" 1680171273 463782 5c3e96678c4c26b1b211719ff781e05a ""
+  "main.bcf" 1680171172 108699 78266f50112f94224304b2008a2c4d57 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1679931356 "/Users/eragon/Documents/CODE/Github/proxy_attention/writing/thesis/main.tex" "main.pdf" "main" 1679931357 0
+["pdflatex"] 1680171171 "/Users/eragon/Documents/CODE/Github/proxy_attention/writing/thesis/main.tex" "main.pdf" "main" 1680171285 0
   "/Users/eragon/Documents/CODE/Github/proxy_attention/writing/thesis/main.tex" 1679928930 6712 7216331762ef6f7588ab52494ca89300 ""
   "/usr/local/texlive/2022basic/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2022basic/texmf-dist/fonts/tfm/adobe/helvetic/phvr7t.tfm" 1136768653 2520 53e01eef820ca829e42c1333c3fd02b9 ""
@@ -161,20 +161,20 @@
   "chapters/implementation.tex" 1679911960 1096 d1da6dd701547bad712865c28123b7f3 ""
   "chapters/introduction.tex" 1678099157 177 2c69eb890320b3da89b05ffa058ae9f9 ""
   "chapters/proposed.tex" 1679666327 421 3be7fb96113661d7038059063692eb2a ""
-  "chapters/sota.tex" 1679930527 5970 452493724af201de38d06793c1aa2729 ""
+  "chapters/sota.tex" 1680171282 9744 a6f267416530ebff7ae225d9a86d5fb7 ""
   "images/asl.png" 1679916993 831554 1c8b1f61f6321eb3fa380d9e3f39cc90 ""
   "images/banner.png" 1678100986 12386 47e4c7ee17a3d77036a48ed53deccd86 ""
   "images/cifar100.png" 1679916993 729631 8aee4cee081869ebaba1fb9b54232d11 ""
   "images/dogs.png" 1679916993 1215976 0938de3a53b16ba92eeece161695ef5f ""
   "images/imagenette.png" 1679916993 1073968 50a1cde14a979aeff77aab828fc2c5a0 ""
-  "main.aux" 1679931357 13347 6163a9af2f7ed08fd4f762bebb368f5e "pdflatex"
-  "main.bbl" 1679931275 25736 2ca639ef854adb6402c82c35b6b9b22c "biber main"
-  "main.lof" 1679931357 600 98f978396e8d83d36311be69dafcb367 "pdflatex"
-  "main.lot" 1679931357 190 84e9851f92b610fc7b63f18d7621c1e0 "pdflatex"
-  "main.out" 1679931357 10504 685d3cfca08556f4a54ee474d0c15769 "pdflatex"
-  "main.run.xml" 1679931357 2305 45a15ab55dcc23c59be4eaa4484b97a2 "pdflatex"
+  "main.aux" 1680171172 15098 aa3672ed3be4b0c12221bf1d3b3af36f "pdflatex"
+  "main.bbl" 1680171285 46558 e8a2ec90af06a5b649e1c95d28c7a705 "biber main"
+  "main.lof" 1680171172 600 98f978396e8d83d36311be69dafcb367 "pdflatex"
+  "main.lot" 1680171172 190 84e9851f92b610fc7b63f18d7621c1e0 "pdflatex"
+  "main.out" 1680171172 10504 685d3cfca08556f4a54ee474d0c15769 "pdflatex"
+  "main.run.xml" 1680171172 2305 45a15ab55dcc23c59be4eaa4484b97a2 "pdflatex"
   "main.tex" 1679928930 6712 7216331762ef6f7588ab52494ca89300 ""
-  "main.toc" 1679931357 6183 d84361fb2178ae6a95d963314db8992b "pdflatex"
+  "main.toc" 1680171172 6183 f1a84e20d7182f7a1e02e28e7cfbc2ff "pdflatex"
   (generated)
   "main.aux"
   "main.bcf"

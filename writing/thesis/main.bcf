@@ -2369,7 +2369,18 @@
     <bcf:citekey order="6" intorder="1">devriesImprovedRegularizationConvolutional2017</bcf:citekey>
     <bcf:citekey order="7" intorder="1">yunCutMixRegularizationStrategy2019</bcf:citekey>
     <bcf:citekey order="8" intorder="1">zhangMixupEmpiricalRisk2018</bcf:citekey>
-    <bcf:citekey order="9" intorder="1">singhHideandSeekDataAugmentation2018</bcf:citekey>
+    <bcf:citekey order="9" intorder="1">yunCutMixRegularizationStrategy2019</bcf:citekey>
+    <bcf:citekey order="10" intorder="1">walawalkarAttentiveCutMixEnhanced2020</bcf:citekey>
+    <bcf:citekey order="11" intorder="1">singhHideandSeekDataAugmentation2018</bcf:citekey>
+    <bcf:citekey order="12" intorder="1">zhouLearningDeepFeatures2016</bcf:citekey>
+    <bcf:citekey order="13" intorder="1">devriesImprovedRegularizationConvolutional2017</bcf:citekey>
+    <bcf:citekey order="14" intorder="1">zhongRandomErasingData2020</bcf:citekey>
+    <bcf:citekey order="15" intorder="1">qinResizeMixMixingData2020</bcf:citekey>
+    <bcf:citekey order="16" intorder="1">yunCutMixRegularizationStrategy2019</bcf:citekey>
+    <bcf:citekey order="17" intorder="1">takahashiDataAugmentationUsing2020</bcf:citekey>
+    <bcf:citekey order="18" intorder="1">leeSmoothMixSimpleEffective2020</bcf:citekey>
+    <bcf:citekey order="19" intorder="1">yunCutMixRegularizationStrategy2019</bcf:citekey>
+    <bcf:citekey order="20" intorder="1">devriesImprovedRegularizationConvolutional2017</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">

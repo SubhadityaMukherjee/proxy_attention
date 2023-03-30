@@ -78,7 +78,6 @@ Graph Based Visual Saliency
 
 
 \section{Augmentation}
-Attentive Cutmix
 
 Attributemix
 
@@ -92,6 +91,8 @@ $, where $M$ is the mean of the three distributions $p_{orig}, p_{augmix1}, p_{a
 % Cutout
 Devries et al. in their paper \cite{devriesImprovedRegularizationConvolutional2017} propose an augmentation method they call Cutout. In this method, random sized square patches are removed from the images by replacing the corresponding pixels with a constant value (usually 0). Selecting the region involves picking a random pixel value and then creating a uniform sized square around the chosen pixel. The authors also find that Cutout performs better in combination with other methods rather than just being used by itself. Cutout can be expressed as an element-wise multiplication operation $x_{cutout} = x \odot M$,
 where $x$ is the original image, $M$ is a binary mask of the same size as $x$ with randomly chosen coordinates of a square patch of pixels to be cut out, and $\odot$ denotes element-wise multiplication.
+
+
 % \nolinebreak
 Co mixup
 % \nolinebreak
@@ -99,6 +100,9 @@ Co mixup
 Unlike Cutout \cite{devriesImprovedRegularizationConvolutional2017}, where the chosen patch is replaced with zero pixels, in CutMix \cite{yunCutMixRegularizationStrategy2019} the chosen patch is replaced with a randomly chosen patch from a different region of the same image. Yun et al. propose this approach as multiple class labels can be learned with a single image.
 CutMix can be defined by the following operations $\overset{\sim}x = M \odot x_{A} + (1-M) \odot x_{B}$ ; $\overset{\sim}y = \lambda y_{A}+ (1- \lambda)y_{B}$. where $x$ is an RGB image, $y$ is the respective label, $M$ is a binary mask of the patch of the image that will be dropped and $\odot$ represents element wise multiplication. The new training sample $\overset{\sim}x , \overset{\sim}y$ is created by combining two other training samples $x_{A}, y_{A}$ and $x_{B} , y_{B}$. To control the combination ratio $\lambda$, a sample from the $\beta(1,1)$ distribution is chosen. This combination is quite similar to \cite{zhangMixupEmpiricalRisk2018} but differs in the sense that CutMix focuses on generating locally natural images.
 % \nolinebreak
+% Attentive Cutmix
+Building up on \cite{yunCutMixRegularizationStrategy2019}, Walawalkar et al. propose an alternative method of replacing patches in an image they call Attentive CutMix \cite{walawalkarAttentiveCutMixEnhanced2020}. In this method, instead of randomly pasting patches in the image, a pre-trained network is used to identify attentive regions from the image. Similar to the earlier approach, these patches are then mapped back to the original image. Doing so allows the network to select backround regions that are important for the task while also updating the label information. 
+
 % Hide and Seek
 In their paper Singh et al. \cite{singhHideandSeekDataAugmentation2018} propose a data augmentation method that takes an image as an input, and divides it into a grid. Each of the sub-grids are then turned off with a given probability. These sub-grids can be connected or independant of each other and the turned off grids are replaced by the average pixel value of all the images in the dataset.
 
@@ -106,7 +110,8 @@ GridMask
 
 Image Mixing and deletion
 
-Intra class part swapping
+% Intra class part swapping
+Zhang et al. propose another method of data augmentation that uses a CAM \cite{zhouLearningDeepFeatures2016} to identify the most important regions of an image. These parts are then thresholded, scaled, translated and pasted onto the target image. A similar process is also applied to the target image and the attentive parts of the original image are used to replace the corresponding attentive parts of the target image. Similar to previous methods, the labels are also updated to reflect the changes in the image.
 
 Keep augment
 
@@ -116,21 +121,26 @@ Puzzle mix
 
 Randaugment
 
-Random Erasing
+% Random Erasing
+While Cutout augmentation \cite{devriesImprovedRegularizationConvolutional2017} is applied to every image in the dataset, Zhong et al. propose a new method, Random Erasing, that takes a probability of being applied into account \cite{zhongRandomErasingData2020}. In Random Erasing, contiguous rectangular regions are selected and replaced at random with random upper and lower limits chosen for both region area and aspect ratio. For object detection tasks, a region aware detection algorithm is applied to make the network more robust to occlusion. Note that Cutout removes square patches, while Random Erasing either removes square or rectangular patches. 
 
 Random distortion
 
 Remix
 
-Resizemix
+% Resizemix
+Many of the augmentation methods that rely on randomly choosing regions to cut and paste from sometimes fail to work well with regions that lack object information. ResizeMix \cite{qinResizeMixMixingData2020} tackles this problem by replacing the patch with a proportional resized version of the selected image. This method is similar to CutMix \cite{yunCutMixRegularizationStrategy2019} but differs in the sense that ResizeMix uses a resized version of the entire image instead of a randomly chosen patch.
 
-Ricap
+% Ricap
+Another augmentation technique that applies random cropping and pasting is RICAP \cite{takahashiDataAugmentationUsing2020}. In this method, four regions are cropped from different images and then pasted together to form a new image. The created image thus has multiple mixed labels. A uniform distribution is used to determine the area of each cropped region in the final image. The authors propose multple variants of RICAP that use different points of origin for cropping. They find that the method works best when the cropped regions use the corners as the origin as it allows the network to see more of the image.
 
 Saliencymix
 
 Sample pairing
 
-Smooth mix
+% Smooth mix
+With the success of mask based approaches for data augmentation, there have been many papers that attempt to fix the flaws of previous research. One such method is SmoothMix \cite{leeSmoothMixSimpleEffective2020}, which builds up on both CutMix \cite{yunCutMixRegularizationStrategy2019} and Cutout \cite{devriesImprovedRegularizationConvolutional2017} but modifies the mask to have softer edges. The intensity of the masked edges gradually decreases and depends on the strength of the mask. The updated pixel values are thus obtained by mixing the mask with the original image according to the formula $\lambda= \frac{\Sigma_{i=1}^{W}\Sigma_{j=1}^{H}G_{ij}}{WH}$. Where $G_{ij}$ is the pixel value of mask $G$ and $H,W$ are the height and width of the image respectively. The new pixel values are then $(x_{new} , y_{new}) = (G.xa + (1 - G).xb , \lambda.ya + (1 - \lambda).yb)$
+
 
 Smote
 

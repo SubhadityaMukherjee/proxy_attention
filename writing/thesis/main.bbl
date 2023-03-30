@@ -417,6 +417,70 @@
       \endverb
       \keyw{Computer Science - Machine Learning,Statistics - Machine Learning}
     \endentry
+    \entry{walawalkarAttentiveCutMixEnhanced2020}{online}{}
+      \name{author}{4}{}{%
+        {{hash=caefcc8c1710091cc966342d67df28cb}{%
+           family={Walawalkar},
+           familyi={W\bibinitperiod},
+           given={Devesh},
+           giveni={D\bibinitperiod}}}%
+        {{hash=656a003a053913c84310e52854968608}{%
+           family={Shen},
+           familyi={S\bibinitperiod},
+           given={Zhiqiang},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=f7d472f100bd11b3fbb1c5f7d54960a3}{%
+           family={Liu},
+           familyi={L\bibinitperiod},
+           given={Zechun},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=82fa321950a025af7d68b502b217c22a}{%
+           family={Savvides},
+           familyi={S\bibinitperiod},
+           given={Marios},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{3c249e0898b4a1aec133ca4937d3674f}
+      \strng{fullhash}{810f900becb1a95ad6678560f4abe1f2}
+      \strng{bibnamehash}{3c249e0898b4a1aec133ca4937d3674f}
+      \strng{authorbibnamehash}{3c249e0898b4a1aec133ca4937d3674f}
+      \strng{authornamehash}{3c249e0898b4a1aec133ca4937d3674f}
+      \strng{authorfullhash}{810f900becb1a95ad6678560f4abe1f2}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Convolutional neural networks (CNN) are capable of learning robust representation with different regularization methods and activations as convolutional layers are spatially correlated. Based on this property, a large variety of regional dropout strategies have been proposed, such as Cutout, DropBlock, CutMix, etc. These methods aim to promote the network to generalize better by partially occluding the discriminative parts of objects. However, all of them perform this operation randomly, without capturing the most important region(s) within an object. In this paper, we propose Attentive CutMix, a naturally enhanced augmentation strategy based on CutMix. In each training iteration, we choose the most descriptive regions based on the intermediate attention maps from a feature extractor, which enables searching for the most discriminative parts in an image. Our proposed method is simple yet effective, easy to implement and can boost the baseline significantly. Extensive experiments on CIFAR-10/100, ImageNet datasets with various CNN architectures (in a unified setting) demonstrate the effectiveness of our proposed method, which consistently outperforms the baseline CutMix and other methods by a significant margin.}
+      \field{day}{5}
+      \field{eprinttype}{arxiv}
+      \field{month}{4}
+      \field{number}{arXiv:2003.13048}
+      \field{pubstate}{preprint}
+      \field{shorttitle}{Attentive {{CutMix}}}
+      \field{title}{Attentive {{CutMix}}: {{An Enhanced Data Augmentation Approach}} for {{Deep Learning Based Image Classification}}}
+      \field{urlday}{29}
+      \field{urlmonth}{3}
+      \field{urlyear}{2023}
+      \field{year}{2020}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.48550/arXiv.2003.13048
+      \endverb
+      \verb{eprint}
+      \verb arXiv:2003.13048
+      \endverb
+      \verb{file}
+      \verb /Users/eragon/Zotero/storage/5ZN5WF6N/Walawalkar et al. - 2020 - Attentive CutMix An Enhanced Data Augmentation Ap.pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/2003.13048
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/2003.13048
+      \endverb
+      \keyw{Computer Science - Computer Vision and Pattern Recognition}
+    \endentry
     \entry{singhHideandSeekDataAugmentation2018}{online}{}
       \name{author}{5}{}{%
         {{hash=b14c1e38525e58e809557d68d6fd5df3}{%
@@ -451,8 +515,8 @@
       \strng{authorbibnamehash}{da7ea9661525754a9e647bc6950a9f9d}
       \strng{authornamehash}{da7ea9661525754a9e647bc6950a9f9d}
       \strng{authorfullhash}{0ed6f8405cc8b34c03463bba041b9ab8}
-      \field{sortinit}{9}
-      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{shorttitle}
       \field{abstract}{We propose 'Hide-and-Seek' a general purpose data augmentation technique, which is complementary to existing data augmentation techniques and is beneficial for various visual recognition tasks. The key idea is to hide patches in a training image randomly, in order to force the network to seek other relevant content when the most discriminative content is hidden. Our approach only needs to modify the input image and can work with any network to improve its performance. During testing, it does not need to hide any patches. The main advantage of Hide-and-Seek over existing data augmentation techniques is its ability to improve object localization accuracy in the weakly-supervised setting, and we therefore use this task to motivate the approach. However, Hide-and-Seek is not tied only to the image localization task, and can generalize to other forms of visual input like videos, as well as other recognition tasks like image classification, temporal action localization, semantic segmentation, emotion recognition, age/gender estimation, and person re-identification. We perform extensive experiments to showcase the advantage of Hide-and-Seek on these various visual recognition problems.}
@@ -485,6 +549,335 @@
       \verb http://arxiv.org/abs/1811.02545
       \endverb
       \keyw{Computer Science - Computer Vision and Pattern Recognition}
+    \endentry
+    \entry{zhouLearningDeepFeatures2016}{inproceedings}{}
+      \name{author}{5}{}{%
+        {{hash=c7cb7aa044ac5597397cceabad3765a3}{%
+           family={Zhou},
+           familyi={Z\bibinitperiod},
+           given={Bolei},
+           giveni={B\bibinitperiod}}}%
+        {{hash=c8d6add84efe17681e0d4968ebf47fdc}{%
+           family={Khosla},
+           familyi={K\bibinitperiod},
+           given={Aditya},
+           giveni={A\bibinitperiod}}}%
+        {{hash=ff625fa4a3aa4372da089f7c768a77c0}{%
+           family={Lapedriza},
+           familyi={L\bibinitperiod},
+           given={Agata},
+           giveni={A\bibinitperiod}}}%
+        {{hash=b7446de83b2320d904225a0730e3389a}{%
+           family={Oliva},
+           familyi={O\bibinitperiod},
+           given={Aude},
+           giveni={A\bibinitperiod}}}%
+        {{hash=2a80dd1cae02059e95bfed2f2715fd0a}{%
+           family={Torralba},
+           familyi={T\bibinitperiod},
+           given={Antonio},
+           giveni={A\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Las Vegas, NV, USA}%
+      }
+      \list{publisher}{1}{%
+        {IEEE}%
+      }
+      \strng{namehash}{85a01c7844076348ef51e88248410965}
+      \strng{fullhash}{11813c4999ac7bb6f658ca15eb365e76}
+      \strng{bibnamehash}{85a01c7844076348ef51e88248410965}
+      \strng{authorbibnamehash}{85a01c7844076348ef51e88248410965}
+      \strng{authornamehash}{85a01c7844076348ef51e88248410965}
+      \strng{authorfullhash}{11813c4999ac7bb6f658ca15eb365e76}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{In this work, we revisit the global average pooling layer proposed in [13], and shed light on how it explicitly enables the convolutional neural network (CNN) to have remarkable localization ability despite being trained on imagelevel labels. While this technique was previously proposed as a means for regularizing training, we find that it actually builds a generic localizable deep representation that exposes the implicit attention of CNNs on an image. Despite the apparent simplicity of global average pooling, we are able to achieve 37.1\% top-5 error for object localization on ILSVRC 2014 without training on any bounding box annotation.We demonstrate in a variety of experiments that our network is able to localize the discriminative image regions despite just being trained for solving classification task1.}
+      \field{booktitle}{2016 {{IEEE Conference}} on {{Computer Vision}} and {{Pattern Recognition}} ({{CVPR}})}
+      \field{eventtitle}{2016 {{IEEE Conference}} on {{Computer Vision}} and {{Pattern Recognition}} ({{CVPR}})}
+      \field{isbn}{978-1-4673-8851-1}
+      \field{langid}{english}
+      \field{month}{6}
+      \field{title}{Learning {{Deep Features}} for {{Discriminative Localization}}}
+      \field{urlday}{20}
+      \field{urlmonth}{2}
+      \field{urlyear}{2023}
+      \field{year}{2016}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{2921\bibrangedash 2929}
+      \range{pages}{9}
+      \verb{doi}
+      \verb 10.1109/CVPR.2016.319
+      \endverb
+      \verb{file}
+      \verb /Users/eragon/Zotero/storage/D46H4UWB/Zhou et al. - 2016 - Learning Deep Features for Discriminative Localiza.pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://ieeexplore.ieee.org/document/7780688/
+      \endverb
+      \verb{url}
+      \verb http://ieeexplore.ieee.org/document/7780688/
+      \endverb
+    \endentry
+    \entry{zhongRandomErasingData2020}{article}{}
+      \name{author}{5}{}{%
+        {{hash=5ffd59133d7d49ddc05ba07d2bbe8c66}{%
+           family={Zhong},
+           familyi={Z\bibinitperiod},
+           given={Zhun},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=7f1ed47c0c1b22e46324b0745b5b65eb}{%
+           family={Zheng},
+           familyi={Z\bibinitperiod},
+           given={Liang},
+           giveni={L\bibinitperiod}}}%
+        {{hash=3c065eed66394a54f1d36a69511ea026}{%
+           family={Kang},
+           familyi={K\bibinitperiod},
+           given={Guoliang},
+           giveni={G\bibinitperiod}}}%
+        {{hash=bc6feb32222eb9129e27d20dbc31167a}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Shaozi},
+           giveni={S\bibinitperiod}}}%
+        {{hash=446e84a6f09f26fc6cf5730853e551ba}{%
+           family={Yang},
+           familyi={Y\bibinitperiod},
+           given={Yi},
+           giveni={Y\bibinitperiod}}}%
+      }
+      \strng{namehash}{9beb7313dee5fea863f2a90fa266a247}
+      \strng{fullhash}{aa6bb3b2b5a8e821b6e99f37d5de0376}
+      \strng{bibnamehash}{9beb7313dee5fea863f2a90fa266a247}
+      \strng{authorbibnamehash}{9beb7313dee5fea863f2a90fa266a247}
+      \strng{authornamehash}{9beb7313dee5fea863f2a90fa266a247}
+      \strng{authorfullhash}{aa6bb3b2b5a8e821b6e99f37d5de0376}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{In this paper, we introduce Random Erasing, a new data augmentation method for training the convolutional neural network (CNN). In training, Random Erasing randomly selects a rectangle region in an image and erases its pixels with random values. In this process, training images with various levels of occlusion are generated, which reduces the risk of over-fitting and makes the model robust to occlusion. Random Erasing is parameter learning free, easy to implement, and can be integrated with most of the CNN-based recognition models. Albeit simple, Random Erasing is complementary to commonly used data augmentation techniques such as random cropping and flipping, and yields consistent improvement over strong baselines in image classification, object detection and person re-identification. Code is available at: https://github.com/zhunzhong07/Random-Erasing.}
+      \field{day}{3}
+      \field{issn}{2374-3468, 2159-5399}
+      \field{journaltitle}{Proceedings of the AAAI Conference on Artificial Intelligence}
+      \field{langid}{english}
+      \field{month}{4}
+      \field{number}{07}
+      \field{shortjournal}{AAAI}
+      \field{title}{Random {{Erasing Data Augmentation}}}
+      \field{urlday}{21}
+      \field{urlmonth}{10}
+      \field{urlyear}{2022}
+      \field{volume}{34}
+      \field{year}{2020}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{13001\bibrangedash 13008}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1609/aaai.v34i07.7000
+      \endverb
+      \verb{file}
+      \verb /Users/eragon/Zotero/storage/H2HNNUFX/Zhong et al. - 2020 - Random Erasing Data Augmentation.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://aaai.org/ojs/index.php/AAAI/article/view/7000
+      \endverb
+      \verb{url}
+      \verb https://aaai.org/ojs/index.php/AAAI/article/view/7000
+      \endverb
+    \endentry
+    \entry{qinResizeMixMixingData2020}{online}{}
+      \name{author}{6}{}{%
+        {{hash=2f85a6ceba865d9250bcbbc35cf70c03}{%
+           family={Qin},
+           familyi={Q\bibinitperiod},
+           given={Jie},
+           giveni={J\bibinitperiod}}}%
+        {{hash=ec5ce127932e919a209dd5a9db85cee9}{%
+           family={Fang},
+           familyi={F\bibinitperiod},
+           given={Jiemin},
+           giveni={J\bibinitperiod}}}%
+        {{hash=ab5652acf0de64074be2a35319b7c36a}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Qian},
+           giveni={Q\bibinitperiod}}}%
+        {{hash=d2354226a305a694e082d0c47c299a00}{%
+           family={Liu},
+           familyi={L\bibinitperiod},
+           given={Wenyu},
+           giveni={W\bibinitperiod}}}%
+        {{hash=13f130cc9092f464777eeb08a8dd109a}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Xingang},
+           giveni={X\bibinitperiod}}}%
+        {{hash=1bd616b774bd66d7d77e025ac08c962d}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Xinggang},
+           giveni={X\bibinitperiod}}}%
+      }
+      \strng{namehash}{169327b45088329d25efe8084931ee2a}
+      \strng{fullhash}{28c91cef478881ce99b3a236e6b501ef}
+      \strng{bibnamehash}{169327b45088329d25efe8084931ee2a}
+      \strng{authorbibnamehash}{169327b45088329d25efe8084931ee2a}
+      \strng{authornamehash}{169327b45088329d25efe8084931ee2a}
+      \strng{authorfullhash}{28c91cef478881ce99b3a236e6b501ef}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Data augmentation is a powerful technique to increase the diversity of data, which can effectively improve the generalization ability of neural networks in image recognition tasks. Recent data mixing based augmentation strategies have achieved great success. Especially, CutMix uses a simple but effective method to improve the classifiers by randomly cropping a patch from one image and pasting it on another image. To further promote the performance of CutMix, a series of works explore to use the saliency information of the image to guide the mixing. We systematically study the importance of the saliency information for mixing data, and find that the saliency information is not so necessary for promoting the augmentation performance. Furthermore, we find that the cutting based data mixing methods carry two problems of label misallocation and object information missing, which cannot be resolved simultaneously. We propose a more effective but very easily implemented method, namely ResizeMix. We mix the data by directly resizing the source image to a small patch and paste it on another image. The obtained patch preserves more substantial object information compared with conventional cut-based methods. ResizeMix shows evident advantages over CutMix and the saliency-guided methods on both image classification and object detection tasks without additional computation cost, which even outperforms most costly search-based automatic augmentation methods.}
+      \field{day}{20}
+      \field{eprinttype}{arxiv}
+      \field{month}{12}
+      \field{number}{arXiv:2012.11101}
+      \field{pubstate}{preprint}
+      \field{shorttitle}{{{ResizeMix}}}
+      \field{title}{{{ResizeMix}}: {{Mixing Data}} with {{Preserved Object Information}} and {{True Labels}}}
+      \field{urlday}{29}
+      \field{urlmonth}{3}
+      \field{urlyear}{2023}
+      \field{year}{2020}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{eprint}
+      \verb arXiv:2012.11101
+      \endverb
+      \verb{file}
+      \verb /Users/eragon/Zotero/storage/N5QGSZ8V/Qin et al. - 2020 - ResizeMix Mixing Data with Preserved Object Infor.pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/2012.11101
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/2012.11101
+      \endverb
+      \keyw{Computer Science - Computer Vision and Pattern Recognition}
+    \endentry
+    \entry{takahashiDataAugmentationUsing2020}{article}{}
+      \name{author}{3}{}{%
+        {{hash=f05c6141445ed7d02b15871c9e06e6e3}{%
+           family={Takahashi},
+           familyi={T\bibinitperiod},
+           given={Ryo},
+           giveni={R\bibinitperiod}}}%
+        {{hash=5e274388763fb2deb9f78659d85341b3}{%
+           family={Matsubara},
+           familyi={M\bibinitperiod},
+           given={Takashi},
+           giveni={T\bibinitperiod}}}%
+        {{hash=6a5f8c6a5957757638ac13cdd32d69a9}{%
+           family={Uehara},
+           familyi={U\bibinitperiod},
+           given={Kuniaki},
+           giveni={K\bibinitperiod}}}%
+      }
+      \strng{namehash}{ffff3952df718cca7646b3c73ad5598b}
+      \strng{fullhash}{ffff3952df718cca7646b3c73ad5598b}
+      \strng{bibnamehash}{ffff3952df718cca7646b3c73ad5598b}
+      \strng{authorbibnamehash}{ffff3952df718cca7646b3c73ad5598b}
+      \strng{authornamehash}{ffff3952df718cca7646b3c73ad5598b}
+      \strng{authorfullhash}{ffff3952df718cca7646b3c73ad5598b}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Deep convolutional neural networks (CNNs) have achieved remarkable results in image processing tasks. However, their high expression ability risks overfitting. Consequently, data augmentation techniques have been proposed to prevent overfitting while enriching datasets. Recent CNN architectures with more parameters are rendering traditional data augmentation techniques insufficient. In this study, we propose a new data augmentation technique called random image cropping and patching (RICAP) which randomly crops four images and patches them to create a new training image. Moreover, RICAP mixes the class labels of the four images, resulting in an advantage similar to label smoothing. We evaluated RICAP with current state-of-the-art CNNs (e.g., the shake-shake regularization model) by comparison with competitive data augmentation techniques such as cutout and mixup. RICAP achieves a new state-of-the-art test error of \$2.19\textbackslash\%\$ on CIFAR-10. We also confirmed that deep CNNs with RICAP achieve better results on classification tasks using CIFAR-100 and ImageNet and an image-caption retrieval task using Microsoft COCO.}
+      \field{eprintclass}{cs}
+      \field{eprinttype}{arxiv}
+      \field{issn}{1051-8215, 1558-2205}
+      \field{journaltitle}{IEEE Transactions on Circuits and Systems for Video Technology}
+      \field{month}{9}
+      \field{number}{9}
+      \field{shortjournal}{IEEE Trans. Circuits Syst. Video Technol.}
+      \field{title}{Data {{Augmentation}} Using {{Random Image Cropping}} and {{Patching}} for {{Deep CNNs}}}
+      \field{urlday}{30}
+      \field{urlmonth}{3}
+      \field{urlyear}{2023}
+      \field{volume}{30}
+      \field{year}{2020}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{2917\bibrangedash 2931}
+      \range{pages}{15}
+      \verb{doi}
+      \verb 10.1109/TCSVT.2019.2935128
+      \endverb
+      \verb{eprint}
+      \verb 1811.09030
+      \endverb
+      \verb{file}
+      \verb /Users/eragon/Zotero/storage/7KUF8FPR/Takahashi et al. - 2020 - Data Augmentation using Random Image Cropping and .pdf
+      \endverb
+      \verb{urlraw}
+      \verb http://arxiv.org/abs/1811.09030
+      \endverb
+      \verb{url}
+      \verb http://arxiv.org/abs/1811.09030
+      \endverb
+      \keyw{Computer Science - Computer Vision and Pattern Recognition,Computer Science - Machine Learning}
+    \endentry
+    \entry{leeSmoothMixSimpleEffective2020}{inproceedings}{}
+      \name{author}{4}{}{%
+        {{hash=74942925cc41da237a6f1e3f96e7fe73}{%
+           family={Lee},
+           familyi={L\bibinitperiod},
+           given={Jin-Ha},
+           giveni={J\bibinithyphendelim H\bibinitperiod}}}%
+        {{hash=e65ffa98cfbc6a6d0bd1f23087127c07}{%
+           family={Zaheer},
+           familyi={Z\bibinitperiod},
+           given={Muhammad\bibnamedelima Zaigham},
+           giveni={M\bibinitperiod\bibinitdelim Z\bibinitperiod}}}%
+        {{hash=4299e3908c725302f1396772e340ec52}{%
+           family={Astrid},
+           familyi={A\bibinitperiod},
+           given={Marcella},
+           giveni={M\bibinitperiod}}}%
+        {{hash=237c15c3e7acfc462bac679db005df14}{%
+           family={Lee},
+           familyi={L\bibinitperiod},
+           given={Seung-Ik},
+           giveni={S\bibinithyphendelim I\bibinitperiod}}}%
+      }
+      \strng{namehash}{ac5e19c431c58d7e2dbde925331b84c0}
+      \strng{fullhash}{ce6f8a8c1b1594913f70613e828002b5}
+      \strng{bibnamehash}{ac5e19c431c58d7e2dbde925331b84c0}
+      \strng{authorbibnamehash}{ac5e19c431c58d7e2dbde925331b84c0}
+      \strng{authornamehash}{ac5e19c431c58d7e2dbde925331b84c0}
+      \strng{authorfullhash}{ce6f8a8c1b1594913f70613e828002b5}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{eventtitle}{Proceedings of the {{IEEE}}/{{CVF Conference}} on {{Computer Vision}} and {{Pattern Recognition Workshops}}}
+      \field{shorttitle}{{{SmoothMix}}}
+      \field{title}{{{SmoothMix}}: {{A Simple Yet Effective Data Augmentation}} to {{Train Robust Classifiers}}}
+      \field{urlday}{29}
+      \field{urlmonth}{3}
+      \field{urlyear}{2023}
+      \field{year}{2020}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{756\bibrangedash 757}
+      \range{pages}{2}
+      \verb{file}
+      \verb /Users/eragon/Zotero/storage/UAHLZ9ZT/Lee et al. - 2020 - SmoothMix A Simple Yet Effective Data Augmentatio.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://openaccess.thecvf.com/content_CVPRW_2020/html/w45/Lee_SmoothMix_A_Simple_Yet_Effective_Data_Augmentation_to_Train_Robust_CVPRW_2020_paper.html
+      \endverb
+      \verb{url}
+      \verb https://openaccess.thecvf.com/content_CVPRW_2020/html/w45/Lee_SmoothMix_A_Simple_Yet_Effective_Data_Augmentation_to_Train_Robust_CVPRW_2020_paper.html
+      \endverb
     \endentry
   \enddatalist
 \endrefsection
