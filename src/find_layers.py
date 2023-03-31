@@ -72,3 +72,22 @@ def get_batch_size(
 
 
 # print(get_batch_size(model, "cuda:0", input_shape = (3, 224, 224), output_shape = (256,), dataset_size = 9000))
+
+# graph TB;
+
+# A[Start] --> B{max_batch_size is not None and batch_size >= max_batch_size?};
+# B -- Yes --> C((Set batch size to max_batch_size and break));
+# B -- No --> D{batch_size >= dataset_size?};
+# D -- Yes --> E((Halve batch size and break));
+# D -- No --> F[Try scaling up batch size];
+# F --> G[Initialize torch GradScaler];
+# G --> H[Loop for num_iterations];
+# H --> I{Are inputs and targets generated and moved to device?};
+# I -- Yes --> J[Create model outputs and calculate loss];
+# J --> K[Scale loss tensor and perform backward operation];
+# K --> L[Perform optimizer step and update scaler];
+# L --> H;
+# I -- No --> F;
+# F --> D;
+# E --> B;
+# C --> M(Return batch size);

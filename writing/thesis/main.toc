@@ -1,26 +1,27 @@
 \babel@toc {english}{}\relax 
-\contentsline {chapter}{\numberline {1}Introduction}{6}{chapter.1}%
-\contentsline {section}{\numberline {1.1}Context and Novelty}{6}{section.1.1}%
-\contentsline {section}{\numberline {1.2}Motivation}{6}{section.1.2}%
-\contentsline {section}{\numberline {1.3}Challenges}{6}{section.1.3}%
-\contentsline {section}{\numberline {1.4}Problem Statement}{6}{section.1.4}%
-\contentsline {section}{\numberline {1.5}Research Questions}{6}{section.1.5}%
-\contentsline {section}{\numberline {1.6}Thesis Outline}{6}{section.1.6}%
-\contentsline {chapter}{\numberline {2}Background}{7}{chapter.2}%
-\contentsline {section}{\numberline {2.1}Interpretability}{7}{section.2.1}%
-\contentsline {section}{\numberline {2.2}Gradient Based Explanations}{7}{section.2.2}%
-\contentsline {section}{\numberline {2.3}Augmentation}{7}{section.2.3}%
-\contentsline {section}{\numberline {2.4}Datasets}{7}{section.2.4}%
-\contentsline {subsection}{\numberline {2.4.1}CIFAR 100}{7}{subsection.2.4.1}%
-\contentsline {subsection}{\numberline {2.4.2}Stanford dogs}{7}{subsection.2.4.2}%
-\contentsline {subsection}{\numberline {2.4.3}Imagenette}{7}{subsection.2.4.3}%
-\contentsline {subsection}{\numberline {2.4.4}ASL}{7}{subsection.2.4.4}%
-\contentsline {subsection}{\numberline {2.4.5}Food-101}{7}{subsection.2.4.5}%
-\contentsline {chapter}{\numberline {3}State of the Art}{10}{chapter.3}%
-\contentsline {section}{\numberline {3.1}Gradient Based Explanations}{10}{section.3.1}%
-\contentsline {section}{\numberline {3.2}Augmentation}{11}{section.3.2}%
+\contentsline {chapter}{\numberline {1}Introduction}{5}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Context and Novelty}{5}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Motivation}{5}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Challenges}{5}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Problem Statement}{5}{section.1.4}%
+\contentsline {section}{\numberline {1.5}Research Questions}{5}{section.1.5}%
+\contentsline {section}{\numberline {1.6}Thesis Outline}{5}{section.1.6}%
+\contentsline {chapter}{\numberline {2}Background}{6}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Interpretability}{6}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Gradient Based Explanations}{6}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Augmentation}{6}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Datasets}{6}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}CIFAR 100}{6}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}Stanford dogs}{6}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.3}Imagenette}{6}{subsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.4.4}ASL}{6}{subsection.2.4.4}%
+\contentsline {subsection}{\numberline {2.4.5}Food-101}{6}{subsection.2.4.5}%
+\contentsline {chapter}{\numberline {3}State of the Art}{9}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Gradient Based Explanations}{9}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Augmentation}{10}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Summary}{12}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Limitations}{12}{subsection.3.2.2}%
 \contentsline {section}{\numberline {3.3}Architectures}{12}{section.3.3}%
-\contentsline {section}{\numberline {3.4}Summary and Limitations}{12}{section.3.4}%
 \contentsline {chapter}{\numberline {4}Proposed Approach}{13}{chapter.4}%
 \contentsline {section}{\numberline {4.1}Design Decisions}{13}{section.4.1}%
 \contentsline {section}{\numberline {4.2}Hyper Parameters}{13}{section.4.2}%
@@ -67,12 +68,12 @@
 \contentsline {section}{\numberline {5.14}Batch sizer finder}{15}{section.5.14}%
 \contentsline {section}{\numberline {5.15}Result Aggregation}{15}{section.5.15}%
 \contentsline {section}{\numberline {5.16}Inference}{15}{section.5.16}%
-\contentsline {chapter}{\numberline {6}Evaluation}{16}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Metric Based Analysis}{16}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Visual Based Analysis}{16}{section.6.2}%
-\contentsline {section}{\numberline {6.3}Summary}{16}{section.6.3}%
-\contentsline {chapter}{\numberline {7}Conclusion}{17}{chapter.7}%
-\contentsline {section}{\numberline {7.1}Contributions}{17}{section.7.1}%
-\contentsline {section}{\numberline {7.2}Lessons Learned}{17}{section.7.2}%
-\contentsline {section}{\numberline {7.3}Future Work}{17}{section.7.3}%
-\contentsline {chapter}{\numberline {8}Appendix}{18}{chapter.8}%
+\contentsline {chapter}{\numberline {6}Evaluation}{17}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Metric Based Analysis}{17}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Visual Based Analysis}{17}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Summary}{17}{section.6.3}%
+\contentsline {chapter}{\numberline {7}Conclusion}{18}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Contributions}{18}{section.7.1}%
+\contentsline {section}{\numberline {7.2}Lessons Learned}{18}{section.7.2}%
+\contentsline {section}{\numberline {7.3}Future Work}{18}{section.7.3}%
+\contentsline {chapter}{\numberline {8}Appendix}{19}{chapter.8}%
