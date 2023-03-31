@@ -154,7 +154,7 @@ def proxy_one_batch(config, input_wrong, cam):
             (1 - config["proxy_image_weight"] * grads) * normalized_inps,
             normalized_inps,
         )
-    # del grads
+    del grads
     # torch.cuda.empty_cache()
     # gc.col
 
@@ -215,8 +215,8 @@ def proxy_callback(config, input_wrong_full, label_wrong_full, cam):
             # save_pickle((cam, input_wrong, config,tfm))
 
             # TODO run over all the batches
-            thresholded_ims = proxy_one_batch(config, input_wrong, cam)
-            processed_thresholds.extend(thresholded_ims)
+            thresholded_ims = proxy_one_batch(config, input_wrong.to(config["device"]), cam)
+            processed_thresholds.extend(thresholded_ims.detach().cpu())
             processed_labels.extend(label_wrong)
 
 
@@ -242,7 +242,7 @@ def proxy_callback(config, input_wrong_full, label_wrong_full, cam):
     # with Pool() as p:
     #     list(tqdm(p.imap(save_image, range(len(processed_labels))), total=len(processed_labels), desc="Saving images"))
 
-    processed_thresholds = torch.stack(processed_thresholds, dim = 0).detach().cpu()
+    processed_thresholds = torch.stack(processed_thresholds, dim = 0).detach()
     batch_size = processed_thresholds.size(0)
 
 
@@ -329,8 +329,8 @@ def one_epoch(config, pbar, model, optimizer, dataloaders, target_layers, schedu
                 # logging.info("[INFO] : Proxy")
                 wrong_indices = (labels != preds).nonzero()
                 # input_wrong = input_wrong.stack(inputs[wrong_indices])
-                input_wrong.extend(inputs[wrong_indices])
-                label_wrong.extend(labels[wrong_indices])
+                input_wrong.extend(inputs[wrong_indices].detach().cpu())
+                label_wrong.extend(labels[wrong_indices].detach().cpu())
                 # input_wrong = torch.cat((input_wrong, inputs[wrong_indices]))
                 # label_wrong = torch.cat((label_wrong, labels[wrong_indices]))
             
@@ -468,9 +468,9 @@ def setup_train_round(
     config["writer"].close()
 
     # Clean up after training
-    del model
-    torch.cuda.empty_cache()
-    gc.collect()
+    # del model
+    # torch.cuda.empty_cache()
+    # gc.collect()
     print("GPU freed")
 
 def train_proxy_steps( config):

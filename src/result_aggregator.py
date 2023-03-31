@@ -89,7 +89,7 @@ def process_runs(main_path, save_ims=False):
     all_files = get_event_files(main_path=main_path, save_ims=False)
     all_dict = {}
     for files in tqdm(all_files, total=len(all_files)):
-        print(files)
+        # print(files)
         try:
             event_acc = EventAccumulator(files)
             event_acc.Reload()

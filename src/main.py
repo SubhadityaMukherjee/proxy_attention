@@ -70,12 +70,13 @@ config = {
     "image_size": 224,
     "batch_size": 32,
     "enable_proxy_attention": True,
-    "transfer_imagenet": True,
+    # "transfer_imagenet": True,
+    "transfer_imagenet": False,
     # "subset_images": 10000,
     "subset_images": 20000,
     # "subset_images": 3000,
     "pixel_replacement_method": "blended",
-    "proxy_steps": [10, "p", 10],
+    # "proxy_steps": [10, "p", 10],
     # "proxy_steps": [1, "p", 1],
     # "proxy_steps": [3],
     # "proxy_steps": [20],
@@ -127,7 +128,8 @@ search_space = {
     # "model": ["resnet18"],
     "model": ["efficientnet_b0"],
     # "proxy_image_weight" : [0.1, 0.4, 0.8, 0.95],
-    "proxy_image_weight": [0.2, 0.95],
+    # "proxy_image_weight": [0.2, 0.95],
+    "proxy_image_weight": [0.2],
     # "proxy_threshold": [0.1, 0.4, 0.8, 0.85],
     "proxy_threshold": [0.1, 0.85],
     "gradient_method": ["gradcamplusplus"],
@@ -137,7 +139,10 @@ search_space = {
     # "ds_name": ["cifar100"],
     "ds_name": ["dogs"],
     # "ds_name": ["dogs", "caltech101", "asl", "imagenette", "plantdisease"],
-    "clear_every_step": [True, False],
+    # "clear_every_step": [True, False],
+    "clear_every_step": [False],
+
+    "proxy_steps": [[40], [20,"p", 19]],
 }
 
 # No proxy search space
