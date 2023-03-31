@@ -33,6 +33,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{hyperref}
 \usepackage{graphicx}
+% \usepackage{algopseudocode}
+\usepackage{algorithm}
+\usepackage{algorithmic}
 \usepackage[english]{babel}
 % \usepackage{biblatex}
 
@@ -110,17 +113,17 @@ sorting=none
 \fancypagestyle{body}{
     \fancyhf{}
     \fancyhead[C]{\includegraphics[width=.8\textwidth]{images/banner.png}}
-    \setlength{\headsep}{1pt}
+    \setlength{\headsep}{8pt}
     \addtolength{\topmargin}{-45.11401pt}
     \setlength{\headheight}{77.11401pt}
     \fancyhead[LE,RO]{\thepage}
-    \renewcommand{\headrulewidth}{.8pt}
-
+    % \renewcommand{\headrulewidth}{.4pt}
+    % \renewcommand\plainheadrulewidth{.4pt}
     % \fancyhead[RE,LO]{Chapter \leftmark}
     
 }
+\patchcmd{\chapter}{\thispagestyle{plain}}{\thispagestyle{fancy}}{}{}
 
-\pagestyle{plain}% Set page style to plain
 \fancypagestyle{contents}{
     % \fancyhf{}
     % \fancyhead[LE,RO]{\thepage}
@@ -188,19 +191,20 @@ sorting=none
 }
 \date{}
 
+\pagestyle{body}% Set page style to plain
 \begin{document}
-\thispagestyle{body}
+% \thispagestyle{body}
 \maketitle
 
 % \setlength{\headheight}{32pt}
 
-\thispagestyle{body}
+% \thispagestyle{body}
 \tableofcontents
 
-\thispagestyle{body}
+% \thispagestyle{body}
 \listoffigures
 
-\thispagestyle{body}
+% \thispagestyle{body}
 \listoftables
 
 
@@ -208,23 +212,23 @@ sorting=none
 % \include{chapters/contents}
 
 % \include{chapters/acknowledgements}
-\thispagestyle{body}
+% \thispagestyle{body}
 \input{chapters/introduction.tex}
-\thispagestyle{body}
+% \thispagestyle{body}
 \input{chapters/background.tex}
-\thispagestyle{body}
+% \thispagestyle{body}
 \input{chapters/sota.tex}
-\thispagestyle{body}
+% \thispagestyle{body}
 \input{chapters/proposed.tex}
-\thispagestyle{body}
+% \thispagestyle{body}
 \input{chapters/implementation.tex}
-\thispagestyle{body}
+% \thispagestyle{body}
 \input{chapters/evaluation.tex}
-\thispagestyle{body}
+% \thispagestyle{body}
 \input{chapters/conclusions.tex}
-\thispagestyle{body}
+% \thispagestyle{body}
 \input{chapters/appendix.tex}
-\thispagestyle{body}
+% \thispagestyle{body}
 
 % \bibliographystyle{ieeetr}
 % \bibliography{biblio}

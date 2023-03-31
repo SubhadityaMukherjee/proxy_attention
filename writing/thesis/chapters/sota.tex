@@ -78,55 +78,39 @@ Graph Based Visual Saliency
 
 
 \section{Augmentation}
-
-Attributemix
-
-Augmentaiton with curriculum leanring
-
 % Augmix
 Another augmentation strategy proposed by \cite{hendrycksAugMixSimpleData2020} first applies multiple transformations randomly and in parallel chains to each image. These transformations can include combinations of Translation, Rotation, Shearing etc. The outputs of these combinations are then mixed to form a new image, which is then further mixed with the original image to form the new image. This combination is done to improve performance in cases where data shifts are encountered in production. Once the images are mixed, a skip-connection is used to combine the results of the chains. AugMix also uses the Jensen-Shannon Divergence consistency loss \cite{linDivergenceMeasuresBased} to ensure that the images are stable across a range of inputs. Considering $KL$ to be Kullback-Leibler Divergence, the Jensen-Shannon Divergence can be defined as $
-JS(p_{orig}; p_{augmix1};p_{augmix2}) = \frac{1}{3}(KL[p_{orig}||M||]+KL[p_{augmix1}||M||]+KL[p_{augmix2}||M||])
+    JS(p_{orig}; p_{augmix1};p_{augmix2}) = \frac{1}{3}(KL[p_{orig}||M||]+KL[p_{augmix1}||M||]+KL[p_{augmix2}||M||])
 $, where $M$ is the mean of the three distributions $p_{orig}, p_{augmix1}, p_{augmix2}$.
-% \nolinebreak
+
 % Cutout
 Devries et al. in their paper \cite{devriesImprovedRegularizationConvolutional2017} propose an augmentation method they call Cutout. In this method, random sized square patches are removed from the images by replacing the corresponding pixels with a constant value (usually 0). Selecting the region involves picking a random pixel value and then creating a uniform sized square around the chosen pixel. The authors also find that Cutout performs better in combination with other methods rather than just being used by itself. Cutout can be expressed as an element-wise multiplication operation $x_{cutout} = x \odot M$,
 where $x$ is the original image, $M$ is a binary mask of the same size as $x$ with randomly chosen coordinates of a square patch of pixels to be cut out, and $\odot$ denotes element-wise multiplication.
 
-
-% \nolinebreak
-Co mixup
-% \nolinebreak
 % Cut and mix
 Unlike Cutout \cite{devriesImprovedRegularizationConvolutional2017}, where the chosen patch is replaced with zero pixels, in CutMix \cite{yunCutMixRegularizationStrategy2019} the chosen patch is replaced with a randomly chosen patch from a different region of the same image. Yun et al. propose this approach as multiple class labels can be learned with a single image.
 CutMix can be defined by the following operations $\overset{\sim}x = M \odot x_{A} + (1-M) \odot x_{B}$ ; $\overset{\sim}y = \lambda y_{A}+ (1- \lambda)y_{B}$. where $x$ is an RGB image, $y$ is the respective label, $M$ is a binary mask of the patch of the image that will be dropped and $\odot$ represents element wise multiplication. The new training sample $\overset{\sim}x , \overset{\sim}y$ is created by combining two other training samples $x_{A}, y_{A}$ and $x_{B} , y_{B}$. To control the combination ratio $\lambda$, a sample from the $\beta(1,1)$ distribution is chosen. This combination is quite similar to \cite{zhangMixupEmpiricalRisk2018} but differs in the sense that CutMix focuses on generating locally natural images.
 % \nolinebreak
 % Attentive Cutmix
-Building up on \cite{yunCutMixRegularizationStrategy2019}, Walawalkar et al. propose an alternative method of replacing patches in an image they call Attentive CutMix \cite{walawalkarAttentiveCutMixEnhanced2020}. In this method, instead of randomly pasting patches in the image, a pre-trained network is used to identify attentive regions from the image. Similar to the earlier approach, these patches are then mapped back to the original image. Doing so allows the network to select backround regions that are important for the task while also updating the label information. 
+Building up on \cite{yunCutMixRegularizationStrategy2019}, Walawalkar et al. propose an alternative method of replacing patches in an image they call Attentive CutMix \cite{walawalkarAttentiveCutMixEnhanced2020}. In this method, instead of randomly pasting patches in the image, a pre-trained network is used to identify attentive regions from the image. Similar to the earlier approach, these patches are then mapped back to the original image. Doing so allows the network to select backround regions that are important for the task while also updating the label information.
+
+% Cow Mask
+Many of the algorithms use rectangular or square shaped masks. While they are effective, French et al. propose Cow Mask \cite{frenchMilkingCowMaskSemiSupervised2020}, a new method of masking that uses irregularly shaped masks with a Gaussian filter to reduce noise. The authors also propose two methods of mixing, one that builds up on Random Erasing \cite{zhongRandomErasingData2020}, and another that uses Cut Mix \cite{yunCutMixRegularizationStrategy2019}. A pixel wise mixing threshold is also chosen, and either mixing or erasing is applied to the image based on this threshold. This augmentation technique is shown to be effective in semi-supervised learning.
+
+% Cut Paste Learn
+Another approach involving a cut-paste methodology was proposed by \cite{dwibediCutPasteLearn2017}. In their paper, the authors propose a new method of augmentation that extracts instances of objects from the images and instead of pasting them on other images, they are pasted on randomly chosen backgrounds. This method leads to pixel artifacts in the images as selecting the objects is a noisy process. To overcome the drop in performance as a result of this, the authors apply a Gaussian blur and poisson blending to the boundaries of the pasted objects. Further augmentaion is applied before pasting the objects by rotation, occlusion and truncation. The authors also find that this approach makes the network more robust to artifacts in the images.
 
 % Hide and Seek
 In their paper Singh et al. \cite{singhHideandSeekDataAugmentation2018} propose a data augmentation method that takes an image as an input, and divides it into a grid. Each of the sub-grids are then turned off with a given probability. These sub-grids can be connected or independant of each other and the turned off grids are replaced by the average pixel value of all the images in the dataset.
 
-GridMask
-
-Image Mixing and deletion
+% GridMask
+One of the major drawbacks of algorithms that rely on modifying image patches (such as \cite{singhHideandSeekDataAugmentation2018,devriesImprovedRegularizationConvolutional2017,zhongRandomErasingData2020}) is that they sometimes delete parts of the image that might be useful to the network. To overcome this problem Chen et al. propose a new method Grid Mask \cite{chenGridMaskDataAugmentation2020} that uses evenly spaced grids to find a balance between the amount of information that is deleted and stored. Using the number of grids and their respective sizes as a hyperparameter, the authors find that Grid Mask is effective in preserving important parts of the image.
 
 % Intra class part swapping
 Zhang et al. propose another method of data augmentation that uses a CAM \cite{zhouLearningDeepFeatures2016} to identify the most important regions of an image. These parts are then thresholded, scaled, translated and pasted onto the target image. A similar process is also applied to the target image and the attentive parts of the original image are used to replace the corresponding attentive parts of the target image. Similar to previous methods, the labels are also updated to reflect the changes in the image.
 
-Keep augment
-
-Latent space interpo
-
-Puzzle mix
-
-Randaugment
-
 % Random Erasing
-While Cutout augmentation \cite{devriesImprovedRegularizationConvolutional2017} is applied to every image in the dataset, Zhong et al. propose a new method, Random Erasing, that takes a probability of being applied into account \cite{zhongRandomErasingData2020}. In Random Erasing, contiguous rectangular regions are selected and replaced at random with random upper and lower limits chosen for both region area and aspect ratio. For object detection tasks, a region aware detection algorithm is applied to make the network more robust to occlusion. Note that Cutout removes square patches, while Random Erasing either removes square or rectangular patches. 
-
-Random distortion
-
-Remix
+While Cutout augmentation \cite{devriesImprovedRegularizationConvolutional2017} is applied to every image in the dataset, Zhong et al. propose a new method, Random Erasing, that takes a probability of being applied into account \cite{zhongRandomErasingData2020}. In Random Erasing, contiguous rectangular regions are selected and replaced at random with random upper and lower limits chosen for both region area and aspect ratio. For object detection tasks, a region aware detection algorithm is applied to make the network more robust to occlusion. Note that Cutout removes square patches, while Random Erasing either removes square or rectangular patches.
 
 % Resizemix
 Many of the augmentation methods that rely on randomly choosing regions to cut and paste from sometimes fail to work well with regions that lack object information. ResizeMix \cite{qinResizeMixMixingData2020} tackles this problem by replacing the patch with a proportional resized version of the selected image. This method is similar to CutMix \cite{yunCutMixRegularizationStrategy2019} but differs in the sense that ResizeMix uses a resized version of the entire image instead of a randomly chosen patch.
@@ -134,27 +118,47 @@ Many of the augmentation methods that rely on randomly choosing regions to cut a
 % Ricap
 Another augmentation technique that applies random cropping and pasting is RICAP \cite{takahashiDataAugmentationUsing2020}. In this method, four regions are cropped from different images and then pasted together to form a new image. The created image thus has multiple mixed labels. A uniform distribution is used to determine the area of each cropped region in the final image. The authors propose multple variants of RICAP that use different points of origin for cropping. They find that the method works best when the cropped regions use the corners as the origin as it allows the network to see more of the image.
 
-Saliencymix
-
-Sample pairing
+% Sample pairing
+While algorithms like Mixup \cite{zhangMixupEmpiricalRisk2018} modify the labels of the image proportional to the amount of mixing between the original and the target images, Sample Pairing \cite{inoueDataAugmentationPairing2018} maintains the same training labels. In their paper, Inoue et al. propose a method that merges images not by cut and paste but by averaging their pixel intensites. Sample Pairing follows an interval based augmentation policy, where the network is first trained for a 100 epochs normally before being introduced to the mixed images. This process is also repeated cyclicaly with eight epochs of training with mixed images followed by 2 epochs of training with normal images only.
 
 % Smooth mix
 With the success of mask based approaches for data augmentation, there have been many papers that attempt to fix the flaws of previous research. One such method is SmoothMix \cite{leeSmoothMixSimpleEffective2020}, which builds up on both CutMix \cite{yunCutMixRegularizationStrategy2019} and Cutout \cite{devriesImprovedRegularizationConvolutional2017} but modifies the mask to have softer edges. The intensity of the masked edges gradually decreases and depends on the strength of the mask. The updated pixel values are thus obtained by mixing the mask with the original image according to the formula $\lambda= \frac{\Sigma_{i=1}^{W}\Sigma_{j=1}^{H}G_{ij}}{WH}$. Where $G_{ij}$ is the pixel value of mask $G$ and $H,W$ are the height and width of the image respectively. The new pixel values are then $(x_{new} , y_{new}) = (G.xa + (1 - G).xb , \lambda.ya + (1 - \lambda).yb)$
 
+% Smote
+One of the older methods of data augmentation is SMOTE \cite{SMOTESyntheticMinority}. This algorithm is not domain specific but in the context of computer vision, it can be used to balance datasets that suffer from imbalanced labels. SMOTE generates new samples by combining the K-nearest neighbors of the minority class images to form new instances. Although many of the other methods discussed in this paper are more effective, SMOTE is still a useful tool to have.
 
-Smote
+% Snap mix
+Huang et al. propose SnapMix \cite{huangSnapMixSemanticallyProportional2021}, where choosing the size of the patch to be cut is determined from the beta distributions of both the original and target images. The extracted patches are then merged with random image regions, each of which are of different sizes. Labels are also updated by taking the composition of the images into account.
+% Remix
+Cao et al. address the problem of class imbalance by performing data augmentation on images that are part of a minority class. From the labels of the images that were mixed, the final label is chosen as the label of the image with the least representation in the dataset. The authors call this method ReMix \cite{caoReMixImagetoImageTranslation2021}.
+% Visual context Augmentation
+Dvornik et al. propose Visual Context Augmentation \cite{dvornikModelingVisualContext2018} that uses a NN to understand the context of objects in the image before pasting them in the target image. The authors generate training data by first generating pairs of context images with the objects masked out. These images are then fed into the NN to learn the difference between objects and bacgrounds given the masked pixels. Once the model has learnt this information, instances of the objects are placed into the masked regions of the target image.
 
-Snap mix
+Attributemix
+Augmentaiton with curriculum leanring
+Co mixup
+Image Mixing and deletion
+Keep augment
+Latent space interpo
+Puzzle mix
+Randaugment
+Random distortion
+Saliencymix
 
 Spec augment
 
-Visual context Augmentation
 
+
+\subsection{Summary}
+\subsection{Limitations}
+\begin{itemize}
+\item Context
+\item Does not make use of what the network knows
+\item Does not help the network learn from its mistakes
+\end{itemize}
 \section{Architectures}
 Resnet 18, 50
 
 VGG
 
 Vision Transformer
-
-\section{Summary and Limitations}
