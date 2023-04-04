@@ -926,7 +926,8 @@
   pages = {364--380},
   url = {https://openaccess.thecvf.com/content_ECCV_2018/html/NIKITA_DVORNIK_Modeling_Visual_Context_ECCV_2018_paper.html},
   urldate = {2023-03-31},
-  eventtitle = {Proceedings of the {{European Conference}} on {{Computer Vision}} ({{ECCV}})}
+  eventtitle = {Proceedings of the {{European Conference}} on {{Computer Vision}} ({{ECCV}})},
+  file = {/Users/eragon/Zotero/storage/QUAACLNF/Dvornik et al. - 2018 - Modeling Visual Context is Key to Augmenting Objec.pdf}
 }
 
 @inproceedings{dwibediCutPasteLearn2017,
@@ -1824,6 +1825,40 @@
   file = {/Users/eragon/Zotero/storage/WTJN3BVS/Khan et al. - 2019 - Unsupervised Primitive Discovery for Improved 3D G.pdf}
 }
 
+@online{kimCoMixupSaliencyGuided2021,
+  title = {Co-{{Mixup}}: {{Saliency Guided Joint Mixup}} with {{Supermodular Diversity}}},
+  shorttitle = {Co-{{Mixup}}},
+  author = {Kim, Jang-Hyun and Choo, Wonho and Jeong, Hosan and Song, Hyun Oh},
+  date = {2021-02-05},
+  number = {arXiv:2102.03065},
+  eprint = {arXiv:2102.03065},
+  eprinttype = {arxiv},
+  doi = {10.48550/arXiv.2102.03065},
+  url = {http://arxiv.org/abs/2102.03065},
+  urldate = {2023-04-04},
+  abstract = {While deep neural networks show great performance on fitting to the training distribution, improving the networks' generalization performance to the test distribution and robustness to the sensitivity to input perturbations still remain as a challenge. Although a number of mixup based augmentation strategies have been proposed to partially address them, it remains unclear as to how to best utilize the supervisory signal within each input data for mixup from the optimization perspective. We propose a new perspective on batch mixup and formulate the optimal construction of a batch of mixup data maximizing the data saliency measure of each individual mixup data and encouraging the supermodular diversity among the constructed mixup data. This leads to a novel discrete optimization problem minimizing the difference between submodular functions. We also propose an efficient modular approximation based iterative submodular minimization algorithm for efficient mixup computation per each minibatch suitable for minibatch based neural network training. Our experiments show the proposed method achieves the state of the art generalization, calibration, and weakly supervised localization results compared to other mixup methods. The source code is available at https://github.com/snu-mllab/Co-Mixup.},
+  pubstate = {preprint},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Computer Vision and Pattern Recognition,Computer Science - Machine Learning,Statistics - Machine Learning},
+  file = {/Users/eragon/Zotero/storage/56YEZJBU/Kim et al. - 2021 - Co-Mixup Saliency Guided Joint Mixup with Supermo.pdf;/Users/eragon/Zotero/storage/7AQ4DGFT/Kim et al. - 2021 - Co-Mixup Saliency Guided Joint Mixup with Supermo.pdf}
+}
+
+@inproceedings{kimPuzzleMixExploiting2020,
+  title = {Puzzle {{Mix}}: {{Exploiting Saliency}} and {{Local Statistics}} for {{Optimal Mixup}}},
+  shorttitle = {Puzzle {{Mix}}},
+  booktitle = {Proceedings of the 37th {{International Conference}} on {{Machine Learning}}},
+  author = {Kim, Jang-Hyun and Choo, Wonho and Song, Hyun Oh},
+  date = {2020-11-21},
+  pages = {5275--5285},
+  publisher = {{PMLR}},
+  issn = {2640-3498},
+  url = {https://proceedings.mlr.press/v119/kim20b.html},
+  urldate = {2023-04-04},
+  abstract = {While deep neural networks achieve great performance on fitting the training distribution, the learned networks are prone to overfitting and are susceptible to adversarial attacks. In this regard, a number of mixup based augmentation methods have been recently proposed. However, these approaches mainly focus on creating previously unseen virtual examples and can sometimes provide misleading supervisory signal to the network. To this end, we propose Puzzle Mix, a mixup method for explicitly utilizing the saliency information and the underlying statistics of the natural examples. This leads to an interesting optimization problem alternating between the multi-label objective for optimal mixing mask and saliency discounted optimal transport objective. Our experiments show Puzzle Mix achieves the state of the art generalization and the adversarial robustness results compared to other mixup methods on CIFAR-100, Tiny-ImageNet, and ImageNet datasets, and the source code is available at https://github.com/snu-mllab/PuzzleMix.},
+  eventtitle = {International {{Conference}} on {{Machine Learning}}},
+  langid = {english},
+  file = {/Users/eragon/Zotero/storage/B3UJ38HM/Kim et al. - 2020 - Puzzle Mix Exploiting Saliency and Local Statisti.pdf;/Users/eragon/Zotero/storage/KDMP48E9/Kim et al. - 2020 - Puzzle Mix Exploiting Saliency and Local Statisti.pdf}
+}
+
 @online{kindermansReliabilitySaliencyMethods2017,
   title = {The ({{Un}})Reliability of Saliency Methods},
   author = {Kindermans, Pieter-Jan and Hooker, Sara and Adebayo, Julius and Alber, Maximilian and Schütt, Kristof T. and Dähne, Sven and Erhan, Dumitru and Kim, Been},
@@ -1846,6 +1881,23 @@
   date = {2014},
   eprint = {1412.6980},
   eprinttype = {arxiv}
+}
+
+@online{kokhlikyanCaptumUnifiedGeneric2020,
+  title = {Captum: {{A}} Unified and Generic Model Interpretability Library for {{PyTorch}}},
+  shorttitle = {Captum},
+  author = {Kokhlikyan, Narine and Miglani, Vivek and Martin, Miguel and Wang, Edward and Alsallakh, Bilal and Reynolds, Jonathan and Melnikov, Alexander and Kliushkina, Natalia and Araya, Carlos and Yan, Siqi and Reblitz-Richardson, Orion},
+  date = {2020-09-16},
+  number = {arXiv:2009.07896},
+  eprint = {arXiv:2009.07896},
+  eprinttype = {arxiv},
+  doi = {10.48550/arXiv.2009.07896},
+  url = {http://arxiv.org/abs/2009.07896},
+  urldate = {2023-04-04},
+  abstract = {In this paper we introduce a novel, unified, open-source model interpretability library for PyTorch [12]. The library contains generic implementations of a number of gradient and perturbation-based attribution algorithms, also known as feature, neuron and layer importance algorithms, as well as a set of evaluation metrics for these algorithms. It can be used for both classification and non-classification models including graph-structured models built on Neural Networks (NN). In this paper we give a high-level overview of supported attribution algorithms and show how to perform memory-efficient and scalable computations. We emphasize that the three main characteristics of the library are multimodality, extensibility and ease of use. Multimodality supports different modality of inputs such as image, text, audio or video. Extensibility allows adding new algorithms and features. The library is also designed for easy understanding and use. Besides, we also introduce an interactive visualization tool called Captum Insights that is built on top of Captum library and allows sample-based model debugging and visualization using feature importance metrics.},
+  pubstate = {preprint},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Machine Learning,Statistics - Machine Learning},
+  file = {/Users/eragon/Zotero/storage/A874V4BJ/Kokhlikyan et al. - 2020 - Captum A unified and generic model interpretabili.pdf}
 }
 
 @article{kononowiczSlowPotentialsTime2011,
