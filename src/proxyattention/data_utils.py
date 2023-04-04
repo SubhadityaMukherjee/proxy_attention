@@ -20,6 +20,7 @@ from PIL import Image
 from torchvision.io import read_image
 import random
 from tqdm import tqdm
+from typing import Dict
 
 from .meta_utils import get_files
 
@@ -37,44 +38,62 @@ def get_parent_name(x):
 class ImageClassDs(Dataset):
     def __init__(
         self, df: pd.DataFrame, imfolder: str, train: bool = True, transforms=None
-    ):
+    ) -> None:
         self.df = df
         self.x, self.y = self.df["image_id"].values, self.df["label"].values
         self.imfolder = imfolder
-        self.train = train
         self.transforms = transforms
-        self.classes = self.df["label"]
 
-    def __getitem__(self, index):
-        # im_path = self.df.iloc[index]["image_id"]
+    def __getitem__(self, index: int) -> Dict[str, torch.Tensor]:
         im_path = self.x[index]
-        # try:
-        #     x = cv2.imread(str(im_path), cv2.IMREAD_COLOR)
-        # except:
-        #     print(im_path)
-        # x = cv2.cvtColor(x, cv2.COLOR_BGR2RGB)
-        # # x = Image(im_path)
         x = Image.open(im_path)
         if len(x.getbands()) != 3:
             x = x.convert("RGB")
 
-        # x = Image.open(im_path).convert("RGB")
         if self.transforms:
             x = self.transforms(x)
 
-        # y = self.df.iloc[index]["label"]
         y = self.y[index]
         return {
             "x": x,
             "y": y,
         }
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.df)
 
+#Paired Dataset for Image Segmentation
+class ImageSegmentationDs(Dataset):
+    def __init__(
+        self, df: pd.DataFrame, imfolder: str, train: bool = True, transforms=None
+    ) -> None:
+        self.df = df
+        self.x, self.y = self.df["image_id"].values, self.df["image_id_2"].values
+        self.imfolder = imfolder
+        self.transforms = transforms
+
+    def __getitem__(self, index: int) -> Dict[str, torch.Tensor]:
+        x = Image.open(self.x[index])
+        y = Image.open(self.y[index])
+        if len(x.getbands()) != 3:
+            x = x.convert("RGB")
+            y = y.convert("RGB")
+
+        if self.transforms:
+            x = self.transforms(x)
+            y = self.transforms(y)
+
+        # y = self.y[index]
+        return {
+            "x": x,
+            "y": y,
+        }
+
+    def __len__(self) -> int:
+        return len(self.df)
 
 # %%
-def clear_proxy_images(config):
+def clear_proxy_images(config: Dict[str, str]) -> None:
     all_files = get_files(config["ds_path"])
     _ = [Path.unlink(x) for x in all_files if "proxy" in str(x)]
     print("[INFO] Cleared all existing proxy images")

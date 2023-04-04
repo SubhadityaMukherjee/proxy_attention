@@ -49,31 +49,16 @@ TIMM
 \section{Proxy Attention}
 
 % \begin{algorithm}
-%     \caption{Calculate $y = x^n$}
+% %     \caption{Calculate $y = x^n$}
 
-%     % \caption{Proxy Attention Single Batch}
+%     \caption{Proxy Attention Single Batch}
 %     \begin{algorithmic}[1]
-%         \Require $config, input_wrong, cam$
-%         % \Function{proxy_one_batch}{$config, input_wrong, cam$}
-%         \State $grads \gets$ \Call{$cam$}{$input_wrong.to(config["device"]), None$}
-%         \State $grads \gets$ \Call{$torch.Tensor$}{$grads$}$.\Call{to}{config["device"]}$.
-%         $unsqueeze(1).\Call{expand}{-1, 3, -1, -1}$
-%         \State $normalized_inps \gets$ \Call{$inv_normalize$}{$input_wrong$}
-%         \If{$config["pixel_replacement_method"] \neq "blended"$}
-%         \State $output \gets$ \Call{$torch.where$}{$grads > config["proxy_threshold"],$\
-%         \hskip\algorithmicindent\hskip\algorithmicindent\hskip\algorithmicindent
-%         \Call{$dict_decide_change$}{$config["pixel_replacement_method"], grads$},\
-%         \hskip\algorithmicindent\hskip\algorithmicindent\hskip\algorithmicindent
-%         $normalized_inps$}
-%         \Else
-%         \State $output \gets$ \Call{$torch.where$}{$grads > config["proxy_threshold"],$\
-%         \hskip\algorithmicindent\hskip\algorithmicindent\hskip\algorithmicindent
-%         $(1 - config["proxy_image_weight"] * grads) * normalized_inps$,\
-%         \hskip\algorithmicindent\hskip\algorithmicindent\hskip\algorithmicindent
-%         $normalized_inps$}
-%         \EndIf
-%         % \EndFunction
-%         \end{algorithmic}
+%         \Require $input_wrong$
+%         \State $grads \leftarrow CAM(input\_wrong)$
+%         \State $grads \leftarrow unsqueeze(grads, 1)$
+%         \State $grads \leftarrow expand(grads, (-1,3,-1,-1))$
+%         \State $normalized_inputs$ \leftarrow $inverse_normalize(input\_wrong)$
+%     \end{algorithmic}
 % \end{algorithm}
 
 \subsection{Callback Mechanism}
@@ -93,7 +78,7 @@ To maximize training performance, a batch size finder is used to find the optima
         \REQUIRE $dataset\_size, max\_batch\_size, failed$
         \STATE $batch\_size = 2$
         \WHILE{TRUE}
-            \IF{$max\_batch\_size$ is not $None$ \And$ $batch\_size \geq max\_batch\_size$}
+            \IF{$max\_batch\_size$ is not $None$ $\And$ $batch\_size \geq max\_batch\_size$}
                 \STATE $batch\_size \leftarrow max\_batch\_size$
             \ENDIF
             \IF{$batch\_size \geq dataset\_size$}
