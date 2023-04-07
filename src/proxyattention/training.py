@@ -137,7 +137,6 @@ def choose_network(config):
 
 
 def proxy_one_batch(config, input_wrong, cam):
-    # print(input_wrong)
     grads = cam(input_tensor=input_wrong.to(config["device"]), targets=None)
     grads = torch.Tensor(grads).to(config["device"]).unsqueeze(1).expand(-1, 3, -1, -1)
     normalized_inps = inv_normalize(input_wrong)
@@ -155,17 +154,7 @@ def proxy_one_batch(config, input_wrong, cam):
             normalized_inps,
         )
     del grads
-    # torch.cuda.empty_cache()
-    # gc.col
-
     return output
-
-# def save_image(ind, processed_labels,processed_thresholds, config):
-#     label = config["label_map"][processed_labels[ind].cpu().detach().item()]
-#     save_name = (
-#         config["ds_path"] / label / f"proxy-{ind}-{config['global_run_count']}.jpeg"
-#     )
-#     tfm(processed_thresholds[ind].cpu().detach()).save(save_name)
 
 def proxy_callback(config, input_wrong_full, label_wrong_full, cam):
     writer = config["writer"]
@@ -176,14 +165,9 @@ def proxy_callback(config, input_wrong_full, label_wrong_full, cam):
     # TODO some sort of decay?
     # TODO Remove min and batchify
 
-    # chosen_inds = min(config["batch_size"], chosen_inds)
-    # chosen_inds = min(config["batch_size"], chosen_inds)
-    # chosen_inds = 200 if chosen_inds > 200 else chosen_inds
-
     writer.add_scalar(
         "Number_Chosen", chosen_inds, config["global_run_count"]
     )
-    # print(f"{chosen_inds} images chosen to run proxy on")
 
     input_wrong_full = input_wrong_full[:chosen_inds]
     label_wrong_full = label_wrong_full[:chosen_inds]
@@ -212,9 +196,6 @@ def proxy_callback(config, input_wrong_full, label_wrong_full, cam):
                     config["global_run_count"],
                 )
 
-            # save_pickle((cam, input_wrong, config,tfm))
-
-            # TODO run over all the batches
             thresholded_ims = proxy_one_batch(config, input_wrong.to(config["device"]), cam)
             processed_thresholds.extend(thresholded_ims.detach().cpu())
             processed_labels.extend(label_wrong)
@@ -231,17 +212,6 @@ def proxy_callback(config, input_wrong_full, label_wrong_full, cam):
             logging.info("[INFO] Saving the images")
         except ValueError:
             pass
-
-    # def save_image(ind):
-    #     label = config["label_map"][processed_labels[ind].item()]
-    #     save_name = (
-    #         config["ds_path"] / label / f"proxy-{ind}-{config['global_run_count']}.jpeg"
-    #     )
-    #     tfm(processed_thresholds[ind]).save(save_name)
-    
-    # with Pool() as p:
-    #     list(tqdm(p.imap(save_image, range(len(processed_labels))), total=len(processed_labels), desc="Saving images"))
-
     processed_thresholds = torch.stack(processed_thresholds, dim = 0).detach()
     batch_size = processed_thresholds.size(0)
 
@@ -251,34 +221,12 @@ def proxy_callback(config, input_wrong_full, label_wrong_full, cam):
         save_name = (
             config["ds_path"] / label / f"proxy-{ind}-{config['global_run_count']}.jpeg"
         )
-        # tfm(processed_thresholds[ind]).save(save_name)
-        # processed_thresholds[ind].save(save_name)
         tfm(processed_thresholds[ind, :, :, :]).save(save_name)
-
-    # with Pool() as p:
-    #     list(tqdm(p.map(save_image, [(ind, processed_labels, config, processed_thresholds) for ind in range(len(processed_labels))]), total=len(processed_labels), desc="Saving images"))
-    # print("Saving images")
-    # ctx = mp.get_context('spawn')
-    # # queue = ctx.Queue()
-    # processes = []
-    # for ind in range(len(processed_labels)):
-    #     p = ctx.Process(target=save_image, args=(ind, config["label_map"], config["ds_path"], config["global_run_count"], processed_labels, processed_thresholds))
-    #     processes.append(p)
-    #     p.start()
-    # for p in processes:
-    #     p.join()
-    # # results = [queue.get() for _ in range(len(processed_labels))]
-
 
 
 def one_epoch(config, pbar, model, optimizer, dataloaders, target_layers, scheduler = None):
     writer = config["writer"]
-    # mem = tracker.SummaryTracker()
     config["global_run_count"] += 1
-    # scheduler = config["scheduler"]
-
-    # input_wrong = torch.Tensor().to(config["device"], non_blocking = True)
-    # label_wrong = torch.Tensor().to(config["device"], non_blocking = True)
 
     input_wrong = []
     label_wrong = []

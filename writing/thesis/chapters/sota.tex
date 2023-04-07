@@ -1,5 +1,32 @@
 \chapter{State of the Art}
 \section{Gradient Based Explanations}
+% Deconvnet
+One of the earlier approaches to Saliency maps for CNNs was proposed by Zeiler et al. \cite{zeilerVisualizingUnderstandingConvolutional2013} termed DeconvNet. DeconvNet works by inverting the operations that the network performs in the forward pass. After attaching the DeconvNet layers to the network, propagating through these layers gives a representation of features that the original CNN possesed. For a single class, the relevant reconstruction can be obtained by setting all the activations other than the one corresponding to the class to zero. The resulting image is then used to generate the saliency map. The Conv layer is replaced by a Deconv layer and the ReLU operation has the negative values clamped. While the pooling operation is not strictly invertible, the authors use switch variables that store the position of the maximum value for each pooling operation. While the DeconvNet works to a certain extent, the results are not as accurate as the ones obtained by other methods and are also biased towards the representations of the first layer.
+
+% Deep Inside Conv Nets
+Building on the DeconvNet, Simonyan et al. \cite{simonyanDeepConvolutionalNetworks2014} extrapolate the idea of class visualization to create one of the first approaches to Saliency maps. Their approach, also called Vanilla Gradient ranks the pixels of an image $I_{0}$ by how important they are in prediction the Saliency score $S_{c}(I) \approx w^{T}I + b$. In this equation, $w$ and $b$ are the weights and biases of the network obtained by back propagating wrt the image itself. The objective to be minimized thus is $arg \underset{I}max S_{c}(I) - \lambda||I||^{2}_{2}$ where $\lambda$ is used as a regularization parameter. Using these equations, a saliency map $A \in \mathbb{R}^{m \times n}$ ($m \times n$ stands for $height \times width$) can be computed. To find the map, we find the derivative of $w$, rearrage the elements and then process them according to the number of input channels. If the number of channels is greater than one, the maximum value over the channel is considered $A_{i,j}= \underset{ch}max |w_{h_{(i,j,ch)}}|$. Where, $ch$ is the color channel of the pixel $(i,j)$, $h(i,j,ch)$ is the index of the $w$ corresponding to that pixel. The Vanilla Gradient method produces an approximate saliency map but has a lot of noise. This leads to issues for more complex images. Many of the issues with Vanilla Gradients and DeconvNets \cite{zeilerVisualizingUnderstandingConvolutional2013} have been addressed by the methods proposed in the following papers.
+
+% Scorecam
+In another paper, the authors propose a score weighted approach (ScoreCAM) to create saliency maps \cite{wangScoreCAMScoreWeightedVisual2020}. Like many other methods, the images are first passed through the network and the corresponding activations are obtained from the final convolutional layer. These activation maps are then upsampled and normalized to the range of $[0,1]$. The portions of the activation maps that were highlighted are then passed through a CNN with a SoftMax layer to obtain the score for each of the current classes. These scores are used to find the relative importance of all the activation maps. Finally the sum of all these maps is computed using a linear combination with the corresponding target score and then passed through a ReLU operation. These operations can be mathmaticaly represented as $L^{c}_{ScoreCAM} = ReLU(\underset{k}\Sigma w_{k}^{c}A^{k})$, where $k$ represents the index considered, $c$ represents the current class and $S_k$ represents the outputs of the aforementioned SoftMax layer. The authors find that the maps obtained using ScoreCAM are less noisy and using this method removes dependancy on unstable gradients as compared to other methods.
+
+% Guided Gradcam
+A variant of GradCAM \cite{selvarajuGradCAMVisualExplanations} was proposed by Selvaraju et al. \cite{selvarajuGradCAMWhyDid2017} where unlike GradCAM that finds the parts of the image that influence the model's decision, Guided GradCAM takes the positive gradients into account. These gradients are used to obtain an even more fine-grained representation of the outputs of the saliency map. While GradCAM backpropagates both positive and negative gradients, Guided Backprop only propagates the positive gradients and is defined as a pointwise multiplication of the results of GradCAM and Guided Backpropagation \cite{springenbergStrivingSimplicityAll2015}.
+
+% Noise Tunnel
+In combination with attribution methods, Noise Tunnel \cite{kokhlikyanCaptumUnifiedGeneric2020} is an algorithm that improves the accuracy of the masks obtained by these methods. Noise Tunnel was proposed to counter noisy and irrelevant attributions obtained by some of the gradient based methods by adding a Gaussian Noise and then averaging the predictions over sampled attributions. Since all the samples are considered, this method has a significant computational overhead. For Smooth Grad \cite{smilkovSmoothGradRemovingNoise2017}, the new attribution is defined as $\hat M_{c}(x) = \frac{1}{n}\Sigma_{1}^{n}M_{c}(x + \mathcal{N}(0, \sigma^{2}))$. Where $M_{c}$ is the attribution calculated by SmoothGrad, $\mathcal {N}(0, 0.01^2)$ is the Gaussian Noise with $\sigma = 0.01$ and $n$ is the number of samples. Similarly for Smooth Grad Square, $\hat M_{c}(x) = \frac{1}{n}\Sigma_{1}^{n}\sqrt{M_{c}(x + \mathcal{N}(0, \sigma^{2}))}$. Noise Tunnel can also be used on Var Grad \cite{richterVarGradLowVarianceGradient2020} with the equation $\hat M_{c}(x) = \frac{1}{n}\Sigma_{k=1}^{n}\{M_{c}(x + \mathcal{N}(0, \sigma^{2}))\}^{2}- \{\hat M_{c}(x)\}^{2}$
+
+% Integrated Gradients
+For a model $F$, the attribution method Integrated Gradients \cite{sundararajanAxiomaticAttributionDeep2017} computes the contribution of each pixel in the image towards the final prediction. The output of the model is used to calculate a pixel wise partial derivative that is then integrated along a path starting from the baseline and ending at the input. Each of the steps are scaled according to the partial derivative obtained in the previous step. For every step k with m total steps over the path, the IG equation is defined as $IntegratedGrads_i^{approx}(x)::=(x_{i}-x_i')\times \Sigma_{k=1}^{m}\frac{\partial F(x' + \frac{k}{m} \times (x-x'))}{\partial x_{i}} \times \frac{1}{m}$. Where $(x_{i} - x_{i}')$ is the pixelwise difference between the two images, $\frac{\partial F(x' + \frac{k}{m} \times (x-x'))}{\partial x_i}$ is the partial derivative of the model output $F$ with respect to pixel $i$ at the $k$-th step of the path and $\frac{1}{m}$ is the scaling factor that ensures that each of the steps taken contribute equally to the final result.
+
+% Rise
+Petsiuk et al. propose RISE \cite{petsiukRISERandomizedInput2018}, a saliency method that randomly alters the input images by applying random noise to each of them. After model predictions are obtained, the saliency map is generated by a combination of the partial maps over each of the modified images. RISE improves accuracy but needs a lot of computation time considering that multiple models need to be trained for each of the random noise samples.
+
+% Influence Of Image Class Acc On Saliency Map Estimation
+With regard to the relationship between saliency maps and image classification accuracy, Oyama et al. \cite{oyamaInfluenceImageClassification2018} found a strong correlation between the two. The authors found that both the architecture and the initialization strategy influence the final saliency map. By analyzing the generated saliency maps, they find that if the model is randomly initialized and trained for image classification, having limited categories in the original dataset leads to overfitting. On the other hand having a large number of categories supresses the overfitting for the objects present in the training dataset. On training their proposed network ReadoutNet on a fixation task (a task which requires the network to learn where to focus), they found that the accuracy of estimating the saliency map was linked to the image classification accuracy.
+
+% Summit
+While a large amount of research focuses on intepreting the influence of a single image or neuron, Hohman et al. propose Summit, \cite{hohmanSummitScalingDeep2019} a novel scalable summarization algorithm. Summit creates an attribution graph that distills the influence of neurons and substructures throughout the network that are used to make the final prediction. The attribution graph is created as a result of combining activation aggregation, a technique to find important neurons and neuron-influence aggregation, a technique to find relationships among the neurons identified in the previous step. To aggregate the activations, after a forward pass through the network, the activation channels maximums are obtained. These are then filtered by class and aggregated by either taking the top $k$ channels or the top $k$ channels by weight. To quantify how much a layer influences the next, the authors aggregate the influences by creating a tensor $I^{l}$ for all the layers of the network ($l$). How important channel $i$ of the layer $l-1$ is determined by the aggregate tensor $I^{l}_{cij}$ where $j$ represents the output channel and $c$ is the class of the image. Considering the $j^{th}$ kernel of the layer $K^{(j)} \in \mathbb{R}^{H \times W \times C_{l-1}}$, a single channel $Y$ can be represented using the 3D convolution operation by $Y_{:,:,j}= X \ast K^{(j)}$. This is equivalent to it's representation by the 2D convolution $Y_{:,:,j}= \Sigma_{i=1}^{C_{l-1}} X_{:,:,i} \ast K^{(j)}_{:,:,i}$. The value $X_{:,:,i} \ast K^{(j)}_{:,:,i}$ is the contribution of the current channel from the previous layer and the maximum of this value is used to generate the influence map.
+
 Beware Of Inmates
 
 Interpretation Is Fragile
@@ -10,11 +37,7 @@ The Unreliability Of Saliency Methods
 
 There And Back Again
 
-Influence Of Image Class Acc On Saliency Map Estimation
 
-Deconvnet
-
-Deep Inside Conv Nets
 
 Cam
 
@@ -22,20 +45,7 @@ Gradcam++
 
 Guided Backprop
 
-% Scorecam
-In another paper, the authors propose a score weighted approach (ScoreCAM) to create saliency maps \cite{wangScoreCAMScoreWeightedVisual2020}. Like many other methods, the images are first passed through the network and the corresponding activations are obtained from the final convolutional layer. These activation maps are then upsampled and normalized to the range of $[0,1]$. The portions of the activation maps that were highlighted are then passed through a CNN with a SoftMax layer to obtain the score for each of the current classes. These scores are used to find the relative importance of all the activation maps. Finally the sum of all these maps is computed using a linear combination with the corresponding target score and then passed through a ReLU operation. These operations can be mathmaticaly represented as $L^{c}_{ScoreCAM} = ReLU(\underset{k}\Sigma w_{k}^{c}A^{k})$, where $k$ represents the index considered, $c$ represents the current class and $S_k$ represents the outputs of the aforementioned SoftMax layer. The authors find that the maps obtained using ScoreCAM are less noisy and using this method removes dependancy on unstable gradients as compared to other methods.
-
-Guided Gradcam
-A variant of GradCAM \cite{selvarajuGradCAMVisualExplanations} was proposed by Selvaraju et al. \cite{selvarajuGradCAMWhyDid2017} where unlike GradCAM that finds the parts of the image that influence the model's decision, Guided GradCAM takes the positive gradients into account. These gradients are used to obtain an even more fine-grained representation of the outputs of the saliency map. While GradCAM backpropagates both positive and negative gradients, Guided Backprop only propagates the positive gradients and is defined as a pointwise multiplication of the results of GradCAM and Guided Backpropagation \cite{springenbergStrivingSimplicityAll2015}.
-
-
 Salience Map
-
-% Noise Tunnel
-In combination with attribution methods, Noise Tunnel \cite{kokhlikyanCaptumUnifiedGeneric2020} is an algorithm that improves the accuracy of the masks obtained by these methods. Noise Tunnel was proposed to counter noisy and irrelevant attributions obtained by some of the gradient based methods by adding a Gaussian Noise and then averaging the predictions over sampled attributions. Since all the samples are considered, this method has a significant computational overhead. For Smooth Grad \cite{smilkovSmoothGradRemovingNoise2017}, the new attribution is defined as $\hat M_{c}(x) = \frac{1}{n}\Sigma_{1}^{n}M_{c}(x + \mathcal{N}(0, \sigma^{2}))$. Where $M_{c}$ is the attribution calculated by SmoothGrad, $\mathcal {N}(0, 0.01^2)$ is the Gaussian Noise with $\sigma = 0.01$ and $n$ is the number of samples. Similarly for Smooth Grad Square, $\hat M_{c}(x) = \frac{1}{n}\Sigma_{1}^{n}\sqrt{M_{c}(x + \mathcal{N}(0, \sigma^{2}))}$. Noise Tunnel can also be used on Var Grad \cite{richterVarGradLowVarianceGradient2020} with the equation $\hat M_{c}(x) = \frac{1}{n}\Sigma_{k=1}^{n}\{M_{c}(x + \mathcal{N}(0, \sigma^{2}))\}^{2}- \{\hat M_{c}(x)\}^{2}$
-
-% Integrated Gradients
-For a model $F$, the attribution method Integrated Gradients \cite{sundararajanAxiomaticAttributionDeep2017} computes the contribution of each pixel in the image towards the final prediction. The output of the model is used to calculate a pixel wise partial derivative that is then integrated along a path starting from the baseline and ending at the input. Each of the steps are scaled according to the partial derivative obtained in the previous step. For every step k with m total steps over the path, the IG equation is defined as $IntegratedGrads_i^{approx}(x)::=(x_{i}-x_i')\times \Sigma_{k=1}^{m}\frac{\partial F(x' + \frac{k}{m} \times (x-x'))}{\partial x_{i}} \times \frac{1}{m}$. Where $(x_{i} - x_{i}')$ is the pixelwise difference between the two images, $\frac{\partial F(x' + \frac{k}{m} \times (x-x'))}{\partial x_i}$ is the partial derivative of the model output $F$ with respect to pixel $i$ at the $k$-th step of the path and $\frac{1}{m}$ is the scaling factor that ensures that each of the steps taken contribute equally to the final result.
 
 Sam Resnet
 
@@ -56,11 +66,6 @@ Smooth Grad Square
 Lime
 
 Sp Lime
-
-Summit
-
-% Rise
-Petsiuk et al. propose RISE \cite{petsiukRISERandomizedInput2018}, a saliency method that randomly alters the input images by applying random noise to each of them. After model predictions are obtained, the saliency map is generated by a combination of the partial maps over each of the modified images. RISE improves accuracy but needs a lot of computation time considering that multiple models need to be trained for each of the random noise samples.
 
 Lrp
 

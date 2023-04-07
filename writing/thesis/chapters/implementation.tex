@@ -48,18 +48,41 @@ TIMM
 \section{Gradient Based Methods}
 \section{Proxy Attention}
 
-% \begin{algorithm}
-% %     \caption{Calculate $y = x^n$}
+\begin{algorithm}
+    \caption{Single Batch Proxy Attention}
+    \label{alg:proxy_attention_single_batch}
+    \begin{algorithmic}
+        \REQUIRE $input\_wrong$
+        \REQUIRE $CAM$
+        \REQUIRE $proxy\_threshold$
+        \REQUIRE $proxy\_image\_weight$
+        \STATE $grads \leftarrow CAM(input\_wrong)$
+        \STATE $inversed\_normalized\_inputs \leftarrow inverse\_normalize(input\_wrong)$
 
-%     \caption{Proxy Attention Single Batch}
-%     \begin{algorithmic}[1]
-%         \Require $input_wrong$
-%         \State $grads \leftarrow CAM(input\_wrong)$
-%         \State $grads \leftarrow unsqueeze(grads, 1)$
-%         \State $grads \leftarrow expand(grads, (-1,3,-1,-1))$
-%         \State $normalized_inputs$ \leftarrow $inverse_normalize(input\_wrong)$
-%     \end{algorithmic}
-% \end{algorithm}
+        \STATE $output \leftarrow REPLACE(grads \geq proxy\_threshold, ((1- proxy\_image\_weight) * grads) * inversed\_normalized\_inputs, inversed\_normalized\_inputs)$
+    \end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}
+    \caption{Batch Proxy Attention}
+    \label{alg:proxy_attention_batch}
+    \begin{algorithmic}
+        \REQUIRE $input\_wrong$
+        \REQUIRE $label\_wrong$
+        \REQUIRE $subset\_chosen$
+
+        \STATE $chosen\_inds = CEIL(subset\_chosen * LENGTH(input\_wrong))$
+        \STATE $input\_wrong\_subset = input\_wrong[:chosen_inds]$
+        \STATE $label\_wrong\_subset = label\_wrong[:chosen_inds]$
+
+        \STATE $processed\_labels \leftarrow [], processed\_thresholds \leftarrow []$
+        \FOR{$i \leftarrow 0$ \TO $LENGTH(label\_wrong\_subset)$}
+        \STATE $pass$
+        \ENDFOR
+
+    \end{algorithmic}
+\end{algorithm}
 
 \subsection{Callback Mechanism}
 \section{Tensorboard}
@@ -67,91 +90,46 @@ TIMM
 \section{Optimizer}
 \section{LR scheduler}
 \section{Loss function}
-\section{Batch sizer finder}
-To maximize training performance, a batch size finder is used to find the optimal batch size for each of the models. 
+\section{Batch Size Finder}
+To maximize training performance, a batch size finder \ref{alg:batch_size_finder} is used to find the optimal batch size for each of the models.
 
 \begin{algorithm}
-    % \caption{Calculate $y = x^n$}
-
     \caption{Batch Size Finder Algorithm}
-    \begin{algorithmic} 
-        \REQUIRE $dataset\_size, max\_batch\_size, failed$
-        \STATE $batch\_size = 2$
+    \label{alg:batch_size_finder}
+    \begin{algorithmic}
+        \REQUIRE $dataset\_size$
+        \REQUIRE $max\_batch\_size$
+        \STATE $batch\_size \leftarrow 2$
         \WHILE{TRUE}
-            \IF{$max\_batch\_size$ is not $None$ $\And$ $batch\_size \geq max\_batch\_size$}
-                \STATE $batch\_size \leftarrow max\_batch\_size$
-            \ENDIF
-            \IF{$batch\_size \geq dataset\_size$}
-                \STATE $batch\_size \leftarrow batch\_size // 2$
-            \ENDIF
+        \IF{$max\_batch\_size$ is not $None$ $\And$ $batch\_size \geq max\_batch\_size$}
+        \STATE $batch\_size \leftarrow max\_batch\_size$
+        \ENDIF
+        \IF{$batch\_size \geq dataset\_size$}
+        \STATE $batch\_size \leftarrow batch\_size // 2$
+        \ENDIF
 
-            \IF{$failed$ is $False$}
-                \LOOP
-                    \STATE $inputs \leftarrow random((batch\_size,input\_shape))$
-                    \STATE $targets \leftarrow random((batch\_size,output\_shape))$
-                    \STATE $outputs \leftarrow model(inputs)$
-                    \STATE $loss \leftarrow MSE(outputs, targets)$
-                    \STATE $loss.backward()$
-                    \STATE $optimizer.step()$
-                    \STATE $optimizer.zero\_grad()$
-                    \STATE $failed \leftarrow True$
-                    \STATE $batch\_size \leftarrow batch\_size * 2$
-                \ENDLOOP
-            \ELSIF{$failed$ is $True$}
-                \STATE $failed \leftarrow False$
-                \STATE $batch\_size \leftarrow batch\_size // 2$
-            \ENDIF
+        \IF{$failed$ is $False$}
+        \LOOP
+        \STATE $inputs \leftarrow random((batch\_size,input\_shape))$
+        \STATE $targets \leftarrow random((batch\_size,output\_shape))$
+        \STATE $outputs \leftarrow model(inputs)$
+        \STATE $loss \leftarrow MSE(outputs, targets)$
+        \STATE $loss.backward()$
+        \STATE $optimizer.step()$
+        \STATE $optimizer.zero\_grad()$
+        \STATE $failed \leftarrow True$
+        \STATE $batch\_size \leftarrow batch\_size * 2$
+        \ENDLOOP
+        \ELSIF{$failed$ is $True$}
+        \STATE $failed \leftarrow False$
+        \STATE $batch\_size \leftarrow batch\_size // 2$
+        \ENDIF
 
         \ENDWHILE
 
     \end{algorithmic}
-    % \REQUIRE $n \geq 0 \vee x \neq 0$
-    % \ENSURE $y = x^n$
-    % \STATE $y \leftarrow 1$
-    % \IF{$n < 0$}
-    % \STATE $X \leftarrow 1 / x$
-    % \STATE $N \leftarrow -n$
-    % \ELSE
-    % \STATE $X \leftarrow x$
-    % \STATE $N \leftarrow n$
-    % \ENDIF
-    % \WHILE{$N \neq 0$}
-    % \IF{$N$ is even}
-    % \STATE $X \leftarrow X \times X$
-    % \STATE $N \leftarrow N / 2$
-    % \ELSE[$N$ is odd]
-    % \STATE $y \leftarrow y \times X$
-    % \STATE $N \leftarrow N - 1$
-    % \ENDIF
-    % \ENDWHILE
-    % \end{algorithmic}
 \end{algorithm}
 
-% \begin{algorithm}
-% \caption{Batch Size Finder Algorithm}
-% \begin{algorithmic}
-% \State $batch\_size = 2$
-% \State $max\_batch\_size = None$
-% \State $dataset\_size = len(dataset)$
-% \While{True}
-% \If{$max\_batch\_size$ is not None and $batch\_size \geq max\_batch\_size$}
-% \State $batch\_size = max\_batch\_size$
-% \EndIf
-
-% \If{$batch\_size$ \geq $dataset\_size$}
-% \State $batch\_size = batch\_size//2$
-% \EndIf
-
-% \EndWhile
-% \end{algorithmic}
-% \end{algorithm}
-
-% \begin{figure}[h]
-% 	\centering
-% 	\includegraphics[width=0.8]{images/bsfinder.pdf}
-% 	\caption{Batch Size Finder Algorithm}
-% 	\label{fig:bsfind}
-% \end{figure}
 \section{Result Aggregation}
 
 \section{Inference}
