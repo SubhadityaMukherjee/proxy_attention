@@ -26,7 +26,6 @@
 \@writefile{toc}{\contentsline {section}{\numberline {1.4}Problem Statement}{7}{section.1.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {1.5}Research Questions}{7}{section.1.5}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {1.6}Thesis Outline}{7}{section.1.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {1.7}Contributions}{7}{section.1.7}\protected@file@percent }
 \abx@aux@cite{0}{krizhevskyLearningMultipleLayers}
 \abx@aux@segm{0}{0}{krizhevskyLearningMultipleLayers}
 \@writefile{toc}{\contentsline {chapter}{\numberline {2}Background}{8}{chapter.2}\protected@file@percent }
@@ -99,6 +98,7 @@
 \abx@aux@cite{0}{walawalkarAttentiveCutMixEnhanced2020}
 \abx@aux@segm{0}{0}{walawalkarAttentiveCutMixEnhanced2020}
 \@writefile{toc}{\contentsline {section}{\numberline {3.2}Augmentation}{13}{section.3.2}\protected@file@percent }
+\newlabel{sec:augmentation}{{3.2}{13}{Augmentation}{section.3.2}{}}
 \abx@aux@cite{0}{frenchMilkingCowMaskSemiSupervised2020}
 \abx@aux@segm{0}{0}{frenchMilkingCowMaskSemiSupervised2020}
 \abx@aux@cite{0}{zhongRandomErasingData2020}
@@ -154,78 +154,102 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2.1}Summary}{15}{subsection.3.2.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2.2}Limitations}{15}{subsection.3.2.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {3.3}Architectures}{15}{section.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {chapter}{\numberline {4}Proposed Approach}{16}{chapter.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {4}Implementation}{16}{chapter.4}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {4.1}Design Decisions}{16}{section.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4.2}Hyper Parameters}{16}{section.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2.1}Clear Every Step}{16}{subsection.4.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2.2}Gradient Threshold Considered}{16}{subsection.4.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2.3}Multiply Weight}{16}{subsection.4.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2.4}Proxy Steps}{16}{subsection.4.2.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2.5}Subset Of Wrongly Classified}{16}{subsection.4.2.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2.6}Gradient Method}{16}{subsection.4.2.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2.7}Architectures}{16}{subsection.4.2.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {chapter}{\numberline {5}Implementation}{17}{chapter.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4.1}Overview}{16}{section.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4.2}Design Decisions}{16}{section.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4.3}Proxy Attention}{16}{section.4.3}\protected@file@percent }
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces Single Batch Proxy Attention\relax }}{16}{algorithm.1}\protected@file@percent }
+\newlabel{alg:proxy_attention_single_batch}{{1}{16}{Single Batch Proxy Attention\relax }{algorithm.1}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {2}{\ignorespaces Batch Proxy Attention\relax }}{16}{algorithm.2}\protected@file@percent }
+\newlabel{alg:proxy_attention_batch}{{2}{16}{Batch Proxy Attention\relax }{algorithm.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4.4}Challenges and their Potential Solutions}{16}{section.4.4}\protected@file@percent }
+\abx@aux@cite{0}{uddinSaliencyMixSaliencyGuided2021}
+\abx@aux@segm{0}{0}{uddinSaliencyMixSaliencyGuided2021}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4.1}Proxy Method}{17}{subsection.4.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Image Statistics Based Replacement}{17}{section*.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Data Augmentation Based Replacement}{17}{section*.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{GAN Based Replacement}{17}{section*.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Modifying the Weights}{17}{section*.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Multiply with Attention Map}{17}{section*.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4.2}Training Biases}{17}{subsection.4.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Method Bias}{17}{section*.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Mask Bias}{17}{section*.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Learning Bias}{17}{section*.17}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Dataset Bias}{17}{section*.18}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4.3}Hyper Parameters}{17}{subsection.4.4.3}\protected@file@percent }
+\newlabel{sec:hyperparameters}{{4.4.3}{17}{Hyper Parameters}{subsection.4.4.3}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Gradient Method}{17}{section*.19}\protected@file@percent }
+\abx@aux@cite{0}{chattopadhayGradCAMGeneralizedGradientBased2018}
+\abx@aux@segm{0}{0}{chattopadhayGradCAMGeneralizedGradientBased2018}
+\abx@aux@cite{0}{zeilerVisualizingUnderstandingConvolutional2013}
+\abx@aux@segm{0}{0}{zeilerVisualizingUnderstandingConvolutional2013}
+\abx@aux@cite{0}{chattopadhayGradCAMGeneralizedGradientBased2018}
+\abx@aux@segm{0}{0}{chattopadhayGradCAMGeneralizedGradientBased2018}
+\abx@aux@cite{0}{selvarajuGradCAMVisualExplanations}
+\abx@aux@segm{0}{0}{selvarajuGradCAMVisualExplanations}
+\abx@aux@cite{0}{heDeepResidualLearning2016}
+\abx@aux@segm{0}{0}{heDeepResidualLearning2016}
+\abx@aux@cite{0}{khoslaNovelDatasetFineGrained}
+\abx@aux@segm{0}{0}{khoslaNovelDatasetFineGrained}
+\abx@aux@cite{0}{selvarajuGradCAMVisualExplanations}
+\abx@aux@segm{0}{0}{selvarajuGradCAMVisualExplanations}
+\@writefile{toc}{\contentsline {subsubsection}{Gradient Threshold Considered}{18}{section*.20}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Multiply Weight}{18}{section*.21}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Clear Every Step}{18}{section*.22}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Proxy Steps}{18}{section*.23}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Subset Of Wrongly Classified}{18}{section*.24}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4.5}Data Loading and Pre Processing}{18}{section.4.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5.1}Directory structure}{18}{subsection.4.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5.2}Label function}{18}{subsection.4.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5.3}Clearing proxy images}{18}{subsection.4.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5.4}Encode, Stratify, Kfold}{18}{subsection.4.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5.5}train and test, val separate}{18}{subsection.4.5.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5.6}Augmentations}{18}{subsection.4.5.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4.6}Architectures}{18}{section.4.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4.7}Grid Search}{18}{section.4.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4.8}Training Resumption}{19}{section.4.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.8.1}Checkpoints}{19}{subsection.4.8.1}\protected@file@percent }
+\newlabel{sec:checkpoints}{{4.8.1}{19}{Checkpoints}{subsection.4.8.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.8.2}Broken Trials}{19}{subsection.4.8.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.8.3}Challenges with External Libraries}{19}{subsection.4.8.3}\protected@file@percent }
+\newlabel{sec:challenges_with_external_libraries}{{4.8.3}{19}{Challenges with External Libraries}{subsection.4.8.3}{}}
+\abx@aux@cite{0}{micikeviciusMixedPrecisionTraining2017}
+\abx@aux@segm{0}{0}{micikeviciusMixedPrecisionTraining2017}
+\abx@aux@cite{0}{dosovitskiyImageWorth16x162021}
+\abx@aux@segm{0}{0}{dosovitskiyImageWorth16x162021}
+\@writefile{toc}{\contentsline {section}{\numberline {4.9}Optimizations}{20}{section.4.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.9.1}Mixed Precision}{20}{subsection.4.9.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.9.2}No grad}{20}{subsection.4.9.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.9.3}Batched Proxy step}{20}{subsection.4.9.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4.10}Tensorboard}{20}{section.4.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4.11}Transfer learning}{21}{section.4.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4.12}Optimizer}{21}{section.4.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4.13}LR scheduler}{21}{section.4.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4.14}Loss function}{21}{section.4.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4.15}Batch Size Finder}{21}{section.4.15}\protected@file@percent }
+\@writefile{loa}{\contentsline {algorithm}{\numberline {3}{\ignorespaces Batch Size Finder Algorithm\relax }}{21}{algorithm.3}\protected@file@percent }
+\newlabel{alg:batch_size_finder}{{3}{21}{Batch Size Finder Algorithm\relax }{algorithm.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4.16}Result Aggregation}{21}{section.4.16}\protected@file@percent }
+\newlabel{sec:result_aggregation}{{4.16}{21}{Result Aggregation}{section.4.16}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4.17}Inference}{21}{section.4.17}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {5}Evaluation}{22}{chapter.5}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {5.1}Overview}{17}{section.5.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5.2}Hyper parameters}{17}{section.5.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.1}Clear Every Step}{17}{subsection.5.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.2}Gradient Method}{17}{subsection.5.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.3}Gradient Threshold Considered}{17}{subsection.5.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.4}Multiply Weight }{17}{subsection.5.2.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.5}Proxy Steps}{17}{subsection.5.2.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.6}Subset Of Wrongly Classified}{17}{subsection.5.2.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5.3}Data Loading and Pre Processing}{17}{section.5.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.1}Directory structure}{17}{subsection.5.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.2}Label function}{17}{subsection.5.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.3}Clearing proxy images}{17}{subsection.5.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.4}Encode, Stratify, Kfold}{17}{subsection.5.3.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.5}train and test, val separate}{17}{subsection.5.3.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.6}Augmentations}{17}{subsection.5.3.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5.4}Training Details}{18}{section.5.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5.5}Grid Search}{18}{section.5.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5.6}Optimizations}{18}{section.5.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.6.1}Mixed Precision}{18}{subsection.5.6.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.6.2}Gradient Scaling}{18}{subsection.5.6.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.6.3}No grad}{18}{subsection.5.6.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.6.4}Batched Proxy step}{18}{subsection.5.6.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.6.5}Trial Resumption}{18}{subsection.5.6.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.6.6}Models}{18}{subsection.5.6.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5.7}Gradient Based Methods}{18}{section.5.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5.8}Proxy Attention}{18}{section.5.8}\protected@file@percent }
-\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces Single Batch Proxy Attention\relax }}{18}{algorithm.1}\protected@file@percent }
-\newlabel{alg:proxy_attention_single_batch}{{1}{18}{Single Batch Proxy Attention\relax }{algorithm.1}{}}
-\@writefile{loa}{\contentsline {algorithm}{\numberline {2}{\ignorespaces Batch Proxy Attention\relax }}{18}{algorithm.2}\protected@file@percent }
-\newlabel{alg:proxy_attention_batch}{{2}{18}{Batch Proxy Attention\relax }{algorithm.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.8.1}Callback Mechanism}{19}{subsection.5.8.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5.9}Tensorboard}{19}{section.5.9}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5.10}Transfer learning}{19}{section.5.10}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5.11}Optimizer}{19}{section.5.11}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5.12}LR scheduler}{19}{section.5.12}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5.13}Loss function}{19}{section.5.13}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5.14}Batch Size Finder}{19}{section.5.14}\protected@file@percent }
-\@writefile{loa}{\contentsline {algorithm}{\numberline {3}{\ignorespaces Batch Size Finder Algorithm\relax }}{19}{algorithm.3}\protected@file@percent }
-\newlabel{alg:batch_size_finder}{{3}{19}{Batch Size Finder Algorithm\relax }{algorithm.3}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {5.15}Result Aggregation}{19}{section.5.15}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5.16}Inference}{19}{section.5.16}\protected@file@percent }
-\@writefile{toc}{\contentsline {chapter}{\numberline {6}Evaluation}{20}{chapter.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5.1}Metric Based Analysis}{22}{section.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5.2}Visual Based Analysis}{22}{section.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5.3}Summary}{22}{section.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {6}Conclusion}{23}{chapter.6}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {6.1}Metric Based Analysis}{20}{section.6.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6.2}Visual Based Analysis}{20}{section.6.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6.3}Summary}{20}{section.6.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {chapter}{\numberline {7}Conclusion}{21}{chapter.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6.1}Contributions}{23}{section.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6.2}Lessons Learned}{23}{section.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6.3}Future Work}{23}{section.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {7}Appendix}{24}{chapter.7}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {7.1}Contributions}{21}{section.7.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7.2}Lessons Learned}{21}{section.7.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7.3}Future Work}{21}{section.7.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {chapter}{\numberline {8}Appendix}{22}{chapter.8}\protected@file@percent }
-\@writefile{lof}{\addvspace {10\p@ }}
-\@writefile{lot}{\addvspace {10\p@ }}
-\abx@aux@read@bbl@mdfivesum{07CBAD9992AAC384F5E19E8B12B0F264}
+\abx@aux@read@bbl@mdfivesum{E9F762CDAAE3D4E3D5F6C21669EAEBBC}
 \abx@aux@defaultrefcontext{0}{krizhevskyLearningMultipleLayers}{none/global//global/global}
 \abx@aux@defaultrefcontext{0}{zeilerVisualizingUnderstandingConvolutional2013}{none/global//global/global}
 \abx@aux@defaultrefcontext{0}{simonyanDeepConvolutionalNetworks2014}{none/global//global/global}
@@ -261,4 +285,10 @@
 \abx@aux@defaultrefcontext{0}{caoReMixImagetoImageTranslation2021}{none/global//global/global}
 \abx@aux@defaultrefcontext{0}{dvornikModelingVisualContext2018}{none/global//global/global}
 \abx@aux@defaultrefcontext{0}{kimPuzzleMixExploiting2020}{none/global//global/global}
-\gdef \@abspage@last{25}
+\abx@aux@defaultrefcontext{0}{uddinSaliencyMixSaliencyGuided2021}{none/global//global/global}
+\abx@aux@defaultrefcontext{0}{chattopadhayGradCAMGeneralizedGradientBased2018}{none/global//global/global}
+\abx@aux@defaultrefcontext{0}{heDeepResidualLearning2016}{none/global//global/global}
+\abx@aux@defaultrefcontext{0}{khoslaNovelDatasetFineGrained}{none/global//global/global}
+\abx@aux@defaultrefcontext{0}{micikeviciusMixedPrecisionTraining2017}{none/global//global/global}
+\abx@aux@defaultrefcontext{0}{dosovitskiyImageWorth16x162021}{none/global//global/global}
+\gdef \@abspage@last{27}

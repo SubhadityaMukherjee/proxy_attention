@@ -1825,6 +1825,13 @@
   file = {/Users/eragon/Zotero/storage/WTJN3BVS/Khan et al. - 2019 - Unsupervised Primitive Discovery for Improved 3D G.pdf}
 }
 
+@article{khoslaNovelDatasetFineGrained,
+  title = {Novel {{Dataset}} for {{Fine-Grained Image Categorization}}: {{Stanford Dogs}}},
+  author = {Khosla, Aditya and Jayadevaprakash, Nityananda and Yao, Bangpeng and Li, Fei-Fei},
+  langid = {english},
+  file = {/Users/eragon/Zotero/storage/VND9PU96/Khosla et al. - Novel Dataset for Fine-Grained Image Categorizatio.pdf}
+}
+
 @online{kimCoMixupSaliencyGuided2021,
   title = {Co-{{Mixup}}: {{Saliency Guided Joint Mixup}} with {{Supermodular Diversity}}},
   shorttitle = {Co-{{Mixup}}},
@@ -2584,6 +2591,21 @@
   eprinttype = {arxiv}
 }
 
+@online{micikeviciusMixedPrecisionTraining2018,
+  title = {Mixed {{Precision Training}}},
+  author = {Micikevicius, Paulius and Narang, Sharan and Alben, Jonah and Diamos, Gregory and Elsen, Erich and Garcia, David and Ginsburg, Boris and Houston, Michael and Kuchaiev, Oleksii and Venkatesh, Ganesh and Wu, Hao},
+  date = {2018-02-15},
+  number = {arXiv:1710.03740},
+  eprint = {arXiv:1710.03740},
+  eprinttype = {arxiv},
+  url = {http://arxiv.org/abs/1710.03740},
+  urldate = {2023-04-11},
+  abstract = {Deep neural networks have enabled progress in a wide variety of applications. Growing the size of the neural network typically results in improved accuracy. As model sizes grow, the memory and compute requirements for training these models also increases. We introduce a technique to train deep neural networks using half precision floating point numbers. In our technique, weights, activations and gradients are stored in IEEE half-precision format. Half-precision floating numbers have limited numerical range compared to single-precision numbers. We propose two techniques to handle this loss of information. Firstly, we recommend maintaining a single-precision copy of the weights that accumulates the gradients after each optimizer step. This single-precision copy is rounded to half-precision format during training. Secondly, we propose scaling the loss appropriately to handle the loss of information with half-precision gradients. We demonstrate that this approach works for a wide variety of models including convolution neural networks, recurrent neural networks and generative adversarial networks. This technique works for large scale models with more than 100 million parameters trained on large datasets. Using this approach, we can reduce the memory consumption of deep learning models by nearly 2x. In future processors, we can also expect a significant computation speedup using half-precision hardware units.},
+  pubstate = {preprint},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Machine Learning,Statistics - Machine Learning},
+  file = {/Users/eragon/Zotero/storage/9PYB7T5N/Micikevicius et al. - 2018 - Mixed Precision Training.pdf}
+}
+
 @online{millerExplainableAIBeware2017,
   title = {Explainable {{AI}}: {{Beware}} of {{Inmates Running}} the {{Asylum Or}}: {{How I Learnt}} to {{Stop Worrying}} and {{Love}} the {{Social}} and {{Behavioural Sciences}}},
   shorttitle = {Explainable {{AI}}},
@@ -2858,7 +2880,6 @@
   author = {Nunnari, Fabrizio and Kadir, Md Abdul and Sonntag, Daniel},
   editor = {Holzinger, Andreas and Kieseberg, Peter and Tjoa, A Min and Weippl, Edgar},
   date = {2021},
-  series = {Lecture {{Notes}} in {{Computer Science}}},
   volume = {12844},
   pages = {241--253},
   publisher = {{Springer International Publishing}},
@@ -3838,6 +3859,22 @@
   abstract = {Background: There is a growing concern over the addictiveness of Social Media use. Additional representative indicators of impaired control are needed in order to distinguish presumed social media addiction from normal use. Aims: (1) To examine the existence of time distortion during non-social-media use tasks that involve social media cues among those who may be considered at-risk for social media addiction. (2) To examine the usefulness of this distortion for at-risk vs. low/no-risk classification. Method: We used a task that prevented Facebook use and invoked Facebook reflections (survey on self-control strategies) and subsequently measured estimated vs. actual task completion time. We captured the level of addiction using the Bergen Facebook Addiction Scale in the survey, and we used a common cutoff criterion to classify people as at-risk vs. low/no-risk of Facebook addiction. Results: The at-risk group presented significant upward time estimate bias and the low/no-risk group presented significant downward time estimate bias. The bias was positively correlated with Facebook addiction scores. It was efficacious, especially when combined with self-reported estimates of extent of Facebook use, in classifying people to the two categories. Conclusions: Our study points to a novel, easy to obtain, and useful marker of at-risk for social media addiction, which may be considered for inclusion in diagnosis tools and procedures.},
   langid = {english},
   file = {/Users/eragon/Zotero/storage/BI8NBN4V/Turel et al. - 2018 - Time distortion when users at-risk for social medi.pdf}
+}
+
+@online{uddinSaliencyMixSaliencyGuided2021,
+  title = {{{SaliencyMix}}: {{A Saliency Guided Data Augmentation Strategy}} for {{Better Regularization}}},
+  shorttitle = {{{SaliencyMix}}},
+  author = {Uddin, A. F. M. Shahab and Monira, Mst Sirazam and Shin, Wheemyung and Chung, TaeChoong and Bae, Sung-Ho},
+  date = {2021-07-27},
+  number = {arXiv:2006.01791},
+  eprint = {arXiv:2006.01791},
+  eprinttype = {arxiv},
+  url = {http://arxiv.org/abs/2006.01791},
+  urldate = {2023-04-11},
+  abstract = {Advanced data augmentation strategies have widely been studied to improve the generalization ability of deep learning models. Regional dropout is one of the popular solutions that guides the model to focus on less discriminative parts by randomly removing image regions, resulting in improved regularization. However, such information removal is undesirable. On the other hand, recent strategies suggest to randomly cut and mix patches and their labels among training images, to enjoy the advantages of regional dropout without having any pointless pixel in the augmented images. We argue that such random selection strategies of the patches may not necessarily represent sufficient information about the corresponding object and thereby mixing the labels according to that uninformative patch enables the model to learn unexpected feature representation. Therefore, we propose SaliencyMix that carefully selects a representative image patch with the help of a saliency map and mixes this indicative patch with the target image, thus leading the model to learn more appropriate feature representation. SaliencyMix achieves the best known top-1 error of 21.26\% and 20.09\% for ResNet-50 and ResNet-101 architectures on ImageNet classification, respectively, and also improves the model robustness against adversarial perturbations. Furthermore, models that are trained with SaliencyMix help to improve the object detection performance. Source code is available at https://github.com/SaliencyMix/SaliencyMix.},
+  pubstate = {preprint},
+  keywords = {68T07,Computer Science - Machine Learning,I.2,I.4,Statistics - Machine Learning},
+  file = {/Users/eragon/Zotero/storage/9QAI8L7R/Uddin et al. - 2021 - SaliencyMix A Saliency Guided Data Augmentation S.pdf}
 }
 
 @article{urbachQuantifiersAreIncrementally2015,

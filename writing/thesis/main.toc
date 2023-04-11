@@ -6,7 +6,6 @@
 \contentsline {section}{\numberline {1.4}Problem Statement}{7}{section.1.4}%
 \contentsline {section}{\numberline {1.5}Research Questions}{7}{section.1.5}%
 \contentsline {section}{\numberline {1.6}Thesis Outline}{7}{section.1.6}%
-\contentsline {section}{\numberline {1.7}Contributions}{7}{section.1.7}%
 \contentsline {chapter}{\numberline {2}Background}{8}{chapter.2}%
 \contentsline {section}{\numberline {2.1}Interpretability}{8}{section.2.1}%
 \contentsline {section}{\numberline {2.2}Gradient Based Explanations}{8}{section.2.2}%
@@ -23,58 +22,60 @@
 \contentsline {subsection}{\numberline {3.2.1}Summary}{15}{subsection.3.2.1}%
 \contentsline {subsection}{\numberline {3.2.2}Limitations}{15}{subsection.3.2.2}%
 \contentsline {section}{\numberline {3.3}Architectures}{15}{section.3.3}%
-\contentsline {chapter}{\numberline {4}Proposed Approach}{16}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Design Decisions}{16}{section.4.1}%
-\contentsline {section}{\numberline {4.2}Hyper Parameters}{16}{section.4.2}%
-\contentsline {subsection}{\numberline {4.2.1}Clear Every Step}{16}{subsection.4.2.1}%
-\contentsline {subsection}{\numberline {4.2.2}Gradient Threshold Considered}{16}{subsection.4.2.2}%
-\contentsline {subsection}{\numberline {4.2.3}Multiply Weight}{16}{subsection.4.2.3}%
-\contentsline {subsection}{\numberline {4.2.4}Proxy Steps}{16}{subsection.4.2.4}%
-\contentsline {subsection}{\numberline {4.2.5}Subset Of Wrongly Classified}{16}{subsection.4.2.5}%
-\contentsline {subsection}{\numberline {4.2.6}Gradient Method}{16}{subsection.4.2.6}%
-\contentsline {subsection}{\numberline {4.2.7}Architectures}{16}{subsection.4.2.7}%
-\contentsline {chapter}{\numberline {5}Implementation}{17}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Overview}{17}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Hyper parameters}{17}{section.5.2}%
-\contentsline {subsection}{\numberline {5.2.1}Clear Every Step}{17}{subsection.5.2.1}%
-\contentsline {subsection}{\numberline {5.2.2}Gradient Method}{17}{subsection.5.2.2}%
-\contentsline {subsection}{\numberline {5.2.3}Gradient Threshold Considered}{17}{subsection.5.2.3}%
-\contentsline {subsection}{\numberline {5.2.4}Multiply Weight }{17}{subsection.5.2.4}%
-\contentsline {subsection}{\numberline {5.2.5}Proxy Steps}{17}{subsection.5.2.5}%
-\contentsline {subsection}{\numberline {5.2.6}Subset Of Wrongly Classified}{17}{subsection.5.2.6}%
-\contentsline {section}{\numberline {5.3}Data Loading and Pre Processing}{17}{section.5.3}%
-\contentsline {subsection}{\numberline {5.3.1}Directory structure}{17}{subsection.5.3.1}%
-\contentsline {subsection}{\numberline {5.3.2}Label function}{17}{subsection.5.3.2}%
-\contentsline {subsection}{\numberline {5.3.3}Clearing proxy images}{17}{subsection.5.3.3}%
-\contentsline {subsection}{\numberline {5.3.4}Encode, Stratify, Kfold}{17}{subsection.5.3.4}%
-\contentsline {subsection}{\numberline {5.3.5}train and test, val separate}{17}{subsection.5.3.5}%
-\contentsline {subsection}{\numberline {5.3.6}Augmentations}{17}{subsection.5.3.6}%
-\contentsline {section}{\numberline {5.4}Training Details}{18}{section.5.4}%
-\contentsline {section}{\numberline {5.5}Grid Search}{18}{section.5.5}%
-\contentsline {section}{\numberline {5.6}Optimizations}{18}{section.5.6}%
-\contentsline {subsection}{\numberline {5.6.1}Mixed Precision}{18}{subsection.5.6.1}%
-\contentsline {subsection}{\numberline {5.6.2}Gradient Scaling}{18}{subsection.5.6.2}%
-\contentsline {subsection}{\numberline {5.6.3}No grad}{18}{subsection.5.6.3}%
-\contentsline {subsection}{\numberline {5.6.4}Batched Proxy step}{18}{subsection.5.6.4}%
-\contentsline {subsection}{\numberline {5.6.5}Trial Resumption}{18}{subsection.5.6.5}%
-\contentsline {subsection}{\numberline {5.6.6}Models}{18}{subsection.5.6.6}%
-\contentsline {section}{\numberline {5.7}Gradient Based Methods}{18}{section.5.7}%
-\contentsline {section}{\numberline {5.8}Proxy Attention}{18}{section.5.8}%
-\contentsline {subsection}{\numberline {5.8.1}Callback Mechanism}{19}{subsection.5.8.1}%
-\contentsline {section}{\numberline {5.9}Tensorboard}{19}{section.5.9}%
-\contentsline {section}{\numberline {5.10}Transfer learning}{19}{section.5.10}%
-\contentsline {section}{\numberline {5.11}Optimizer}{19}{section.5.11}%
-\contentsline {section}{\numberline {5.12}LR scheduler}{19}{section.5.12}%
-\contentsline {section}{\numberline {5.13}Loss function}{19}{section.5.13}%
-\contentsline {section}{\numberline {5.14}Batch Size Finder}{19}{section.5.14}%
-\contentsline {section}{\numberline {5.15}Result Aggregation}{19}{section.5.15}%
-\contentsline {section}{\numberline {5.16}Inference}{19}{section.5.16}%
-\contentsline {chapter}{\numberline {6}Evaluation}{20}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Metric Based Analysis}{20}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Visual Based Analysis}{20}{section.6.2}%
-\contentsline {section}{\numberline {6.3}Summary}{20}{section.6.3}%
-\contentsline {chapter}{\numberline {7}Conclusion}{21}{chapter.7}%
-\contentsline {section}{\numberline {7.1}Contributions}{21}{section.7.1}%
-\contentsline {section}{\numberline {7.2}Lessons Learned}{21}{section.7.2}%
-\contentsline {section}{\numberline {7.3}Future Work}{21}{section.7.3}%
-\contentsline {chapter}{\numberline {8}Appendix}{22}{chapter.8}%
+\contentsline {chapter}{\numberline {4}Implementation}{16}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Overview}{16}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Design Decisions}{16}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Proxy Attention}{16}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Challenges and their Potential Solutions}{16}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Proxy Method}{17}{subsection.4.4.1}%
+\contentsline {subsubsection}{Image Statistics Based Replacement}{17}{section*.10}%
+\contentsline {subsubsection}{Data Augmentation Based Replacement}{17}{section*.11}%
+\contentsline {subsubsection}{GAN Based Replacement}{17}{section*.12}%
+\contentsline {subsubsection}{Modifying the Weights}{17}{section*.13}%
+\contentsline {subsubsection}{Multiply with Attention Map}{17}{section*.14}%
+\contentsline {subsection}{\numberline {4.4.2}Training Biases}{17}{subsection.4.4.2}%
+\contentsline {subsubsection}{Method Bias}{17}{section*.15}%
+\contentsline {subsubsection}{Mask Bias}{17}{section*.16}%
+\contentsline {subsubsection}{Learning Bias}{17}{section*.17}%
+\contentsline {subsubsection}{Dataset Bias}{17}{section*.18}%
+\contentsline {subsection}{\numberline {4.4.3}Hyper Parameters}{17}{subsection.4.4.3}%
+\contentsline {subsubsection}{Gradient Method}{17}{section*.19}%
+\contentsline {subsubsection}{Gradient Threshold Considered}{18}{section*.20}%
+\contentsline {subsubsection}{Multiply Weight}{18}{section*.21}%
+\contentsline {subsubsection}{Clear Every Step}{18}{section*.22}%
+\contentsline {subsubsection}{Proxy Steps}{18}{section*.23}%
+\contentsline {subsubsection}{Subset Of Wrongly Classified}{18}{section*.24}%
+\contentsline {section}{\numberline {4.5}Data Loading and Pre Processing}{18}{section.4.5}%
+\contentsline {subsection}{\numberline {4.5.1}Directory structure}{18}{subsection.4.5.1}%
+\contentsline {subsection}{\numberline {4.5.2}Label function}{18}{subsection.4.5.2}%
+\contentsline {subsection}{\numberline {4.5.3}Clearing proxy images}{18}{subsection.4.5.3}%
+\contentsline {subsection}{\numberline {4.5.4}Encode, Stratify, Kfold}{18}{subsection.4.5.4}%
+\contentsline {subsection}{\numberline {4.5.5}train and test, val separate}{18}{subsection.4.5.5}%
+\contentsline {subsection}{\numberline {4.5.6}Augmentations}{18}{subsection.4.5.6}%
+\contentsline {section}{\numberline {4.6}Architectures}{18}{section.4.6}%
+\contentsline {section}{\numberline {4.7}Grid Search}{18}{section.4.7}%
+\contentsline {section}{\numberline {4.8}Training Resumption}{19}{section.4.8}%
+\contentsline {subsection}{\numberline {4.8.1}Checkpoints}{19}{subsection.4.8.1}%
+\contentsline {subsection}{\numberline {4.8.2}Broken Trials}{19}{subsection.4.8.2}%
+\contentsline {subsection}{\numberline {4.8.3}Challenges with External Libraries}{19}{subsection.4.8.3}%
+\contentsline {section}{\numberline {4.9}Optimizations}{20}{section.4.9}%
+\contentsline {subsection}{\numberline {4.9.1}Mixed Precision}{20}{subsection.4.9.1}%
+\contentsline {subsection}{\numberline {4.9.2}No grad}{20}{subsection.4.9.2}%
+\contentsline {subsection}{\numberline {4.9.3}Batched Proxy step}{20}{subsection.4.9.3}%
+\contentsline {section}{\numberline {4.10}Tensorboard}{20}{section.4.10}%
+\contentsline {section}{\numberline {4.11}Transfer learning}{21}{section.4.11}%
+\contentsline {section}{\numberline {4.12}Optimizer}{21}{section.4.12}%
+\contentsline {section}{\numberline {4.13}LR scheduler}{21}{section.4.13}%
+\contentsline {section}{\numberline {4.14}Loss function}{21}{section.4.14}%
+\contentsline {section}{\numberline {4.15}Batch Size Finder}{21}{section.4.15}%
+\contentsline {section}{\numberline {4.16}Result Aggregation}{21}{section.4.16}%
+\contentsline {section}{\numberline {4.17}Inference}{21}{section.4.17}%
+\contentsline {chapter}{\numberline {5}Evaluation}{22}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Metric Based Analysis}{22}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Visual Based Analysis}{22}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Summary}{22}{section.5.3}%
+\contentsline {chapter}{\numberline {6}Conclusion}{23}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Contributions}{23}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Lessons Learned}{23}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Future Work}{23}{section.6.3}%
+\contentsline {chapter}{\numberline {7}Appendix}{24}{chapter.7}%
