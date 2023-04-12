@@ -124,15 +124,17 @@ search_space = {
     "change_subset_attention": [0.8, 0.2],
     # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
     # "model": ["resnet18", "vgg16", "resnet50"],
+    "model": ["resnet18", "resnet50"],
     # "model": ["resnet18", "efficientnet_b0", "resnet50"],
     # "model": ["resnet18"],
-    "model": ["efficientnet_b0"],
+    # "model": ["efficientnet_b0"],
     # "proxy_image_weight" : [0.1, 0.4, 0.8, 0.95],
     # "proxy_image_weight": [0.2, 0.95],
     "proxy_image_weight": [0.2],
     # "proxy_threshold": [0.1, 0.4, 0.8, 0.85],
     "proxy_threshold": [0.1, 0.85],
-    "gradient_method": ["gradcamplusplus"],
+    # "gradient_method": ["gradcamplusplus"],
+    "gradient_method": ["gradcam", "eigencam"],
     # "ds_name" : ["asl", "imagenette", "caltech256"],
     # "ds_name" : ["asl", "imagenette"],
     # "clear_every_step": [True, False],
@@ -142,7 +144,9 @@ search_space = {
     # "clear_every_step": [True, False],
     "clear_every_step": [False],
 
-    "proxy_steps": [[40], [20,"p", 19]],
+    # "proxy_steps": [[40], [20,"p", 19]],
+    "proxy_steps": [[20,"p", 19]],
+    # "proxy_steps": [[10,"p", 20, "p", 8], ["p", 39], [39, "p"]],
 }
 
 # No proxy search space
@@ -278,6 +282,8 @@ if __name__ == "__main__":
             config["ds_name"] = "caltech101"
         if config["model"] == "vit_base_path16_224":
             config["model"] = "vit_base_patch16_224"
+        
+        if config["model"] != "vgg16":
 
-        proxyattention.meta_utils.save_pickle(config, fname=f"current_config.pkl")
-        subprocess.run(["python", "runner.py"], check=True)
+            proxyattention.meta_utils.save_pickle(config, fname=f"current_config.pkl")
+            subprocess.run(["python", "runner.py"], check=True)

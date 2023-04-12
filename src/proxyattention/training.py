@@ -375,7 +375,7 @@ def setup_train_round(
 
     train, val = create_folds(config)
     image_datasets, dataloaders, dataset_sizes = create_dls(train, val, config)
-    class_names = image_datasets["train"].classes
+    # class_names = image_datasets["train"].classes
     config["num_classes"] = len(config["label_map"].keys())
     config["dataset_sizes"] = dataset_sizes
 
