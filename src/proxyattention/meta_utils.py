@@ -3,6 +3,8 @@ from pathlib import Path
 from typing import Generator, Iterable
 import pickle
 import seaborn as sns
+import clipboard
+import pandas as pd
 
 sns.set()
 import os
@@ -105,3 +107,39 @@ def read_pickle(fname="pickler.pkl"):
     with open(fname, "rb") as f:
         obj = pickle.load(f)
     return obj
+
+def check_proxy(string): return "p" in str(string)
+def calc_stats(values):
+    return f"min: {values.min()} \nmax: {values.max()} \navg: {values.mean()}"
+def convert_float(df, cols, totype= float):
+    for col in cols:
+        df[col] = df[col].astype(totype)
+
+def fix_tensorboard_names(df)->pd.DataFrame:
+    """Fixes the names of the columns in the tensorboard csv file."""
+    df = df[df["global_run_count"].isna() == False]
+
+    convert_float(df, ["global_run_count"], int)
+    df = df.fillna(0)
+    # Fix naming
+    df = df.rename(columns={"Acc/Val":"accuracy", "proxy_steps":"step_schedule"})
+    # Fix types
+    convert_float(df, ["change_subset_attention", "proxy_threshold", "accuracy"], float)
+    convert_float(df, ["transfer_imagenet"], bool)
+
+    df["has_proxy"] = df["step_schedule"].apply(check_proxy)
+    return df
+
+
+def return_grouped_results(df, group_cols ,filter = None, index_cols = (["ds_name", ("accuracy")]), print_latex = False):
+
+    if filter != None:
+        df = df.reset_index()
+        for key in filter.keys():
+            df = df[df[key] == filter[key]]
+    final_df = pd.DataFrame(df.groupby(group_cols, as_index=True).mean(numeric_only = True)["accuracy"]).sort_values(index_cols, ascending=False)
+    if print_latex == True:
+        clipboard.copy(final_df.to_latex())
+
+    return final_df
+

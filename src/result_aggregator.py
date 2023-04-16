@@ -21,7 +21,26 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
-main_path = "./runs/"
+# main_path = "/mnt/d/CODE/thesis_runs/proper_runs"
+
+computer_choice = "pc"
+# pc, cluster
+
+# Make dirs
+if computer_choice == "linux":
+    main_path = (
+        "/run/media/eragon/HDD/CODE/Github/improving_robotics_datasets/src/runs/"
+    )
+    main_ds_dir = "/run/media/eragon/HDD/Datasets/"
+
+elif computer_choice == "pc":
+    main_path = (
+        "/mnt/d/CODE/thesis_runs/proper_runs/"
+    )
+    main_ds_dir = "/mnt/d/Datasets/"
+
+os.environ["TORCH_HOME"] = main_ds_dir
+
 
 
 def save_pickle(*args, fname="pickler.pkl") -> None:
@@ -95,7 +114,7 @@ def process_event_acc(event_acc, save_ims=False) -> dict:
 
 def process_runs(main_path, save_ims=False) -> pd.DataFrame:
     """Process all runs and return a dataframe of all results"""
-    all_files = get_event_files(main_path=main_path, save_ims=False)
+    all_files = get_event_files(main_path=main_path)
     all_dict = {}
     for files in tqdm(all_files, total=len(all_files)):
         try:

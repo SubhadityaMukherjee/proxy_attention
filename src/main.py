@@ -182,11 +182,18 @@ computer_choice = "pc"
 # pc, cluster
 
 # Make dirs
-if computer_choice == "pc":
+if computer_choice == "linux":
     main_run_dir = (
         "/run/media/eragon/HDD/CODE/Github/improving_robotics_datasets/src/runs/"
     )
     main_ds_dir = "/run/media/eragon/HDD/Datasets/"
+    config["device"] = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+elif computer_choice == "pc":
+    main_run_dir = (
+        "/mnt/d/CODE/thesis_runs/proper_runs/"
+    )
+    main_ds_dir = "/mnt/d/Datasets/"
     config["device"] = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 os.environ["TORCH_HOME"] = main_ds_dir
