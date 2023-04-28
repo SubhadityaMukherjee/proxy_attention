@@ -454,7 +454,7 @@ def train_proxy_steps( config):
         # model.train()
         load_check = i > 0
         if step == "p":
-            # config["load_proxy_data"] = True
+            config["load_proxy_data"] = True
             config["proxy_step"] = True
             setup_train_round(
                 config=config,
@@ -463,7 +463,7 @@ def train_proxy_steps( config):
                 load_check=load_check,
             )
         else:
-            # config["load_proxy_data"] = False
+            config["load_proxy_data"] = False
             config["proxy_step"] = False
             setup_train_round(
                 config=config,

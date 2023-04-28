@@ -119,15 +119,27 @@ def clear_proxy_images(config: Dict[str, str]) -> None:
     _ = [Path.unlink(x) for x in all_files if "proxy" in str(x)]
     print("[INFO] Cleared all existing proxy images")
 
+def get_name_without_proxy(save_name):
+    save_name = str(save_name) # convert Path object to string for manipulation
+    start_index = save_name.find("proxy") # find index of "proxy" substring
+    end_index = save_name.find(".jpeg") # find index of ".jpeg" substring
+    return save_name[:start_index] + save_name[end_index+5:] # concatenate everything before "label" and after ".jpeg"
+
 
 def create_folds(config):
     all_files = get_files(config["ds_path"])
+    if config["load_proxy_data"] is False:
+        all_files = [x for x in all_files if "proxy" not in str(x)]
+    else:
+        # Remove original images that have been replaced by proxy images to maintain 1:1 ratio for the sake of a fair comparison
+        proxy_files = [x for x in all_files if "proxy" in str(x)]
+        replaced_files = [get_name_without_proxy(x) for x in proxy_files]
+        all_files = [x for x in all_files if str(x) not in replaced_files]
+
     random.shuffle(all_files)
     if config["subset_images"] is not None:
         all_files = all_files[: config["subset_images"]]
-    if config["load_proxy_data"] is False:
-        all_files = [x for x in all_files if "proxy" not in str(x)]
-    # all_files = [x for x in tqdm(all_files, total = len(all_files), desc = "Verifying image files") if Image.verify(x)]
+   
 
     # Put them in a data frame for encoding
     df = pd.DataFrame.from_dict(
