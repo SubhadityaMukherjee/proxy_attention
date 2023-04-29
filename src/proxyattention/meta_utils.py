@@ -5,6 +5,7 @@ import pickle
 import seaborn as sns
 import clipboard
 import pandas as pd
+
 from pytorch_grad_cam import (
     AblationCAM,
     EigenCAM,
@@ -13,7 +14,7 @@ from pytorch_grad_cam import (
     GradCAMPlusPlus,
     HiResCAM,
     ScoreCAM,
-    XGradCAM,
+    EigenGradCAM
 )
 from pytorch_grad_cam.utils.image import (
     deprocess_image,
@@ -435,9 +436,9 @@ def show_cam_on_image(image, mask, weight = 0.6):
     im = np.uint8(255 * cam)
     return Image.fromarray(im)
 
-def plot_images_grad(image, grads, title="noproxy", figsize=(10,10)):
+def plot_images_grad(image, grads, title,weight = 0.6, figsize=(10,10)):
 
-    cams = [show_cam_on_image(image[i], grads[i]) for i in range(len(image))]
+    cams = [show_cam_on_image(image[i], grads[i], weight) for i in range(len(image))]
     rows = 4
     cols = 4
     fig, axes = plt.subplots(rows, cols, figsize=figsize)
@@ -447,7 +448,7 @@ def plot_images_grad(image, grads, title="noproxy", figsize=(10,10)):
             img_index = i*cols + j
             if img_index < len(cams):
                 axes[i][j].imshow(cams[img_index])
-                axes[i][j].set_title(title)
+                axes[i][j].set_title(title[img_index])
             axes[i][j].axis('off')
     # plt.show()
     return plt
@@ -455,14 +456,22 @@ def plot_images_grad(image, grads, title="noproxy", figsize=(10,10)):
 def plot_grid(image_list,title_list = None, rows = 4, cols = 4, figsize=(10,10)):
 
     fig, axes = plt.subplots(rows, cols, figsize=figsize)
-    for i in range(rows):
+    if rows > 1:
+        for i in range(rows):
+            for j in range(cols):
+                img_index = i*cols + j
+                if img_index < len(image_list):
+                    axes[i][j].imshow(tfm(image_list[img_index]))
+                    if title_list != None:
+                        axes[i][j].set_title(title_list[img_index])
+                axes[i][j].axis('off')
+    else:
         for j in range(cols):
-            img_index = i*cols + j
-            if img_index < len(image_list):
-                axes[i][j].imshow(tfm(image_list[img_index]))
-                if title_list != None:
-                    axes[i][j].set_title(title_list[img_index])
-            axes[i][j].axis('off')
+            img_index = j
+            axes[j].imshow(tfm(image_list[img_index]))
+            if title_list != None:
+                axes[j].set_title(title_list[img_index])
+            axes[j].axis('off')
 
 def find_target_layer(config, model):
     if config["model"] == "resnet18":
@@ -486,10 +495,10 @@ def find_target_layer(config, model):
         raise ValueError("Unsupported model type!")
 
 
-def get_single_cam(compare):
+def get_single_cam(compare, method = GradCAMPlusPlus):
     target_layer = find_target_layer(config={"model": compare[0]}, model = compare[-1])
 
-    return GradCAMPlusPlus(
+    return method(
         model=compare[-1].cpu(), target_layers=target_layer, use_cuda=False
     )
 
