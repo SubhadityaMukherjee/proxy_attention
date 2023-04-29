@@ -1,8 +1,37 @@
 
 \chapter{Introduction}
 \section{Context and Novelty}
+
 \section{Motivation}
+
 \section{Challenges}
+The major challenges of this study were as follows:
+\begin{itemize}
+    \item Creating a novel augmentation technique that uses attention maps to improve the performance of the model.
+    \item Testing the effect of Proxy attention on the explainability of the model.
+    \item Comparing a large number of hyperparameters and models with limited computational resources.
+    \item Optimizating the usage of XAI techniques to improve the computational efficiency of Proxy Attention.
+\end{itemize}
+
 \section{Problem Statement}
-\section{Research Questions}
+The problem statement of this study is creating a novel augmentation technique - \textbf{Proxy Attention}, that uses attention maps to improve the performance of any model by guiding its attention away from the regions that are not important for the classification task. 
+In turn this method should also improve the explainability of the model while maintaining the same architecture and hyperparameters.
+
+\section{Research Questions} \label{section:researchq}
+The main research questions that summarize the aims of this study are as follows.
+\begin{enumerate}
+    \item Is it possible to create an augmentation technique that uses Attention maps?
+    \item Is it possible to approximate the effects of Attention from ViTs in a CNN without changing the architecture?
+    \item Is it possible to make a network converge faster and consequently require less data using the outputs from XAI techniques?
+    \item Does using Proxy Attention impact the explainability positively?
+\end{enumerate}
 \section{Thesis Outline}
+This thesis follows the following structure:
+\begin{itemize}
+    \item \textbf{Chapter 2} provides the necessary background information about the relevant topics and datasets used in this study.
+    \item \textbf{Chapter 3} provides a literature review of the relevant topics.
+    \item \textbf{Chapter 4} describes the methodology used in this study and the implementation details.
+    \item \textbf{Chapter 5} discusses the results and answers the research questions.
+    \item \textbf{Chapter 6} concludes the thesis and provides recommendations for future work.
+    \item \textbf{Chapter 7} provides additional details and results.
+\end{itemize}
