@@ -43,8 +43,8 @@ dataset_info = {
     },
 }
 #%%
-# for name in tqdm(dataset_info.keys(), total = len(dataset_info.keys())):
-for name in ["plantdisease"]:
+for name in tqdm(dataset_info.keys(), total = len(dataset_info.keys())):
+# for name in ["plantdisease"]:
     ds_name = name
     print(ds_name)
     # break
