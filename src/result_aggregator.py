@@ -23,15 +23,16 @@ args = parser.parse_args()
 
 # main_path = "/mnt/d/CODE/thesis_runs/proper_runs"
 
-computer_choice = "pc"
+computer_choice = "linux"
 # pc, cluster
 
 # Make dirs
 if computer_choice == "linux":
     main_path = (
-        "/run/media/eragon/HDD/CODE/Github/improving_robotics_datasets/src/runs/"
+        "/media/eragon/data/CODE/thesis_runs/proper_runs/"
     )
-    main_ds_dir = "/run/media/eragon/HDD/Datasets/"
+    main_ds_dir = "/media/eragon/HDD/Datasets/"
+
 
 elif computer_choice == "pc":
     main_path = (

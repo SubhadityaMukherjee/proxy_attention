@@ -121,11 +121,12 @@ config = {
 
 search_space = {
     # "change_subset_attention" : [0.8, 0.5, 0.2],
-    "change_subset_attention": [0.8, 0.2],
+    # "change_subset_attention": [0.8, 0.2],
+    "change_subset_attention": [0.8],
     # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
     # "model": ["resnet18", "vgg16", "resnet50"],
-    "model": ["resnet18", "efficientnet_b0"],
-    # "model": ["resnet18", "efficientnet_b0", "resnet50"],
+    # "model": ["resnet18", "efficientnet_b0"],
+    "model": ["efficientnet_b0", "resnet50", "vgg16"],
     # "model": ["resnet18"],
     # "model": ["efficientnet_b0"],
     # "proxy_image_weight" : [0.1, 0.4, 0.8, 0.95],
@@ -134,19 +135,20 @@ search_space = {
     # "proxy_threshold": [0.1, 0.4, 0.8, 0.85],
     # "proxy_threshold": [0.1, 0.85],
     "proxy_threshold": [0.85],
-    # "gradient_method": ["gradcamplusplus"],
-    "gradient_method": ["gradcam", "gradcamplusplus"],
+    "gradient_method": ["gradcamplusplus",],
+    # "gradient_method": ["gradcam", "gradcamplusplus"],
     # "ds_name" : ["asl", "imagenette", "caltech256"],
     # "ds_name" : ["asl", "imagenette"],
     # "clear_every_step": [True, False],
-    # "ds_name": ["cifar100"],
-    "ds_name": ["dogs"],
+    "ds_name": ["cifar100", "asl", "plantdisease", "dogs", "caltech101"],
+    # "ds_name": ["dogs"],
     # "ds_name": ["dogs", "caltech101", "asl", "imagenette", "plantdisease"],
     # "clear_every_step": [True, False],
     "clear_every_step": [False],
 
     # "proxy_steps": [[40], [20,"p", 19]],
-    "proxy_steps": [[100], [25,"p", 24, "p", 24, "p", 24], ],
+    # "proxy_steps": [[100], [25,"p", 24, "p", 24, "p", 24], [50, "p", 49]],
+    "proxy_steps": [[40], [5,"p", 9, "p", 9, "p", 9, "p", 4], [20, "p", 19]],
     # "proxy_steps": [[20,"p", 19]],
     # "proxy_steps": [[10,"p", 20, "p", 8], ["p", 39], [39, "p"]],
 }
@@ -180,15 +182,16 @@ def get_approx_trial_count(search_space):
 
 logging.info(f"[INFO]: Approx trial count = {get_approx_trial_count(search_space)}")
 
-computer_choice = "pc"
+computer_choice = "linux"
 # pc, cluster
 
 # Make dirs
 if computer_choice == "linux":
     main_run_dir = (
-        "/run/media/eragon/HDD/CODE/Github/improving_robotics_datasets/src/runs/"
+        "/media/eragon/data/CODE/thesis_runs/proper_runs/"
     )
-    main_ds_dir = "/run/media/eragon/HDD/Datasets/"
+    # main_ds_dir = "/media/eragon/HDD/Datasets/"
+    main_ds_dir = "/home/eragon/Documents/Datasets/"
     config["device"] = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 elif computer_choice == "pc":
@@ -202,44 +205,44 @@ os.environ["TORCH_HOME"] = main_ds_dir
 dataset_info = {
     "asl": {
         "path": Path(f"{main_ds_dir}asl/asl_alphabet_train/asl_alphabet_train"),
-        "name_fn": proxyattention.data_utils.get_parent_name,
+        "name_fn": proxyattention.meta_utils.get_parent_name,
         "num_classes": 29,
     },
     "imagenette": {
         "path": Path(f"{main_ds_dir}/imagenette2-320/train"),
-        "name_fn": proxyattention.data_utils.get_parent_name,
+        "name_fn": proxyattention.meta_utils.get_parent_name,
         "num_classes": 10,
     },
     "caltech256": {
         "path": Path(f"{main_ds_dir}/caltech256/train"),
-        "name_fn": proxyattention.data_utils.get_parent_name,
+        "name_fn": proxyattention.meta_utils.get_parent_name,
         "num_classes": 256,
     },
     "tinyimagenet": {
         "path": Path(f"{main_ds_dir}/tiny-imagenet-200/train"),
-        "name_fn": proxyattention.data_utils.get_parent_name,
+        "name_fn": proxyattention.meta_utils.get_parent_name,
         "num_classes": 200,
     },
     "cifar100": {
         "path": Path(f"{main_ds_dir}/CIFAR-100/train"),
-        "name_fn": proxyattention.data_utils.get_parent_name,
+        "name_fn": proxyattention.meta_utils.get_parent_name,
         "num_classes": 100,
     },
     "dogs": {
         "path": Path(f"{main_ds_dir}/dogs/images/Images"),
-        "name_fn": proxyattention.data_utils.get_parent_name,
+        "name_fn": proxyattention.meta_utils.get_parent_name,
         "num_classes": 120,
     },
     "caltech101": {
         "path": Path(f"{main_ds_dir}/caltech-101"),
-        "name_fn": proxyattention.data_utils.get_parent_name,
+        "name_fn": proxyattention.meta_utils.get_parent_name,
         "num_classes": 101,
     },
     "plantdisease": {
         "path": Path(
             f"{main_ds_dir}/plantdisease/Plant_leave_diseases_dataset_without_augmentation"
         ),
-        "name_fn": proxyattention.data_utils.get_parent_name,
+        "name_fn": proxyattention.meta_utils.get_parent_name,
         "num_classes": 39,
     },
 }
@@ -272,6 +275,7 @@ if __name__ == "__main__":
         i, combinations = proxyattention.meta_utils.read_pickle(
             "combination_train.pkl"
         )[0]
+        # i = i+1
         combinations = combinations[i::]
         print("Resuming broken trials")
 

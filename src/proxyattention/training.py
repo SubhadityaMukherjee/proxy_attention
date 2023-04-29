@@ -43,7 +43,6 @@ from torchvision import transforms
 from tqdm import tqdm
 from operator import attrgetter
 
-from .meta_utils import *
 import time
 import gc
 import copy
@@ -72,6 +71,7 @@ import itertools
 # from torch.multiprocessing import Pool
 import torch.multiprocessing as mp
 
+from .meta_utils import *
 # from pympler import tracker
 
 # sns.set()
@@ -84,9 +84,9 @@ import sys
 set_batch_size_dict = {
     "vgg16": 16,
     "vit_base_patch16_224": 32,
-    "resnet18": 32,
+    "resnet18": 128,
     "resnet50": 32,
-    "efficientnet_b0" : 32,
+    "efficientnet_b0" : 64,
 }
 
 
@@ -337,27 +337,6 @@ def one_epoch(config, pbar, model, optimizer, dataloaders, target_layers, schedu
         )
 
 
-def find_target_layer(config, model):
-    if config["model"] == "resnet18":
-        return [model.layer4[-1].conv2]
-    elif config["model"] == "resnet50":
-        return [model.layer4[-1].conv2]
-    elif config["model"] == "efficientnet_b0":
-        return [model.conv_head]
-    elif config["model"] == "FasterRCNN":
-        return model.backbone
-    elif config["model"] == "vgg16" or config["model"] == "densenet161":
-        return [model.features[-3]]
-    elif config["model"] == "mnasnet1_0":
-        return model.layers[-1]
-        # elif config["model"] == "vit_small_patch32_224":
-        return [model.norm]
-    elif config["model"] == "vit_base_patch16_224":
-        return [model.norm]
-        # target_layers = model.layers[-1].blocks[-1].norm1
-    else:
-        raise ValueError("Unsupported model type!")
-
 
 # %%
 # TODO Better transfer learning params. more trainable layers
@@ -392,6 +371,8 @@ def setup_train_round(
         chk = torch.load(config["save_path"], map_location = config["device"])
         model.load_state_dict(chk["model_state_dict"])
         optimizer.load_state_dict(chk["optimizer_state_dict"])
+    
+    # model = torch.compile(model)
 
 
     target_layers = find_target_layer(config, model)
@@ -421,8 +402,8 @@ def setup_train_round(
     print("GPU freed")
 
 def train_proxy_steps( config):
-    assert torch.cuda.is_available()
-    torch.cuda.empty_cache()
+    # assert torch.cuda.is_available()
+    # torch.cuda.empty_cache()
 
     fname_start = f'{config["main_run_dir"]}{config["experiment_name"]}_{datetime.now().strftime("%d%m%Y_%H%M%S")}'
     config["fname_start"] = fname_start

@@ -5,7 +5,6 @@ import pickle
 import seaborn as sns
 import clipboard
 import pandas as pd
-from .training import choose_network, dict_gradient_method, inv_normalize, find_target_layer
 from pytorch_grad_cam import (
     AblationCAM,
     EigenCAM,
@@ -35,6 +34,7 @@ import logging
 import timm
 from sklearn import preprocessing
 from sklearn.model_selection import StratifiedKFold
+from tqdm import tqdm
 
 sns.set()
 import os
@@ -114,9 +114,12 @@ class ImageSegmentationDs(Dataset):
         return len(self.df)
 
 # %%
-def clear_proxy_images(config: Dict[str, str]) -> None:
+def clear_proxy_images(config: Dict[str, str]):
     all_files = get_files(config["ds_path"])
-    _ = [Path.unlink(x) for x in all_files if "proxy" in str(x)]
+    try:
+        _ = [Path.unlink(x) for x in tqdm(all_files, total = len(all_files)) if "proxy" in str(x)]
+    except:
+        pass
     print("[INFO] Cleared all existing proxy images")
 
 def get_name_without_proxy(save_name):
@@ -128,6 +131,8 @@ def get_name_without_proxy(save_name):
 
 def create_folds(config):
     all_files = get_files(config["ds_path"])
+
+    # print(all_files[:10])
     if config["load_proxy_data"] is False:
         all_files = [x for x in all_files if "proxy" not in str(x)]
     else:
@@ -135,7 +140,6 @@ def create_folds(config):
         proxy_files = [x for x in all_files if "proxy" in str(x)]
         replaced_files = [get_name_without_proxy(x) for x in proxy_files]
         all_files = [x for x in all_files if str(x) not in replaced_files]
-
     random.shuffle(all_files)
     if config["subset_images"] is not None:
         all_files = all_files[: config["subset_images"]]
@@ -238,21 +242,22 @@ def create_dls(train, val, config):
             val, config["ds_path"], train=False, transforms=data_transforms_val
         ),
     }
-    num_work = 4
+    num_work = 8
     dataloaders = {
         "train": torch.utils.data.DataLoader(
             image_datasets["train"],
             batch_size=config["batch_size"],
             shuffle=True,
             num_workers=num_work,
-            pin_memory=True,
+            # pin_memory=True,
+            pin_memory=False,
         ),
         "val": torch.utils.data.DataLoader(
             image_datasets["val"],
             batch_size=config["batch_size"],
             shuffle=False,
             num_workers=num_work,
-            pin_memory=True,
+            pin_memory=False,
         ),
     }
 
@@ -459,6 +464,27 @@ def plot_grid(image_list,title_list = None, rows = 4, cols = 4, figsize=(10,10))
                     axes[i][j].set_title(title_list[img_index])
             axes[i][j].axis('off')
 
+def find_target_layer(config, model):
+    if config["model"] == "resnet18":
+        return [model.layer4[-1].conv2]
+    elif config["model"] == "resnet50":
+        return [model.layer4[-1].conv2]
+    elif config["model"] == "efficientnet_b0":
+        return [model.conv_head]
+    elif config["model"] == "FasterRCNN":
+        return model.backbone
+    elif config["model"] == "vgg16" or config["model"] == "densenet161":
+        return [model.features[-3]]
+    elif config["model"] == "mnasnet1_0":
+        return model.layers[-1]
+        # elif config["model"] == "vit_small_patch32_224":
+        return [model.norm]
+    elif config["model"] == "vit_base_patch16_224":
+        return [model.norm]
+        # target_layers = model.layers[-1].blocks[-1].norm1
+    else:
+        raise ValueError("Unsupported model type!")
+
 
 def get_single_cam(compare):
     target_layer = find_target_layer(config={"model": compare[0]}, model = compare[-1])
@@ -477,7 +503,7 @@ def iter_dl_and_plot(dataloader, cam_1, cam_2):
     plot_images_grad(image, grads_2, title="noproxy")
 
 def get_row_from_index(read_agg_res, index_check):
-    temp_df = read_agg_res[read_agg_res["index"] == index_check]
+    temp_df = read_agg_res[read_agg_res["count"] == index_check].reset_index()
     model_name = temp_df["model"].values[0]
     save_path = (
         temp_df["save_path"]
