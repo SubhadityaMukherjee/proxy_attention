@@ -222,6 +222,11 @@ def create_dls(train, val, config):
             # transforms.ColorJitter(hue=0.05, saturation=0.05),
             transforms.RandomHorizontalFlip(),
             transforms.RandomRotation(20, interpolation=Image.BILINEAR),
+            transforms.Normalize(
+                mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225]
+            ),
+
             transforms.ToTensor(),  # use ToTensor() last to get everything between 0 & 1
         ]
     )
@@ -229,6 +234,11 @@ def create_dls(train, val, config):
     data_transforms_val = transforms.Compose(
         [
             transforms.Resize((config["image_size"], config["image_size"])),
+            transforms.Normalize(
+                mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225]
+            ),
+
             transforms.ToTensor(),  # use ToTensor() last to get everything between 0 & 1
         ]
     )

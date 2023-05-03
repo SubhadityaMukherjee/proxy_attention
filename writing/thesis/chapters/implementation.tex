@@ -1,15 +1,167 @@
-
 \chapter{Implementation}
 
 \section{Overview}
-\section{Design Decisions}
+\begin{figure}[H]
+    \centering
+    \label{fig:overview_code}
+    \begin{forest}
+        for tree={
+          font=\ttfamily,
+          grow'=0,
+          child anchor=west,
+          parent anchor=south west,
+          anchor=west,
+          calign=first,
+          edge path={
+            \noexpand\path [draw, \forestoption{edge}] (!u.south west) +(7.5pt,0) |- (.child anchor)\forestoption{edge label};
+          },
+          before typesetting nodes={
+            if n=1
+              {insert before={[,phantom]}}
+              {}
+          },
+          fit=band,
+          before computing xy={l=15pt},
+        }
+        [Structure
+            [Datasets
+            [Cifar100
+                [train]
+                [test]
+            ]
+            [dogs
+                [train]
+                [test]
+            ]
+                [\dots]
+            ]
+            [results
+                [aggregated\_runs.csv]
+            ]
+            [runs
+                [run001
+                [checkpoint]
+                [tensorboard logs]]
+                [\dots]
+            ]
+            [src
+                [proxyattention
+                    [meta\_utils.py]
+                    [training.py]
+                ]
+                [main.py]
+                [inference.py]
+            ]
+            ]
+      \end{forest}
+   \caption{Code Directory Structure}
+   
+\end{figure}
 
-% Efficient Computation
-% Updating Dataloaders
-% Batched Implementation
-% Callbacks
-% Training Resumption
-% Logging
+
+\section{Datasets}
+To test Proxy Attention, the following datasets were used.
+Note: Images are resized to 224x224 pixels for consistency. The author generates these batch visualizations to maintain a uniform representation and might not be fully representative of the dataset. Some labels may be cropped out due to space constraints, but they can be found in the links. Since many of these datasets have many classes, not all are shown in the visualizations. The complete list of classes and examples can be found in the links provided.
+
+\subsection{CIFAR 100}
+The CIFAR 100 dataset, introduced by \cite{krizhevskyLearningMultipleLayers}, is an image dataset with 60000 colour images with dimensions 32x32 pixels. As the name suggests, the dataset has 100 unique classes. Each of these classes has 500 training images. Some classes are - airplane, bird, truck, ship, deer and dog. This dataset is used as a coarse-grained classification dataset in this project.\\
+The dataset and complete class information can be found \href{https://www.kaggle.com/datasets/fedesoriano/cifar100}{here}.
+
+% \begin{figure}[h]
+% \resizebox{.8\textwidth}{!}{
+
+% 	\includegraphics{images/cifar100.png}
+% 	% \ref{fig:cifar100}
+% \end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{images/cifar100.pdf}
+	\caption{CIFAR100 Sample}
+    \label{fig:cifar100}
+\end{figure}
+% \subsection*{IIT pets}
+% \resizebox{.8\textwidth}{!}{
+
+% 	\includegraphics{images/iitpets.png}
+% }
+\subsection{Stanford dogs}
+\cite{khoslaNovelDatasetFineGrained}
+- 120 breeds , afghan hound, Appenzeller etc
+- fine grained
+- 20,580 images
+
+The dataset and complete class information can be found \href{http://vision.stanford.edu/aditya86/ImageNetDogs/}{here}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{images/dogs.pdf}
+	\caption{Stanford Dogs Sample}
+	\label{fig:dogs}
+\end{figure}
+
+
+
+% \subsection{Imagenette}
+
+% \begin{figure}[h]
+% 	\centering
+% 	\includegraphics[width=0.8\textwidth]{images/imagenette.pdf}
+% 	\caption{Imagenette Sample}
+% 	\label{fig:imagenette}
+% \end{figure}
+
+% \resizebox{.8\textwidth}{!}{
+% 	\includegraphics{images/imagenette.png}
+% }
+\subsection{ASL Alphabet}
+- 29 categories, letters, del, space, nothing
+- American Sign Language
+- Easy to classify dataset, good as an initial test
+- Same hand, similar background
+The dataset and complete class information can be found \href{https://www.kaggle.com/datasets/grassknoted/asl-alphabet}{here}.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{images/asl.pdf}
+	\caption{ASL Sample}
+	\label{fig:asl}
+
+\end{figure}
+% \resizebox{.8\textwidth}{!}{
+% 	\includegraphics{images/asl.png}
+% }
+
+
+\subsection{Plant Disease}
+- 39 classes - eg : apple scab, blueberry healthy etc
+- plant diseases
+- Mostly fine-grained, similar images, harder to classify
+
+The dataset and complete class information can be found \href{https://www.kaggle.com/datasets/rajibdpi/plant-disease-dataset}{here}.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{images/plantdisease.pdf}
+	\caption{Plant Disease}
+	\label{fig:plant}
+
+\end{figure}
+
+\subsection{Caltech101}
+\cite{li_andreeto_ranzato_perona_2022}
+- 9,146 total images
+- 101 categories : eg: chair, elephant etc
+- Background category excluding the prev 101
+- low clutter/occlusion
+- uniform size
+- some categories have fewer samples
+
+The dataset and complete class information can be found \href{https://www.kaggle.com/datasets/862ae86edba271c39f76d0b530edeb55076b4b82b971160637210900747c44b1}{here}.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{images/caltech101.pdf}
+	\caption{Caltech101}
+	\label{fig:calt}
+\end{figure}
+
 \section{Proxy Attention}
 
 \begin{algorithm}
@@ -48,12 +200,14 @@
     \end{algorithmic}
 \end{algorithm}
 
-\section{Challenges and their Potential Solutions}
-Being a novel method, there were many challenges that were faced while implementing Proxy Attention. While it was not possible to solve all of the issues faced, the author tried to tackle as many as possible. Many of these issues were posed as optimization problems and were taken into account as hyperparameters that could be tuned to improve performance. This section discusses the possible solutions that were tested. Further details about each parameter can be found in ~\ref{sec:hyperparameters}, while the results of the experiments are discussed in ~\ref{sec:results}.
+\section{Challenges and Potential Solutions}
+Being a novel method, many challenges were faced while implementing Proxy Attention. While solving all the issues faced due to time constraints was not feasible, the author tried to tackle as many as possible. Many of these issues were posed as optimization problems and were considered hyperparameters that could be tuned to improve performance. This section discusses the possible solutions that were tested. Further details about each parameter can be found in ~\ref{sec:hyperparameters}.
+
 \subsection{Proxy Method}
 The Proxy Attention step involves replacing the pixels in the original images based on the attention maps obtained from a trained model. There are many different ways in which this can be done, some that were explored in the literature, some that were implemented and others that were left for future research. The following are the different methods that were considered:
+
 \subsubsection{Image Statistics Based Replacement}
-These methods use either local or global stastistical information from the images for replacement. All these methods can be computed either per image, per batch or over the entire dataset.
+These methods use local or global statistical information from the images for replacement. All these methods can be computed per image, batch, or entire dataset.
 
 \begin{enumerate}
     \item \textbf{Average Pixel Value}: The average pixel value of the original image is used for replacement.
@@ -61,26 +215,26 @@ These methods use either local or global stastistical information from the image
     \item \textbf{Min Pixel Value}: The minimum pixel value of the original image is used for replacement.
     \item \textbf{0/255 Pixel Value}: The pixel value of 0 or 255 is used for replacement, where 0 refers to black and 255 refers to white.
 \end{enumerate}
-These methods are simple, but naive in the sense that they lead to significant information loss. In many cases, if a large number of images have their values replaced with these values, then the model might become biased towards predicting a specific class when an image contains a large number of pixels with these values.
+These methods are simple but naive, leading to significant information loss. In many cases, if many images have their values replaced with these values, the model might become biased towards predicting a specific class when an image contains many pixels with these values.
 Due to this reason, these methods were not considered for the final implementation.
 
 \subsubsection{Data Augmentation Based Replacement}
-Data Augmentation techniques essentially involve computing some transformation over images. Many of these methods were covered in the literature survey ~\ref{sec:augmentation}, some of which replaced the pixels with random values, pixels sampled from either the current image or another image in the dataset, or even deleted the pixels. Most of these methods do not consider the model itself, but some such as Saliency Mix \cite{uddinSaliencyMixSaliencyGuided2021} use measures of saliency to find patches from other images in the dataset that are used to replace the chosen pixels. 
-Proxy Attention was inspired by these methods but instead of replacing patches of the image or deleting pixels, it uses a graident based method to downweight the pixels that might have led to the wrong prediction. This method moves away from using naive statistical information but enables the model to eventually learn from the mistakes that it made.
+Data Augmentation techniques involve computing some transformation over images. Many of these methods were covered in the literature survey ~\ref{sec:augmentation}, some of which replaced the pixels with random values, pixels sampled from either the current image or another image in the dataset, or even deleted the pixels. Most of these methods do not consider the model itself, but some, such as Saliency Mix \cite{uddinSaliencyMixSaliencyGuided2021} use saliency measures to find patches from other images in the dataset that are used to replace the chosen pixels. 
+These methods inspired Proxy Attention, but instead of replacing image patches or deleting pixels, it uses a gradient-based method to down-weight the pixels that might have led to the wrong prediction. This method moves away from using naive statistical information but enables the model to learn from its mistakes eventually.
 
 \subsubsection{GAN Based Replacement}
 
 
 \subsubsection{Modifying the Weights}
-Instead of replacing the pixels themselves, another possible method would be to modify the weights of the network directly. While there are many research papers that elaborate on methods to perform this procedure, this domain is not researched enough yet to be used easily. Research on this domain has been done from the early 90s \cite{schmidhuberSelfReferentialWeightMatrix1993}, but practical implementation of such a network that learns to modify its own weight while training have not been extremely successful \cite{irieModernSelfReferentialWeight2022}. 
+Instead of replacing the pixels, another possible method would be to modify the network weights directly. While many research papers elaborate on methods to perform this procedure, this domain still needs to be researched enough to be used easily. Research on this domain has been done from the early 90s \cite{schmidhuberSelfReferentialWeightMatrix1993}, but practical implementation of such a network that learns to modify its weight while training has not been extremely successful \cite{irieModernSelfReferentialWeight2022}. 
 That being the case, implementing such a method is left to future research. 
 
 \cred{add some papers}
 
 \subsubsection{Multiply with Attention Map}
-The method that was chosen for this research does not replace the pixels of the image directly, but weights them using the attention map generated by passing the image through the trained model. 
-The obtained attention map is thus multiplied onto the original image. In line with the principles of proxy attention, this is done to allow the network to understand that the parts of the image that it initially focused on did not lead to the correct result. Note that doing so is only possible if the network has seen this image before. Because, after the Proxy Attention step, the images are slightly modified, if the network has not learnt what the original image looks like, it might make more mistakes in the future by learning the wrong set of features.
-A caveat of this method is that, after successfully applying the proxy step to a image, the number of pixels that are weighted increases and over time might lead to the image, not having any useful features left. This loss of information is tackled by clearing the proxy images every couple of steps.
+The method chosen for this research does not directly replace the image's pixels but weights them using the attention map generated by passing the image through the trained model. 
+The obtained attention map is thus multiplied with the original image. In line with the principles of proxy attention, this allows the network to understand that the parts of the image it initially focused on did not lead to the correct result. Note that doing so is only possible if the network has seen this image. Because the images are slightly modified after the Proxy Attention step, if the network still needs to learn what the original image looks like, it might make more mistakes in the future by learning the wrong set of features.
+A caveat of this method is that, after successfully applying the proxy step to an image, the number of weighted pixels increases and, over time, might lead to the image not having any useful features left. This loss of information is tackled by clearing the proxy images every couple of steps.
 
 \begin{figure}[h]
     \centering
@@ -90,17 +244,17 @@ A caveat of this method is that, after successfully applying the proxy step to a
 \end{figure}
 
 \subsection{Training Biases}
-Gradient based XAI methods are not perfect, and in many cases, they are unable to provide accurate explanations for the predictions made by the model. Since Proxy Attention relies on the outputs of these methods, this might lead to the model learning biased representations of the data. This section discusses the different biases that might be introduced by using these methods in combination with Proxy Attention and how they can potentially be mitigated.
+Gradient-based XAI methods are not perfect, and in many cases, they are unable to provide accurate explanations for the predictions made by the model. Since Proxy Attention relies on the outputs of these methods, this might lead to the model learning biased representations of the data. This section discusses the different biases that might be introduced by using these methods in combination with Proxy Attention and how they can potentially be mitigated.
 
 \subsubsection{Method Bias}
-Not all explainability methods perform equally, some methods are shown to have better masks generated, while other methods are more computationally expensive. Since Proxy Attention heavily depends on these methods, using them might then lead to additional artefacts in the generated images. It might also be the case that some methods lead to better results while being used alongside proxy attention. To test the effects of this, multiple gradient based methods are used to compare the performance of the networks.
+Not all explainability methods perform equally. Some methods are shown to have better masks generated, while other methods are more computationally expensive. Since Proxy Attention heavily depends on these methods, using them may lead to additional artefacts in the generated images. Some methods lead to better results while being used alongside proxy attention. To test the effects of this, multiple gradient-based methods are used to compare the performance of the networks.
 
 \subsubsection{Mask Bias}
-Proxy Attention uses the attention maps produced by gradient based methods and multiplies them on the original image as a mask. While this seems to work well, the masks themselves have edge artefacts that might lead to corrupting some regions of the image. These artefacts are further amplified for smaller image sizes and might impact performance in the log run.
+Proxy Attention uses the attention maps produced by gradient-based methods and multiplies them on the original image as a mask. While this works well, the masks themselves have edge artefacts that may lead to corrupting some regions of the image. These artefacts are further amplified for smaller image sizes and might impact performance in the long run.
 Potential solutions include:
 
 \begin{enumerate}
-    \item Smoothing the masks before applying them to the image using techniques such as Eigen Smoothing. This would potentially help in reducing the edge artefacts.
+    \item Smoothing the masks before applying them to the image using techniques such as Eigen Smoothing. This could help in reducing the edge artefacts.
     \item Ensuring that only a certain percentage of the image is replaced by the Proxy Attention step. Doing so would preserve more information. 
 \end{enumerate}
 
@@ -114,11 +268,13 @@ Potential solutions include:
 \subsubsection{Dataset Bias}
 
 \subsection{Hyper Parameters} \label{sec:hyperparameters}
+- Novel method, so no previous research on the best hyperparameters to use
+- Balance between performance, computational overhead and memory usage
 
 \subsubsection{Gradient Method}
-There are many gradient based methods that are available for generating attention maps from trained networks. While many of these methods were mentioned in the survey, it was not possible to test all of them. Since the effectiveness of Proxy Attention depends quite a bit on the gradient method used, it was important to test them.
+Many gradient-based methods are available for generating attention maps from trained networks. While many of these methods were mentioned in the survey, it was impossible to test them all. Since Proxy Attention's effectiveness depends quite a bit on the gradient method used, it was important to test them.
 
-The important factor that was considered while choosing these methods was the difference in complexity and the power of explanation that they provide. While algorithms like GradCAM++ \cite{chattopadhayGradCAMGeneralizedGradientBased2018} provide more nuanced and better explanations of the image, older algorithms like Vanilla Gradients \cite{zeilerVisualizingUnderstandingConvolutional2013} are not so accurate. The objective here was to understand if using a more powerful method would improve performance with respect to classification accuracy when used with Proxy Attention. If this indeed is the case, then it would be possible to use more powerful methods to further improve performance in the future.
+The important factor considered while choosing these methods was the difference in complexity and the power of explanation they provide. While algorithms like GradCAM++ \cite{chattopadhayGradCAMGeneralizedGradientBased2018} provide more nuanced and better explanations of the image, older algorithms like Vanilla Gradients \cite{zeilerVisualizingUnderstandingConvolutional2013} are not so accurate. The objective here was to understand if using a more powerful method would improve performance with respect to classification accuracy when used with Proxy Attention. If this is the case, then it is possible to use more powerful methods to further improve performance in the future.
 The gradient methods that were tested are as \cred{follows}:
 \begin{itemize}
     \item \textbf{GradCAM++} \cite{chattopadhayGradCAMGeneralizedGradientBased2018}.
@@ -126,9 +282,9 @@ The gradient methods that were tested are as \cred{follows}:
 \end{itemize}
 
 \subsubsection{Gradient Threshold Considered}
-Every gradient method considered results in the generation of a heatmap where the higher the activation, the more important the pixel is. The activations are mapped to a range of $[0,1]$ with higher values in the heatmap indicating higher activation values. Since using Proxy Attention would mean that the pixels with the chosen activation values would be downweighted, it was important to choose a threshold value that would result in the best classification accuracy.
+Every gradient method considered generates a heatmap where the higher the activation, the more important the pixel is. The activations are mapped to a $[0,1]$ range with higher values in the heatmap indicating higher activation values. Since using Proxy Attention would mean that the pixels with the chosen activation values would be down-weighted, choosing a threshold value would result in the best classification accuracy was important.
 
-This is a balancing act as choosing too small of a threshold would result in larger parts of the image being downweighted, while choosing too large of a threshold would result in the image being downweighted too little and hence being too close to the original image to make any difference.
+This is a balancing act as choosing too small of a threshold would result in larger parts of the image being down-weighted, while choosing too large of a threshold would result in the image being down-weighted too little and hence being too close to the original image to make any difference.
 
 \begin{figure}[h]
     \centering
@@ -138,79 +294,213 @@ This is a balancing act as choosing too small of a threshold would result in lar
 \end{figure}
 
 \subsubsection{Multiply Weight}
+- How strongly should the attention map be applied to the image
+- Too strong, then the image might be affected and important features might be lost
+- Too weak, then the image might not be affected at all which renders the proxy step useless
+
+\cred{generate and add figure here}
 
 \subsubsection{Proxy Step Schedule}
+- Novel method, no reference on how often to apply the proxy step
+- Test different schedules
+- If too many times, then might lead to overfitting
+- If too few times, then might not have any effect
+- Applying for every step might be too computationally expensive
+- Applying too many times initially, since the network is not trained yet might lead to overfitting
+- Future work could include a schedule for this as well. It is manually as of now, (\cred{except when using the schedule generator, which is also a naive method}). Scheduling it wrt the validation accuracy might be a good idea as if the network is not learning, the proxy step could be applied more often. But if the performance is suitable, then there is no need to apply the proxy step as frequently and potentially degrade performance.
 
 \subsubsection{Subset Of Wrongly Classified}
+- Another test was done to understand if increasing the number of images that are passed to the proxy step would help in improving performance.
+- The more images in this step, the more computationally expensive it becomes
+- Both ends of the spectrum were tested, with a small fraction and a large fraction of the images being passed through the proxy step
+- Future work could include a schedule for this as well, where the number of images passed to the proxy step decreases over time as the network learns more and does not need as much help
 
-\section{Data Loading and Pre Processing}
-\subsection{Directory structure}
+\section{Data Loading and Pre-Processing}
+- Many datasets were used in the project, consistency and ease of customization was important
+- This section details all the tweaks, custom loaders and pre-processing steps that were used to ensure that the data was consistent across all the experiments
+- Efficiency of both memory usage and performance
+
+\subsection{Data Directory structure}
+The data was stored in a specific directory structure similar to the ImageNet \cite{dengImageNetLargeScaleHierarchical2009} dataset to maintain consistency across the different experiments. Every dataset is divided into training and validation folders. Most of the datasets used in the project come with this split, but a validation split is created manually for those that do not. (Note that the test split is created from the training split while training the model and is not hardcoded.) For every class in the dataset, a subfolder within the parent folder is created with the name of the class. 
+All the datasets used are stored in the same folder on an SSD for ease of access and performance. 
+\begin{figure}[!h]
+    \centering
+    \label{fig:dataset_structure}
+ \begin{forest}
+    for tree={
+      font=\ttfamily,
+      grow'=0,
+      child anchor=west,
+      parent anchor=south west,
+      anchor=west,
+      calign=first,
+      edge path={
+        \noexpand\path [draw, \forestoption{edge}] (!u.south west) +(7.5pt,0) |- (.child anchor)\forestoption{edge label};
+      },
+      before typesetting nodes={
+        if n=1
+          {insert before={[,phantom]}}
+          {}
+      },
+      fit=band,
+      before computing xy={l=15pt},
+    }
+    % for tree={font=\sffamily, %grow'=0,
+    % folder indent=.9em, folder icons,
+    % edge=densely dotted}
+    [Dataset
+      [training
+        [image001]
+        [image002]
+        [\dots]
+      ]
+      [validation
+        [image001]
+        [image002]
+        [\dots]
+      ]
+    ]
+  \end{forest}
+   \caption{Dataset Directory Structure}
+   
+\end{figure}
+
+\subsection{Custom Data Loading}
+% TODO
+- custom data loading logic was written
+- previously generated proxy images are cleared from the folder
+- all the images are listed, shuffled. 
+- if it is a proxy step, then for every proxy image loaded, the corresponding original image is not given to the data loader. to ensure equal number of images for comparison
+- option to take subset of data for faster testing
+- pandas dataframe with path and label is created, label generated using a label function based on the file path
+- labels are encoded and transformed into numerical values using sklearn 
+- the label map, reverse label map are stored in memory
+-  to ensure equal number of class values per class, a stratified k fold oversampling is applied 
+- ensure images have 3 channels, if not, then convert to RGB. (Some images are transparent and have 4 channels, others might accidentally be grayscale. These lead to errors while training and hence are converted to RGB)
 
 \subsection{Label function}
+% TODO
+- ensure compatibility with all datasets
+- pandas dataframe with path is created in the previous step
+- label function is written to extract the label from the file path
+- used to create the label map and reverse label map 
+- eg: get parent name : split the string into a list by "\/" (Unix path label) and return the second last element in the list
+    % - ASL example path : /media/subhaditya/datasets/ASL/asl_alphabet_train/asl_alphabet_train/A/A1.jpg
+    % - label : A
 
-\subsection{Workers}
 
 % Num workers
 \subsection{Clearing proxy images} \label{sec:clearing_proxy_images}
-For every iteration of the proxy attention step, the images are saved locally. That being the case, it is possible to use these generated images over further iterations of the proxy attention step. Since these images are replacement over the original image from the data set, it is possible to use these images as a direct substitute for the original images in the data set. Note that doing so would lead to the network being given more images in the case of using Proxy Attention during training, which is potentially an unfair comparison. To avoid this issue, only a single image is chosen during the data loading process. This thus becomes a hyper parameter where the options are either to store the last generated proxy images across iterations and use those images as direct replacements for the original images or to not perform the step. 
+The images are saved locally for every iteration of the proxy attention step. That being the case, using these generated images over further iterations of the proxy attention step is possible. Since these images replace the original image from the data set, it is possible to use them as a direct substitute for the original images in the data set. Note that doing so would give the network more images when using Proxy Attention during training, which is potentially an unfair comparison. Only a single image is chosen during the data loading process to avoid this issue. Thus, this becomes a hyperparameter where the options are either to store the last generated proxy images across iterations and use those images as direct replacements for the original images or not perform the step. 
 
-In the long run, the option to persist the images across iterations might potentially lead to the network learning artefacts that were introduced in prior iterations. To make sure that the networks that train with Proxy Attention are fairly compared with the ones that do not, the data loader is only passed either the original image or it's substitute but not both. 
-
-\subsection{Splits}
+In the long run, the option to persist the images across iterations could lead to the network learning artefacts introduced in prior iterations. To make sure that the networks that train with Proxy Attention are fairly compared with the ones that do not, the data loader is only passed either the original image or its substitute but not both. 
 
 \subsection{Augmentations}
-Imagenet Normalize
-Tensor
+- Normalization with ImageNet statistics (for transfer learning) used for both training and validation 
+    - mean = [0.485, 0.456, 0.406]
+    - std = [0.229, 0.224, 0.225]
+- Validation, only resize and convert to tensor
+- Training, resize, random horizontal flip, random rotation, convert to tensor
 
 \section{Architectures}
-TIMM
+% TIMM
+\subsection{TIMM}
+- \cite{rw2019timm}
+- Library used to load the models, pretrained/or not on ImageNet, easily available to use
+- Vast number of models available, easy to customize loading
+\subsection{ResNet - 18,50}
+\subsection{VGG16}
+\subsection{EfficientNetB0}
+\subsection{ViT Base Patch $16\times224$}
 
 \section{Grid Search}
-To test the effectiveness of Proxy Attention and to find the best combination of hyper parameters, a grid search was performed. The grid search was performed on a single machine with a single GPU and an analysis script was written to determine what trials to run instead of using a separate optimization framework (Ref ~\ref{sec:result_aggregation}). 
-Due to limited resources, an intial sweep over the hyperparameters was performed using a low memory network (ResNet18 \cite{heDeepResidualLearning2016}), a subset of the Dogs dataset (\cite{khoslaNovelDatasetFineGrained}), a simple graident method (GradCAM \cite{selvarajuGradCAMVisualExplanations}) and a small number of epochs. A separate process was started for each trial in the grid search and the memory was cleared after each trial. This process was repeated until the best combination of hyper parameters was found. Once the worst performing parameters were eliminated, the rest of the trials were run for the other networks, datasets and methods.
-Although it was possible to use a separate optimization framework and an algorithm like Bayesian Optimization to find the best combination of hyper parameters, due to lack of resources and time, the parameters were semi-manually chosen instead.
+A grid search was performed to test the effectiveness of Proxy Attention and to find the best combination of hyperparameters. The grid search was performed on a single machine with a single GPU. An analysis script was written to determine what trials to run instead of using a separate optimization framework (Ref ~\ref{sec:result_aggregation}). 
+Due to limited resources, an initial sweep over the hyperparameters was performed using a low memory network (ResNet18 \cite{heDeepResidualLearning2016}), a subset of the Dogs dataset (\cite{khoslaNovelDatasetFineGrained}), a simple gradient method (GradCAM \cite{selvarajuGradCAMVisualExplanations}) and a small number of epochs. A separate process was started for each trial in the grid search, and the memory was cleared after each trial. This process was repeated until the best combination of hyperparameters was found. Once the worst-performing parameters were eliminated, the rest of the trials were run for the other networks, datasets and methods.
+Although it was possible to use a separate optimization framework and an algorithm like Bayesian Optimization to find the best combination of hyperparameters, the parameters were semi-manually chosen instead due to a lack of resources and time.
 
 
 \section{Training Resumption}
-This project required quite a few experiments to be performed to find the best combination of hyper parameters. Due to limitations in the amount of time and resources available, it was important to be able to resume training in case of any interruptions. The author intially tried using libraries such as \href{https://github.com/optuna/optuna}{Optuna} and \href{https://github.com/ray-project/ray}{Ray Tune} but these did not play well on a single machine. (Ref ~\ref{sec:challenges_with_external_libraries}) Considering the scope of this project, a custom solution was implemented instead.
+This project required several experiments to find the best combination of hyperparameters. Due to limitations in the amount of time and resources available, it was important to be able to resume training in case of any interruptions. The author initially tried using libraries such as \href{https://github.com/optuna/optuna}{Optuna} and \href{https://github.com/ray-project/ray}{Ray Tune}, but these did not play well on a single machine. (Ref ~\ref{sec:challenges_with_external_libraries}) Considering the scope of this project, a custom solution was implemented instead.
 
 \subsection{Checkpoints} \label{sec:checkpoints}
-While checkpoints are almost always a good idea to have, they were especially important in this project. The Proxy Attention step is applied in between training runs and to preserve memory it unloads the existing models and DataLoaders from the GPU. This means that when continuing training, the models and DataLoaders need to be reloaded before the next training run. Doing so would effectively reset the training process and so it was important to have checkpoints to resume training from.
+While checkpoints are almost always a good idea, they were especially important in this project. The Proxy Attention step is applied between training runs, and to preserve memory, it unloads the existing models and DataLoaders from the GPU. This means that when continuing training, the models and DataLoaders need to be reloaded before the next training run. Doing so would effectively reset the training process, so it was important to have checkpoints to resume training.
 As part of the final analysis, the author also iterated over the trained models and compared the explainability of models trained with or without Proxy Attention. Having saved checkpoints made this process much easier.
 
 \subsection{Broken Trials}
-Another challenge of training on a single machine was that the training process could be interrupted at any time. Since multiple trials were being run, it was important to be able to reload the last configuration and continue training from there. The trials were generated as a list of possible configurations and the author iterated over the list to run the trials. If the trail broke, the list of configurations and position of the current trial in the list was saved as a pickled dictionary. Using this saved object, the author could reload the last configuration and continue training easily.
+Another challenge of training on a single machine was that the training process could be interrupted at any time. Since multiple trials were being run, it was important to be able to reload the last configuration and continue the training from there. The trials were generated as a list of possible configurations, and the author iterated over the list to run the trials. If the trail broke, the list of configurations and position of the current trial in the list was saved as a pickled dictionary. Using this saved object, the author could reload the last configuration and continue training easily.
 
 \subsection{Challenges with External Libraries} \label{sec:challenges_with_external_libraries}
 Some of the challenges that were faced while using external libraries are as follows:
 \begin{enumerate}
-    \item \textbf{GPU cache} : While Ray Tune and Optuna do manage resources efficiently, they did not clear the GPU cache effectively. PyTorch by default holds on to the GPU cache and does not release it until the program is closed for efficiency. This would not be a problem for a single training run but many trials were being run, the cache would quickly fill up and cause the training to crash. This does not imply that using Proxy Attention makes it impossible to use such libraries, but that it was easier to implement a custom solution.
-    \item \textbf{Cluster} : Both of these libraries were written to enable running large scale experiments over multiple machines. While this would be useful for a large scale project, it added unnecessary complexity for this project as all the experiments were run on a single machine.
-    \item \textbf{Grid Search} : Both of the libraries mentioned above were designed to be used for hyper parameter tuning and they implement multiple variants of grid search. While this would be useful, it would stop a lot of trials that would have eventually been useful to analyze. In this project, it was important to be able to have results for each of the trials and the author could not find a way to disable the default Early Stopping behavior as part of the grid search.
+    \item \textbf{GPU cache}: While Ray Tune and Optuna manage resources efficiently, they did not clear the GPU cache effectively. PyTorch, by default, holds on to the GPU cache and does not release it until the program is closed for efficiency. This would not be a problem for a single training run, but if many trials were being run, the cache would quickly fill up and cause the training to crash. This does not imply that using Proxy Attention makes it impossible to use such libraries but that it was easier to implement a custom solution.
+    \item \textbf{Cluster} : Both libraries were written to enable running large-scale experiments over multiple machines. While this would be useful for a large-scale project, it added unnecessary complexity to this project as all the experiments were run on a single machine.
+    \item \textbf{Grid Search} : Both libraries mentioned above were designed for hyperparameter tuning and to implement multiple grid search variants. While this would be useful, it would stop many trials that would eventually be useful to analyze. In this project, it was important to have results for each of the trials, and since the author could not find a way to disable the default Early Stopping behaviour as part of the grid search, a custom Grid Search algorithm was created instead.
 \end{enumerate}
 
 \section{Optimizations}
-\subsection{Mixed Precision}
-Mixed Precision training \cite{micikeviciusMixedPrecisionTraining2017} involves computing most of the operations in the network in half precision (16 bit) and only using full precision (32 bit) for important operations such as the loss function. This allows for much larger batch sizes, faster training and overall reduced memory usage. Micikevicius et al. also find that using Mixed Precision training does not significantly affect the accuracy of the model. With all of these benefits, using Mixed Precision training was a no brainer for this project.
+- To improve performance 
+- To reduce memory usage
+- Limited resources (single machine, single GPU)
 
-The only caveat is that not all operations are yet stable in half precision. Operations like Batch Normalization tend to break when using Mixed Precision training and unless managed, the model fails to converge. PyTorch supports \href{https://pytorch.org/docs/stable/notes/amp_examples.html}{automatic casting} to and from half precision and this API was used for this project. It is also a registered issue that Transformer models sometimes fail to converge with Mixed Precision due to the way that Attention is calculated (Ref ~\href{https://github.com/pytorch/pytorch/issues/40497}{PyTorch Issue \#40497}), and so for the Vision Transformer \cite{dosovitskiyImageWorth16x162021} model, the author had to use full precision.
+\subsection{Proxy Step specific}
+- Major bottleneck in the training process is the Proxy Attention step, as it applies an XAI algorithm to each of the images in the batch of wrongly classified images
+- To reduce 
+    - Proxy step used as a callback
+    - CPU is used to store because GPU memory is limited
+    - wrong images and labels are stored during an epoch on the CPU
+    - Gradient computation is also disabled for these images as it is not required and unnecessarily increases memory usage
+    - these are then batched and passed to the Proxy step
+    - Proxy step is applied to the batch of images and the gradients are computed
+    - All computations are done on the GPU using PyTorch tensors unlike many libraries that use numpy arrays
+    - Replacing the pixels in the image is done using torch.where which has been shown to be faster than other methods \cred{ref?}
+    - The gradients are deleted from the GPU after the step is completed to reduce memory usage
+    - All preprocessing steps, label changes etc are done in batches to reduce memory usage and CPU calls
+    - It is a known issue that saving images as png files is slow using Pillow and thus the images are saved as jpeg files instead \cred{ref?}
+
+\subsection{Workers}
+By default, PyTorch uses a single worker to load data from the SSD. This is not ideal, as the resources must be fully utilized. The author used eight workers to load data from the SSD, which improved the training process's performance. Increasing the number of workers beyond a certain point does not necessarily improve performance due to the overhead of transferring data between the CPU and GPU and might lead to detrimental effects.
+
+\subsection{Mixed Precision}
+Mixed Precision Training \cite{micikeviciusMixedPrecisionTraining2017} involves computing most of the operations in the network in half-precision (16-bit) and only using full precision (32-bit) for important operations such as the loss function. This allows for much larger batch sizes, faster training, and reduced memory usage. Micikevicius et al. also find that using Mixed Precision training does not significantly affect the model's accuracy. With all these benefits, using Mixed Precision training was a no-brainer for this project.
+
+The only caveat is that only some operations are stable in half precision. Operations like Batch Normalization tend to break when using Mixed Precision training, and unless managed, the model fails to converge. PyTorch supports \href{https://pytorch.org/docs/stable/notes/amp_examples.html}{automatic casting} to and from half-precision and this API was used for this project. It is also a registered issue that Transformer models sometimes fail to converge with Mixed Precision due to the way that Attention is calculated (Ref ~\href{https://github.com/pytorch/pytorch/issues/40497}{PyTorch Issue \#40497}), and so for the Vision Transformer \cite{dosovitskiyImageWorth16x162021} model, the author had to use full precision.
+
 \subsection{No grad}
-\subsection{Batched Proxy step}
+- Storing gradients takes up much memory
+- Not required for validation
+- Optimizer zero\_grad is used to clear the gradients (using set\_to\_none=True). set\_to\_none is shown to have better performance \href{https://pytorch.org/tutorials/recipes/recipes/tuning_guide.html}{PyTorch Docs}
+
+\subsection{Pillow SIMD}
+- Pillow is an image processing library that is used to load images 
+- Pillow SIMD is a fork of Pillow that uses SIMD instructions to improve performance
+- It is a drop in replacement for Pillow and requires no changes to the code but can improve reading and writing images by a significant margin
+- \href{https://github.com/uploadcare/pillow-simd}{Pillow SIMD}
 
 \section{Tensorboard}
-Tensorboard is a utility for managing and visualizating training logs. In this project, it is used to store the training configurations, metrics, images and other information that is generated during training. Since Tensorboard uses a custom file format to store this information, it can be used to store any kind of information. Unlike a lot of other logging utilities, Tensorboard stores all it's logs locally. While storing them online might be useful in some cases, it is more difficult to manage and quite unnecessary for this project. 
-Another useful feature of Tensorboard is the ability to see live updates while training is in progress. This is useful for debugging and making sure that the training is progressing as expected.
-
+Tensorboard is a utility for managing and visualizing training logs. In this project, it is used to store the training configurations, metrics, images and other information that is generated during training. Since Tensorboard uses a custom file format to store this information, it can be used to store any information. Unlike many other logging utilities, Tensorboard stores all its logs locally. While storing them online might be useful in some cases, it is more difficult to manage and quite unnecessary for this project. 
+Another useful feature of Tensorboard is the ability to see live updates while training is in progress. This is useful for debugging and ensuring the training is progressing as expected.
 
 \section{Optimizer}
-\section{LR scheduler}
-\section{Loss function}
-\section{Batch Size Finder}
-To maximize training performance, a batch size finder \ref{alg:batch_size_finder} is used to find the optimal batch size for each of the models.
+- AdamW is used as the optimizer
+- lr is set to 1e-3
+- weight decay is set to 1e-5
+- \cred{ref?}
 
-The batch size finder algorithm is rather simple. It is starts off by testing for a small batch size of 2. This batch size is then successively, either incremented, or decremented based on the ability of the current GPU configuration to be able to support that batch of data. 
-A random batch of data with the size that is to be tested is generated and is passed through the required model. The rest of the steps required to train a network are also performed on this randomly generated data. If the GPU fails to accommodate the current batch of data, the loop terminates and the required batch size is obtained.
-This algorithm remains the same for any model, any data type, any other further optimisations applied (such as mixed precision training \cite{micikeviciusMixedPrecisionTraining2017}), and is robust to multiple GPUs being used for training.
+\section{LR scheduler}
+- One Cycle LR is used as the learning rate scheduler
+- max lr is set to 2e-3
+- \cred{ref?}
+
+\section{Loss function}
+- Cross Entropy Loss is used as the loss function
+- \cred{ref?}
+
+\section{Batch Size Finder}
+To maximize training performance, a batch size finder \ref{alg:batch_size_finder} is used to find the optimal batch size for each model.
+
+The batch size finder algorithm is rather simple. It starts by testing for a small batch size of 2. This batch size is then successively, either incremented or decremented, based on the current GPU configuration's ability to support that batch of data. 
+A random batch of data with the size that is to be tested is generated and passed through the required model. If the GPU fails to accommodate the current batch of data, the loop terminates, and the required batch size is obtained. The rest of the steps required to train a network are also performed on this randomly generated data.
+This algorithm remains the same for any model, data type, or other further optimizations applied (such as mixed precision training \cite{micikeviciusMixedPrecisionTraining2017}) and is robust to multiple GPUs being used for training.
 \begin{algorithm}
     \caption{Batch Size Finder Algorithm}
     \label{alg:batch_size_finder}
@@ -242,19 +532,18 @@ This algorithm remains the same for any model, any data type, any other further 
         \STATE $failed \leftarrow False$
         \STATE $batch\_size \leftarrow batch\_size // 2$
         \ENDIF
-
         \ENDWHILE
 
     \end{algorithmic}
 \end{algorithm}
 
 \section{Result Aggregation} \label{sec:result_aggregation}
-The biggest caveat of using Tensorboard is that the logs it generates cannot be directly queried in the interface itself. To overcome this, a custom script was written to query the logs and generate a DataFrame that combines all the logs into a single pandas DataFrame. This makes it possible to not only query the logs, but also to perform any kind of analysis on them. Specific queries such as "What is the best accuracy across all the networks for 'gradcam++', 'dogs dataset' and 'proxy\_threshold = 0.5'?" can be easily answered using this script. This makes it possible to easily compare the performance of different models and different configurations. 
+The biggest caveat of using Tensorboard is that the logs it generates cannot be directly queried in the interface itself. To overcome this, a custom script was written to query the logs and generate a DataFrame that combines all the logs into a single pandas DataFrame. This makes it possible to not only query the logs but also to perform any kind of analysis on them. This script can easily answer specific queries such as "What is the best accuracy across all the networks for 'gradcam++', 'dogs dataset' and 'proxy\_threshold = 0.5'?". This makes it possible to easily compare the performance of different models and configurations. 
 
 Since the script for aggregating logs is rather useful, it was made publicly available as a \href{https://gist.github.com/SubhadityaMukherjee/58cbdf324812175233e91993b720e0bc}{Github Gist}.
 
 \section{Inference}
-Inference refers to using a trained model to make predictions on new data. In this project, a large number of models were trained. To be able to use any of the previously trained models for inference, a separate script was created.\\
-This script follows from the result aggregation, and can use queries over the dataframe generated in the previous step. Since the generated dataframe also contains the path to the saved model, this script can use that information along with the names of the architecture, dataset and other hyper-parameters to load the required models easily. 
+Inference refers to using a trained model to make predictions on new data. In this project, a large number of models were trained. A separate script was created to use any of the previously trained models for inference.\\
+This script follows from the result aggregation and can use queries over the dataframe generated in the previous step. Since the generated dataframe also contains the path to the saved model, this script can use that information along with the names of the architecture, dataset and other hyper-parameters to load the required models easily. 
 The inference script also contains functions for comparing both the accuracies and the explainability of two pre-trained models given a validation dataset or a list of images.\\
-For a batch of images, and given a set of hyperparameters, the script loads two models - one trained with Proxy Attention, and one trained without. The same dataloader is passed through both models to obtain predictions. To ensure fair comparison, only GradCAM++ is used for this evaluation phase. 
+For a batch of images and given a set of hyperparameters, the script loads two models - one trained with Proxy Attention and one trained without. The same dataloader is passed through both models to obtain predictions. Only EigenGradCAM is used for this evaluation phase to ensure a fair comparison, and since GradCAM++ was used for training, it would not be fair to use it for evaluation as well. \cred{modify this a bit}

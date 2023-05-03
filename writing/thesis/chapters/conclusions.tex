@@ -1,5 +1,23 @@
-
 \chapter{Conclusion}
 \section{Contributions}
+- Novel augmentation technique that uses attention maps
+    - Better explainability , better performance
+    - Faster convergence, less data
+    - Easy to implement, no change in architecture
+- Experiments with a large number of hyperparameters and models to test the robustness of the method and find the best configuration
+- Open source callback code that can be used to easily add Proxy Attention to any existing code base
+- Script to easily parse tensorboard logs to a unified DataFrame for easy analysis
+- Scripts to reproduce all the results in this thesis along with training logs
+
 \section{Lessons Learned}
+- Combining research from different domains to create a novel method
+- Importance of hyperparameter tuning
+- Understading memory leaks and debugging them, how to optimize memory usage 
+- Importance of writing functional (instead of class oriented) code that can be easily reused and modified 
+- Better understanding of Augmentation, XAI techniques
+- Better understanding of configuring the training loop
+
 \section{Future Work}
+- Schedule both the number of proxy steps, number of images for proxy step based on validation performance
+- Experiment with more XAI methods
+- Experiment with smoothing the attention maps before using them for the proxy step

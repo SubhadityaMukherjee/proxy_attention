@@ -1,21 +1,34 @@
 
 \chapter{Introduction}
-\section{Context and Novelty}
+
+\section{Problem Statement}
+The problem statement of this study is creating a novel augmentation technique - \textbf{Proxy Attention}, that uses attention maps to improve the performance of any model by guiding its attention away from the regions that are not important for the classification task.
+In turn, this method should also improve the explainability of the model while maintaining the same architecture and hyperparameters.
 
 \section{Motivation}
+- Recent boom in using Transformers
+- Transformers are computationally expensive, harder to train, and require more data
+- The biggest advantage of Transformers is attention
+- CNNs are still extremely useful, but they lack the explainability of Transformers
+- The idea is to combine the best of both worlds
+- Not directly possible, so we use XAI techniques to approximate the effects of attention
+- Mistakes made by CNNs are often due to the model focusing on the wrong regions. While CNNs eventually learn to pick the right regions, this takes time and a lot of data. Proxy Attention aims to speed up this process, and make the model converge faster by guiding its attention away from the regions that are not important for the classification task.
+- Uses what the model already knows to help guide it by helping it better understand it's mistakes
+
+\section{Context and Novelty}
+- Relevant to any CV task, but we focus on image classification
+- Improvements in performance and explainability
+- Novel method of using attention maps for augmentation
+- Improving the explainability of CNNs without changing the architecture, easy to add to any existing code base
 
 \section{Challenges}
 The major challenges of this study were as follows:
 \begin{itemize}
-    \item Creating a novel augmentation technique that uses attention maps to improve the performance of the model.
+    \item Creating a novel augmentation technique that uses attention maps to improve the model's performance.
     \item Testing the effect of Proxy attention on the explainability of the model.
-    \item Comparing a large number of hyperparameters and models with limited computational resources.
-    \item Optimizating the usage of XAI techniques to improve the computational efficiency of Proxy Attention.
+    \item Comparing many hyperparameters and models with limited computational resources.
+    \item Optimizing the usage of XAI techniques to improve the computational efficiency of Proxy Attention.
 \end{itemize}
-
-\section{Problem Statement}
-The problem statement of this study is creating a novel augmentation technique - \textbf{Proxy Attention}, that uses attention maps to improve the performance of any model by guiding its attention away from the regions that are not important for the classification task. 
-In turn this method should also improve the explainability of the model while maintaining the same architecture and hyperparameters.
 
 \section{Research Questions} \label{section:researchq}
 The main research questions that summarize the aims of this study are as follows.
@@ -28,10 +41,11 @@ The main research questions that summarize the aims of this study are as follows
 \section{Thesis Outline}
 This thesis follows the following structure:
 \begin{itemize}
-    \item \textbf{Chapter 2} provides the necessary background information about the relevant topics and datasets used in this study.
+    \item \textbf{Chapter 2} provides the necessary background information about this study's relevant topics and datasets.
     \item \textbf{Chapter 3} provides a literature review of the relevant topics.
     \item \textbf{Chapter 4} describes the methodology used in this study and the implementation details.
-    \item \textbf{Chapter 5} discusses the results and answers the research questions.
-    \item \textbf{Chapter 6} concludes the thesis and provides recommendations for future work.
-    \item \textbf{Chapter 7} provides additional details and results.
+    \item \textbf{Chapter 5} presents the results and answers the research questions.
+    \item \textbf{Chapter 6} discusses the results in the context of the research questions.
+    \item \textbf{Chapter 7} concludes the thesis and provides recommendations for future work.
+    \item \textbf{Chapter 8} provides additional details and results.
 \end{itemize}
