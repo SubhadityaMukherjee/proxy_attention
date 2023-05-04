@@ -4,7 +4,9 @@
 %% License: ISC license                          %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\documentclass[a4paper,11pt]{book}
+% \documentclass[a4paper,11pt]{book}
+\documentclass[a4paper,11pt,openright]{book}
+\usepackage{ebgaramond}
 \usepackage{lipsum}
 \usepackage[Lenny]{fncychap}
 \ChNameUpperCase
@@ -13,6 +15,7 @@
 % \ChTitleVar{\Large\sc}
 
 \usepackage[T1]{fontenc}
+
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
 \usepackage{subcaption}
@@ -48,6 +51,7 @@
   \lstdefinestyle{ascii-tree}{
     literate={├─}{|}1 {─}{--}1 {└}{+}1 
   }
+
 \usepackage[
 	top    = 1cm,
 	bottom = 1.80cm,
@@ -56,7 +60,13 @@
 	includeheadfoot]{geometry} % Use similar margins to the Word Template
 \setlength{\parindent}{0pt}
 \setlist[itemize]{noitemsep, topsep=0pt}
-
+\usepackage{setspace}\onehalfspacing\frenchspacing\flushbottom\sloppy
+     % https://tex.stackexchange.com/questions/65355/flushbottom-vs-raggedbottom
+     \setlength{\dimen0}{\textheight}
+     \addtolength{\dimen0}{-\topskip}
+     \divide\dimen0\baselineskip
+     \setlength{\textheight}{\number\dimen0 \baselineskip}
+     \addtolength{\textheight}{\topskip}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Source: http://en.wikibooks.org/wiki/LaTeX/Hyperlinks %
