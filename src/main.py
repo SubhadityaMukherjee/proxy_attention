@@ -65,7 +65,7 @@ print("Done imports")
 
 config = {
     # "experiment_name": "proxy_run",
-    "experiment_name": "hypers",
+    "experiment_name": "transform",
     # "experiment_name": "baseline_run",
     # "experiment_name": "ignore",
     "image_size": 224,
@@ -129,7 +129,8 @@ search_space = {
     # "model": ["resnet18", "efficientnet_b0"],
     # "model": ["efficientnet_b0", "resnet50", "vgg16"],
     # "model": ["resnet18"],
-    "model": ["efficientnet_b0"],
+    "model": ["vit_base_patch16_224"],
+    # "model": ["efficientnet_b0"],
     "proxy_image_weight" : [0.1, 0.4, 0.8, 0.95],
     # "proxy_image_weight": [0.2, 0.95],
     # "proxy_image_weight": [0.2],
@@ -149,8 +150,8 @@ search_space = {
 
     # "proxy_steps": [[40], [20,"p", 19]],
     # "proxy_steps": [[100], [25,"p", 24, "p", 24, "p", 24], [50, "p", 49]],
-    # "proxy_steps": [[40], [5,"p", 9, "p", 9, "p", 9, "p", 4], [20, "p", 19]],
-    "proxy_steps": [[5,"p", 9, "p", 9, "p", 9, "p", 4]],
+    "proxy_steps": [[40], [5,"p", 9, "p", 9, "p", 9, "p", 4], [20, "p", 19]],
+    # "proxy_steps": [[5,"p", 9, "p", 9, "p", 9, "p", 4]],
     # "proxy_steps": [[20,"p", 19]],
     # "proxy_steps": [[10,"p", 20, "p", 8], ["p", 39], [39, "p"]],
 }
@@ -298,7 +299,7 @@ if __name__ == "__main__":
         if config["model"] == "vit_base_path16_224":
             config["model"] = "vit_base_patch16_224"
         
-        if config["model"] != "vgg16":
+        # if config["model"] != "vgg16":
 
-            proxyattention.meta_utils.save_pickle(config, fname=f"current_config.pkl")
-            subprocess.run(["python", "runner.py"], check=True)
+        proxyattention.meta_utils.save_pickle(config, fname=f"current_config.pkl")
+        subprocess.run(["python", "runner.py"], check=True)

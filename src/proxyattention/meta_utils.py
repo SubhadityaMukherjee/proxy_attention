@@ -132,6 +132,8 @@ def get_name_without_proxy(save_name):
 
 def create_folds(config):
     all_files = get_files(config["ds_path"])
+    # remove csv files
+    all_files = [x for x in all_files if ".csv" not in str(x)]
 
     # print(all_files[:10])
     if config["load_proxy_data"] is False:
@@ -222,24 +224,25 @@ def create_dls(train, val, config):
             # transforms.ColorJitter(hue=0.05, saturation=0.05),
             transforms.RandomHorizontalFlip(),
             transforms.RandomRotation(20, interpolation=Image.BILINEAR),
+            
+            transforms.ToTensor(),  # use ToTensor() last to get everything between 0 & 1
             transforms.Normalize(
                 mean=[0.485, 0.456, 0.406],
                 std=[0.229, 0.224, 0.225]
             ),
 
-            transforms.ToTensor(),  # use ToTensor() last to get everything between 0 & 1
         ]
     )
 
     data_transforms_val = transforms.Compose(
         [
             transforms.Resize((config["image_size"], config["image_size"])),
+            transforms.ToTensor(),  # use ToTensor() last to get everything between 0 & 1
             transforms.Normalize(
                 mean=[0.485, 0.456, 0.406],
                 std=[0.229, 0.224, 0.225]
             ),
 
-            transforms.ToTensor(),  # use ToTensor() last to get everything between 0 & 1
         ]
     )
     # data_transforms_train = torch.jit.script(data_transforms_train)

@@ -83,7 +83,7 @@ import sys
 # %%
 set_batch_size_dict = {
     "vgg16": 16,
-    "vit_base_patch16_224": 32,
+    "vit_base_patch16_224": 16,
     "resnet18": 128,
     "resnet50": 32,
     "efficientnet_b0" : 64,
@@ -211,16 +211,20 @@ def proxy_callback(config, input_wrong_full, label_wrong_full, cam):
             logging.info("[INFO] Saving the images")
         except ValueError:
             pass
-    processed_thresholds = torch.stack(processed_thresholds, dim = 0).detach()
-    batch_size = processed_thresholds.size(0)
+    
+    try:
+        processed_thresholds = torch.stack(processed_thresholds, dim = 0).detach()
+        batch_size = processed_thresholds.size(0)
 
 
-    for ind in tqdm(range(batch_size), total=batch_size, desc="Saving images"):
-        label = config["label_map"][processed_labels[ind].item()]
-        save_name = (
-            config["ds_path"] / label / f"proxy-{ind}-{config['global_run_count']}.jpeg"
-        )
-        tfm(processed_thresholds[ind, :, :, :]).save(save_name)
+        for ind in tqdm(range(batch_size), total=batch_size, desc="Saving images"):
+            label = config["label_map"][processed_labels[ind].item()]
+            save_name = (
+                config["ds_path"] / label / f"proxy-{ind}-{config['global_run_count']}.jpeg"
+            )
+            tfm(processed_thresholds[ind, :, :, :]).save(save_name)
+    except RuntimeError:
+        pass
 
 
 def one_epoch(config, pbar, model, optimizer, dataloaders, target_layers, scheduler = None):
@@ -253,6 +257,9 @@ def one_epoch(config, pbar, model, optimizer, dataloaders, target_layers, schedu
             labels = inps["y"].to(config["device"], non_blocking=True)
 
             optimizer.zero_grad(set_to_none=True)
+
+            # if "vit" not in config["model"]: 
+                # Enable fp16 for all models except ViT
             with torch.set_grad_enabled(phase == "train"):
                 with torch.cuda.amp.autocast():
                     if phase == "train":
@@ -271,6 +278,23 @@ def one_epoch(config, pbar, model, optimizer, dataloaders, target_layers, schedu
                     scaler.scale(loss).backward()
                     scaler.step(optimizer)
                     scaler.update()
+            # else:
+            #     # Disable fp16 for ViT
+            #     if phase == "train":
+            #         outputs = model(inputs)
+            #     else:
+            #         with torch.no_grad():
+            #             outputs = model(inputs)
+            #     _, preds = torch.max(outputs.data.detach(), 1)
+            #     loss = criterion(outputs, labels)
+
+            #     running_loss += loss.item()
+            #     running_corrects += (preds == labels).sum().item()
+
+            #     if phase == "train":
+            #         loss.backward()
+            #         optimizer.step()
+
 
             if config["proxy_step"] == True and phase == "train":
                 # logging.info("[INFO] : Proxy")
