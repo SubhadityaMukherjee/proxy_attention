@@ -140,7 +140,7 @@ The dataset and complete class information can be found \href{https://www.kaggle
 \end{figure}
 
 \subsection{Caltech101}
-The Caltech101 \cite{li_andreeto_ranzato_perona_2022} dataset was created to tackle the absence of a uniform baseline comparison for vision classification tasks. The dataset has 101 categories of images, with a total of 9146 images. A background category is also included, which has images that do not belong to any of the 101 categories. An advantage of this dataset is that the images are of uniform size and have low clutter and occlusion, making it easier to classify. The caveat is that some categories have fewer samples than others.\\
+The Caltech101 \cite{liCaltech101} dataset was created to tackle the absence of a uniform baseline comparison for vision classification tasks. The dataset has 101 categories of images, with a total of 9146 images. A background category is also included, which has images that do not belong to any of the 101 categories. An advantage of this dataset is that the images are of uniform size and have low clutter and occlusion, making it easier to classify. The caveat is that some categories have fewer samples than others.\\
 The dataset and complete class information can be found \href{https://www.kaggle.com/datasets/862ae86edba271c39f76d0b530edeb55076b4b82b971160637210900747c44b1}{here}.
 \begin{figure}[H]
     \centering
@@ -150,42 +150,48 @@ The dataset and complete class information can be found \href{https://www.kaggle
 \end{figure}
 
 \section{\cred{Proxy Attention}}
+- Let $I_{s} \in \mathbb{R}^{W \times H \times C}$ be a random source image
+- applied saliency map $I_{vs}$ 
+	- $I_{vs} = f(I_{s}) \in \mathbb{R}^{W \times H}$
+	- Augmented image $I_{a}$
+	- $\odot$ elementwise multi 
+	- Mask $M \in \{0,1\}^{W \times H}$ 
 
-\begin{algorithm}
-    \caption{Single Batch Proxy Attention}
-    \label{alg:proxy_attention_single_batch}
-    \begin{algorithmic}
-        \REQUIRE $input\_wrong$
-        \REQUIRE $CAM$
-        \REQUIRE $proxy\_threshold$
-        \REQUIRE $proxy\_image\_weight$
-        \STATE $grads \leftarrow CAM(input\_wrong)$
-        \STATE $inversed\_normalized\_inputs \leftarrow inverse\_normalize(input\_wrong)$
+% \begin{algorithm}
+%     \caption{Single Batch Proxy Attention}
+%     \label{alg:proxy_attention_single_batch}
+%     \begin{algorithmic}
+%         \REQUIRE $input\_wrong$
+%         \REQUIRE $CAM$
+%         \REQUIRE $proxy\_threshold$
+%         \REQUIRE $proxy\_image\_weight$
+%         \STATE $grads \leftarrow CAM(input\_wrong)$
+%         \STATE $inversed\_normalized\_inputs \leftarrow inverse\_normalize(input\_wrong)$
 
-        \STATE $output \leftarrow REPLACE(grads \geq proxy\_threshold, ((1- proxy\_image\_weight) * grads) * inversed\_normalized\_inputs, inversed\_normalized\_inputs)$
-    \end{algorithmic}
-\end{algorithm}
+%         \STATE $output \leftarrow REPLACE(grads \geq proxy\_threshold, ((1- proxy\_image\_weight) * grads) * inversed\_normalized\_inputs, inversed\_normalized\_inputs)$
+%     \end{algorithmic}
+% \end{algorithm}
 
 
-\begin{algorithm}
-    \caption{Batch Proxy Attention}
-    \label{alg:proxy_attention_batch}
-    \begin{algorithmic}
-        \REQUIRE $input\_wrong$
-        \REQUIRE $label\_wrong$
-        \REQUIRE $subset\_chosen$
+% \begin{algorithm}
+%     \caption{Batch Proxy Attention}
+%     \label{alg:proxy_attention_batch}
+%     \begin{algorithmic}
+%         \REQUIRE $input\_wrong$
+%         \REQUIRE $label\_wrong$
+%         \REQUIRE $subset\_chosen$
 
-        \STATE $chosen\_inds = CEIL(subset\_chosen * LENGTH(input\_wrong))$
-        \STATE $input\_wrong\_subset = input\_wrong[:chosen_inds]$
-        \STATE $label\_wrong\_subset = label\_wrong[:chosen_inds]$
+%         \STATE $chosen\_inds = CEIL(subset\_chosen * LENGTH(input\_wrong))$
+%         \STATE $input\_wrong\_subset = input\_wrong[:chosen_inds]$
+%         \STATE $label\_wrong\_subset = label\_wrong[:chosen_inds]$
 
-        \STATE $processed\_labels \leftarrow [], processed\_thresholds \leftarrow []$
-        \FOR{$i \leftarrow 0$ \TO $LENGTH(label\_wrong\_subset)$}
-        \STATE $pass$ \#TODO
-        \ENDFOR
+%         \STATE $processed\_labels \leftarrow [], processed\_thresholds \leftarrow []$
+%         \FOR{$i \leftarrow 0$ \TO $LENGTH(label\_wrong\_subset)$}
+%         \STATE $pass$ \#TODO
+%         \ENDFOR
 
-    \end{algorithmic}
-\end{algorithm}
+%     \end{algorithmic}
+% \end{algorithm}
 
 \section{Challenges and Potential Solutions}
 Being a novel method, many challenges were faced while implementing Proxy Attention. While solving all the issues faced due to time constraints was not feasible, the author tried to tackle as many as possible. Many of these issues were posed as optimization problems and were considered hyperparameters that could be tuned to improve performance. This section discusses the possible solutions that were tested. Further details about each parameter can be found in Section ~\ref{sec:hyperparameters}.
@@ -252,8 +258,6 @@ Potential solutions include:
     \item Testing multiple schedules of when to apply the Proxy Attention step. This would help in understanding which part of the training process would benefit from the Proxy Attention step the most, reducing the computational overhead in the long run.
     \item Not reusing previously masked images for the Proxy Step. Doing so ensures that the artefacts are not propagated further into the training process.
 \end{enumerate}
-
-\subsubsection{\cred{Dataset Bias}}
 
 \subsection{Hyper Parameters} \label{sec:hyperparameters}
 Proxy Attention is a novel method, and so there is no previous research on the best hyperparameters to use. The objective in choosing them is to find a balance between performance, computational overhead, and memory usage. The following section discusses the different hyperparameters that were tested and the reasoning behind their selection.
@@ -384,13 +388,20 @@ For validation, the images are resized to $224\times224$ and then converted to T
 This section discusses the architectures used and the library used to implement them.
 
 \subsection{TIMM}
-The library used to load the models is called \textbf{TIMM} \cite{rw2019timm}. It is a PyTorch library that provides a vast number of models with the option of loading pretrained versions of the same. The library also provides an easy way to customize the loading options for transfer learning, including the ability to choose the number of classes, the number of layers to freeze, Global Pooling options, etc.\\
+The library used to load the models is called \textbf{TIMM} \cite{wightmanRwightmanPytorchimagemodelsV02023}. It is a PyTorch library that provides a vast number of models with the option of loading pretrained versions of the same. The library also provides an easy way to customize the loading options for transfer learning, including the ability to choose the number of classes, the number of layers to freeze, Global Pooling options, etc.\\
 The following models were used in this project:
 
-\subsection{ResNet - 18,50}
-\subsection{VGG16}
-\subsection{EfficientNetB0}
-\subsection{ViT Base Patch $16\times224$}
+\subsection{\cred{ResNet - 18,50}}
+- prev misconception : deeper the network, better performance ; but vanishing grads
+- skip connections : loss of info
+- act of n-1)th conv added to out of n+1)th ; adds relu, skips nth layer
+- if nth layer doesnt learn, no information loss
+- enabling the network to skip one ReLU activation in between if it does not provide any useful information or provides no information at all i.e, 0, and the network will be using the previous information, thus maintaining consistent performance
+- If anyways both the layers are providing significant information, thus having previous information will anyways boost the performance.
+
+\subsection{\cred{VGG16}}
+\subsection{\cred{EfficientNetB0}}
+\subsection{\cred{ViT Base Patch $16\times224$}}
 
 \section{Grid Search}
 A grid search was performed to test the effectiveness of Proxy Attention and to find the best combination of hyperparameters. The grid search was performed on a single machine with a single GPU. An analysis script was written to determine what trials to run instead of using a separate optimization framework (Ref ~\ref{sec:result_aggregation}).
@@ -418,22 +429,24 @@ Some of the challenges that were faced while using external libraries are as fol
 \end{enumerate}
 
 \section{Optimizations}
-The following section discusses the optimizations that were implemented to improve the performance of Proxy Attention, training the networks and reducing memory usage. 
+The following section discusses the optimizations that were implemented to improve the performance of Proxy Attention, training the networks and reducing memory usage.
 
 \subsection{Proxy Step specific}
-- Major bottleneck in the training process is the Proxy Attention step, as it applies an XAI algorithm to each of the images in the batch of wrongly classified images
-- To reduce
-- Proxy step used as a callback
-- CPU is used to store because GPU memory is limited
-- wrong images and labels are stored during an epoch on the CPU
-- Gradient computation is also disabled for these images as it is not required and unnecessarily increases memory usage
-- these are then batched and passed to the Proxy step
-- Proxy step is applied to the batch of images and the gradients are computed
-- All computations are done on the GPU using PyTorch tensors unlike many libraries that use numpy arrays
-- Replacing the pixels in the image is done using torch.where which has been shown to be faster than other methods \cred{ref?}
-- The gradients are deleted from the GPU after the step is completed to reduce memory usage
-- All preprocessing steps, label changes etc are done in batches to reduce memory usage and CPU calls
-- It is a known issue that saving images as png files is slow using Pillow and thus the images are saved as jpeg files instead \cred{ref?}
+The Proxy Attention step is the most computationally expensive step in the training process since it applies an XAI algorithm to each of the images in the batch of wrongly classified images. To reduce the time taken to apply the XAI algorithm, the following optimizations were implemented:
+\begin{itemize}
+    \item \textbf{CPU}: The CPU was used to store the wrongly classified images and labels as GPU memory is limited. The images and labels were stored during an epoch on the CPU and then passed to the GPU for the Proxy Attention step in batches.
+    \item \textbf{Computational Graph}: The computational graphs of the wrongly classified images were deleted as they were not required and storing them unnecessarily increases memory usage.
+    \item \textbf{Native PyTorch}: All computations were done on the GPU using PyTorch tensors, unlike many libraries that use numpy arrays. This reduced the overhead of converting between numpy arrays and PyTorch tensors and enabled the use of the GPU for all computations.
+    \item \textbf{torch.where}: Replacing the pixels in the image was done using torch.where which is much faster than simply iterating over the image and replacing the pixels.
+    \item \textbf{Freeing GPU memory}: The gradients were deleted from the GPU after the step was completed to reduce memory usage. This was done using \textit{del} and then calling \textit{torch.cuda.empty\_cache()} to free the memory.
+    \item \textbf{Batching}: All preprocessing steps, label changes, etc., were done in batches to reduce memory usage and CPU calls.
+    \item \textbf{Saving Images}: It is a known issue that saving images as \textit{png} files with no compression is slow using Pillow and thus the images were saved as \textit{jpeg} files instead. (Ref. ~\href{https://github.com/python-pillow/Pillow/issues/1211}{Github issue}). In practise, \textit{jpeg} images have smaller file sizes than \textit{png} images, which inturn reduces the additional storage required.
+
+\end{itemize}
+
+\subsection{Grid Search}
+The major challenge with implementing a grid search was the memory usage. On a single machine, PyTorch reserves some memory for itself, and this memory is not released until the program is closed. This means that if the grid search is run sequentially, the memory usage will increase with each trial and eventually lead to a crash. The solution implemented was to run each trial as a separate process and call it from a main script. This ensured that the memory was released after each trial and the memory usage was kept in check.\\
+This project did not require training multiple models simultaneously and so parallelization was not required or implemented.
 
 \subsection{Workers}
 By default, PyTorch uses a single worker to load data from the SSD. This is not ideal, as the resources must be fully utilized. The author used eight workers to load data from the SSD, which improved the training process's performance. Increasing the number of workers beyond a certain point does not necessarily improve performance due to the overhead of transferring data between the CPU and GPU and might lead to detrimental effects.
@@ -444,7 +457,7 @@ Mixed Precision Training \cite{micikeviciusMixedPrecisionTraining2017} involves 
 The only caveat is that only some operations are stable in half precision. Operations like Batch Normalization tend to break when using Mixed Precision training, and unless managed, the model fails to converge. PyTorch supports \href{https://pytorch.org/docs/stable/notes/amp_examples.html}{automatic casting} to and from half-precision and this API was used for this project. It is also a registered issue that Transformer models sometimes fail to converge with Mixed Precision due to the way that Attention is calculated (Ref ~\href{https://github.com/pytorch/pytorch/issues/40497}{PyTorch Issue \#40497}), and so for the Vision Transformer \cite{dosovitskiyImageWorth16x162021} model, the author had to use full precision.
 
 \subsection{No grad}
-Since a single machine was used for training, it was important to reduce memory usage wherever possible. Since is not necessary to store the gradients for the validation step as they are not used for anything, one of the ways to reduce memory consumption is to disable gradient computation for the validation step. This is done by using the \texttt{torch.no\_grad()} context manager.  The optimizer's \texttt{zero\_grad()} method is used to clear the gradients (using \texttt{set\_to\_none=True}). The additional parameter \texttt{set\_to\_none} is shown to have better performance (Refer to the ~\href{https://pytorch.org/tutorials/recipes/recipes/tuning_guide.html}{Official PyTorch tuning guide} for more information.) as it involves fewer operations.
+Since a single machine was used for training, it was important to reduce memory usage wherever possible. Since it was not necessary to store the gradients for the validation step as they are not used for anything, one of the ways to reduce memory consumption is to disable gradient computation for the validation step. This is done by using the \texttt{torch.no\_grad()} context manager.  The optimizer's \texttt{zero\_grad()} method is used to clear the gradients (using \texttt{set\_to\_none=True}). The additional parameter \texttt{set\_to\_none} is shown to have better performance (Refer to the ~\href{https://pytorch.org/tutorials/recipes/recipes/tuning_guide.html}{Official PyTorch tuning guide} for more information.) as it involves fewer operations.
 
 \subsection{Pillow SIMD}
 One of the bottlenecks in the training process is loading images from the SSD. A few years ago the image processing library Pillow, used to be one of the majorly used libraries for loading images. In recent times, it has been superceded by the \href{https://github.com/uploadcare/pillow-simd}{Pillow SIMD} library, which uses SIMD instructions to improve performance. It is a drop-in replacement for Pillow and requires no changes to the code but can increase image I/O speeds by a significant margin (~\href{https://python-pillow.org/pillow-perf/}{Benchmark comparison between Pillow and Pillow SIMD}). \cred{Add more info about SIMD}
@@ -469,46 +482,18 @@ Another useful feature of Tensorboard is the ability to see live updates while t
 - \cred{ref?}
 
 \section{Batch Size Finder}
-To maximize training performance, a batch size finder \ref{alg:batch_size_finder} is used to find the optimal batch size for each model.
+To maximize training performance, a batch size finder \ref{fig:bsfinder} is used to find the optimal batch size for each model.
 
 The batch size finder algorithm is rather simple. It starts by testing for a small batch size of 2. This batch size is then successively, either incremented or decremented, based on the current GPU configuration's ability to support that batch of data.
 A random batch of data with the size that is to be tested is generated and passed through the required model. If the GPU fails to accommodate the current batch of data, the loop terminates, and the required batch size is obtained. The rest of the steps required to train a network are also performed on this randomly generated data.
 This algorithm remains the same for any model, data type, or other further optimizations applied (such as mixed precision training \cite{micikeviciusMixedPrecisionTraining2017}) and is robust to multiple GPUs being used for training.
-\begin{algorithm}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/batchsizefinder.pdf}
     \caption{Batch Size Finder Algorithm}
-    \label{alg:batch_size_finder}
-    \begin{algorithmic}
-        \REQUIRE $dataset\_size$
-        \REQUIRE $max\_batch\_size$
-        \STATE $batch\_size \leftarrow 2$
-        \WHILE{TRUE}
-        \IF{$max\_batch\_size$ is not $None$ $\And$ $batch\_size \geq max\_batch\_size$}
-        \STATE $batch\_size \leftarrow max\_batch\_size$
-        \ENDIF
-        \IF{$batch\_size \geq dataset\_size$}
-        \STATE $batch\_size \leftarrow batch\_size // 2$
-        \ENDIF
-
-        \IF{$failed$ is $False$}
-        \LOOP
-        \STATE $inputs \leftarrow random((batch\_size,input\_shape))$
-        \STATE $targets \leftarrow random((batch\_size,output\_shape))$
-        \STATE $outputs \leftarrow model(inputs)$
-        \STATE $loss \leftarrow MSE(outputs, targets)$
-        \STATE $loss.backward()$
-        \STATE $optimizer.step()$
-        \STATE $optimizer.zero\_grad()$
-        \STATE $failed \leftarrow True$
-        \STATE $batch\_size \leftarrow batch\_size * 2$
-        \ENDLOOP
-        \ELSIF{$failed$ is $True$}
-        \STATE $failed \leftarrow False$
-        \STATE $batch\_size \leftarrow batch\_size // 2$
-        \ENDIF
-        \ENDWHILE
-
-    \end{algorithmic}
-\end{algorithm}
+    \label{fig:bsfinder}
+\end{figure}
 
 \section{Result Aggregation} \label{sec:result_aggregation}
 The biggest caveat of using Tensorboard is that the logs it generates cannot be directly queried in the interface itself. To overcome this, a custom script was written to query the logs and generate a DataFrame that combines all the logs into a single pandas DataFrame. This makes it possible to not only query the logs but also to perform any kind of analysis on them. This script can easily answer specific queries such as "What is the best accuracy across all the networks for 'gradcam++', 'dogs dataset' and 'proxy\_threshold = 0.5'?". This makes it possible to easily compare the performance of different models and configurations.

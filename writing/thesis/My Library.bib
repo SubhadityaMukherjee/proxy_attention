@@ -172,6 +172,22 @@
   file = {/Users/eragon/Zotero/storage/6FKGN7MN/Babiker and Goebel - 2018 - An Introduction to Deep Visual Explanation.pdf}
 }
 
+@online{baiAreTransformersMore2021,
+  title = {Are {{Transformers More Robust Than CNNs}}?},
+  author = {Bai, Yutong and Mei, Jieru and Yuille, Alan and Xie, Cihang},
+  date = {2021-11-09},
+  eprint = {2111.05464},
+  eprinttype = {arxiv},
+  eprintclass = {cs},
+  doi = {10.48550/arXiv.2111.05464},
+  url = {http://arxiv.org/abs/2111.05464},
+  urldate = {2023-05-07},
+  abstract = {Transformer emerges as a powerful tool for visual recognition. In addition to demonstrating competitive performance on a broad range of visual benchmarks, recent works also argue that Transformers are much more robust than Convolutions Neural Networks (CNNs). Nonetheless, surprisingly, we find these conclusions are drawn from unfair experimental settings, where Transformers and CNNs are compared at different scales and are applied with distinct training frameworks. In this paper, we aim to provide the first fair \& in-depth comparisons between Transformers and CNNs, focusing on robustness evaluations. With our unified training setup, we first challenge the previous belief that Transformers outshine CNNs when measuring adversarial robustness. More surprisingly, we find CNNs can easily be as robust as Transformers on defending against adversarial attacks, if they properly adopt Transformers' training recipes. While regarding generalization on out-of-distribution samples, we show pre-training on (external) large-scale datasets is not a fundamental request for enabling Transformers to achieve better performance than CNNs. Moreover, our ablations suggest such stronger generalization is largely benefited by the Transformer's self-attention-like architectures per se, rather than by other training setups. We hope this work can help the community better understand and benchmark the robustness of Transformers and CNNs. The code and models are publicly available at https://github.com/ytongbai/ViTs-vs-CNNs.},
+  pubstate = {preprint},
+  keywords = {Computer Science - Computer Vision and Pattern Recognition},
+  file = {/Users/eragon/Zotero/storage/TLGEDGGF/Bai et al. - 2021 - Are Transformers More Robust Than CNNs.pdf}
+}
+
 @inproceedings{bakryUntanglingObjectviewManifold2014,
   title = {Untangling Object-View Manifold for Multiview Recognition and Pose Estimation},
   booktitle = {European Conference on Computer Vision},
@@ -627,6 +643,25 @@
   eventtitle = {{{IEEE Transactions}} on {{Image Processing}}},
   keywords = {Computational modeling,Computer architecture,convolutional neural networks,deep learning,Deep learning,Feature extraction,human eye fixations,Predictive models,Saliency,Task analysis,Visualization},
   file = {/Users/eragon/Zotero/storage/T7PLI7VZ/Cornia et al. - 2018 - Predicting Human Eye Fixations via an LSTM-Based S.pdf}
+}
+
+@inproceedings{corniaSAMPushingLimits2018,
+  title = {{{SAM}}: {{Pushing}} the {{Limits}} of {{Saliency Prediction Models}}},
+  shorttitle = {{{SAM}}},
+  booktitle = {2018 {{IEEE}}/{{CVF Conference}} on {{Computer Vision}} and {{Pattern Recognition Workshops}} ({{CVPRW}})},
+  author = {Cornia, Marcella and Baraldi, Lorenzo and Serra, Giuseppe and Cucchiara, Rita},
+  date = {2018-06},
+  pages = {1971--19712},
+  publisher = {{IEEE}},
+  location = {{Salt Lake City, UT, USA}},
+  doi = {10.1109/CVPRW.2018.00250},
+  url = {https://ieeexplore.ieee.org/document/8575416/},
+  urldate = {2023-05-08},
+  abstract = {The prediction of human eye fixations has been recently gaining a lot of attention thanks to the improvements shown by deep architectures. In our work, we go beyond classical feed-forward networks to predict saliency maps and propose a Saliency Attentive Model which incorporates neural attention mechanisms to iteratively refine predictions. Experiments demonstrate that the proposed strategy overcomes by a considerable margin the state of the art on the largest dataset available for saliency prediction. Here, we provide experimental results on other popular saliency datasets to confirm the effectiveness and the generalization capabilities of our model, which enable us to reach the state of the art on all considered datasets.},
+  eventtitle = {2018 {{IEEE}}/{{CVF Conference}} on {{Computer Vision}} and {{Pattern Recognition Workshops}} ({{CVPRW}})},
+  isbn = {978-1-5386-6100-0},
+  langid = {english},
+  file = {/Users/eragon/Zotero/storage/HMKE3CQU/Cornia et al. - 2018 - SAM Pushing the Limits of Saliency Prediction Mod.pdf}
 }
 
 @inproceedings{cubukRandaugmentPracticalAutomated2020,
@@ -1233,7 +1268,7 @@
   abstract = {In order for machine learning to be deployed and trusted in many applications, it is crucial to be able to reliably explain why the machine learning algorithm makes certain predictions. For example, if an algorithm classifies a given pathology image to be a malignant tumor, then the doctor may need to know which parts of the image led the algorithm to this classification. How to interpret black-box predictors is thus an important and active area of research. A fundamental question is: how much can we trust the interpretation itself? In this paper, we show that interpretation of deep learning predictions is extremely fragile in the following sense: two perceptively indistinguishable inputs with the same predicted label can be assigned very different interpretations. We systematically characterize the fragility of several widely-used feature-importance interpretation methods (saliency maps, relevance propagation, and DeepLIFT) on ImageNet and CIFAR-10. Our experiments show that even small random perturbation can change the feature importance and new systematic perturbations can lead to dramatically different interpretations without changing the label. We extend these results to show that interpretations based on exemplars (e.g. influence functions) are similarly fragile. Our analysis of the geometry of the Hessian matrix gives insight on why fragility could be a fundamental challenge to the current interpretation approaches.},
   pubstate = {preprint},
   keywords = {Computer Science - Machine Learning,Statistics - Machine Learning},
-  file = {/Users/eragon/Zotero/storage/9YPQ3RXB/Ghorbani et al. - 2018 - Interpretation of Neural Networks is Fragile.pdf;/Users/eragon/Zotero/storage/K7RINCR7/Ghorbani et al. - 2018 - Interpretation of Neural Networks is Fragile.pdf}
+  file = {/Users/eragon/Zotero/storage/K7RINCR7/Ghorbani et al. - 2018 - Interpretation of Neural Networks is Fragile.pdf}
 }
 
 @article{gianferraraCognitiveMotorSkill2021,
@@ -1271,6 +1306,25 @@
   pubstate = {preprint},
   keywords = {Computer Science - Artificial Intelligence,Computer Science - Machine Learning,Statistics - Machine Learning},
   file = {/Users/eragon/Zotero/storage/MZWDDSBU/Gilpin et al. - 2019 - Explaining Explanations An Overview of Interpreta.pdf}
+}
+
+@inproceedings{gongKeepAugmentSimpleInformationPreserving2021,
+  title = {{{KeepAugment}}: {{A Simple Information-Preserving Data Augmentation Approach}}},
+  shorttitle = {{{KeepAugment}}},
+  booktitle = {2021 {{IEEE}}/{{CVF Conference}} on {{Computer Vision}} and {{Pattern Recognition}} ({{CVPR}})},
+  author = {Gong, Chengyue and Wang, Dilin and Li, Meng and Chandra, Vikas and Liu, Qiang},
+  date = {2021-06},
+  pages = {1055--1064},
+  publisher = {{IEEE}},
+  location = {{Nashville, TN, USA}},
+  doi = {10.1109/CVPR46437.2021.00111},
+  url = {https://ieeexplore.ieee.org/document/9578546/},
+  urldate = {2023-05-08},
+  abstract = {Data augmentation (DA) is an essential technique for training state-of-the-art deep learning systems. In this paper, we empirically show that the standard data augmentation methods may introduce distribution shift and consequently hurt the performance on unaugmented data during inference. To alleviate this issue, we propose a simple yet effective approach, dubbed KeepAugment, to increase the fidelity of augmented images. The idea is to use the saliency map to detect important regions on the original images and preserve these informative regions during augmentation. This information-preserving strategy allows us to generate more faithful training examples. Empirically, we demonstrate that our method significantly improves upon a number of prior art data augmentation schemes, e.g. AutoAugment, Cutout, random erasing, achieving promising results on image classification, semi-supervised image classification, multi-view multi-camera tracking and object detection.},
+  eventtitle = {2021 {{IEEE}}/{{CVF Conference}} on {{Computer Vision}} and {{Pattern Recognition}} ({{CVPR}})},
+  isbn = {978-1-66544-509-2},
+  langid = {english},
+  file = {/Users/eragon/Zotero/storage/FQJIJTCL/Gong et al. - 2021 - KeepAugment A Simple Information-Preserving Data .pdf}
 }
 
 @inproceedings{gongReshapingVisualDatasets2013,
@@ -1618,6 +1672,12 @@
   file = {/Users/eragon/Zotero/storage/2XLFYTRF/Inoue - 2018 - Data Augmentation by Pairing Samples for Images Cl.pdf}
 }
 
+@online{IntroductionAdvancedExplainable,
+  title = {Introduction: {{Advanced Explainable AI}} for Computer Vision — {{Advanced AI}} Explainability with Pytorch-Gradcam},
+  url = {https://jacobgil.github.io/pytorch-gradcam-book/introduction.html},
+  urldate = {2023-05-07}
+}
+
 @inproceedings{irieModernSelfReferentialWeight2022,
   title = {A {{Modern Self-Referential Weight Matrix That Learns}} to {{Modify Itself}}},
   booktitle = {Proceedings of the 39th {{International Conference}} on {{Machine Learning}}},
@@ -1650,6 +1710,13 @@
   urldate = {2022-11-15},
   langid = {english},
   file = {/Users/eragon/Zotero/storage/VF7LW5BV/Izenman - 2012 - Introduction to manifold learning Introduction to.pdf}
+}
+
+@software{jacobPyTorchLibraryCAM2021,
+  title = {{{PyTorch}} Library for {{CAM}} Methods},
+  author = {Jacob, Gildenblat and {contributors}},
+  date = {2021},
+  url = {https://github.com/jacobgil/pytorch-grad-cam}
 }
 
 @inproceedings{jaipuriaDeflatingDatasetBias2020,
@@ -2155,6 +2222,12 @@
   file = {/Users/eragon/Zotero/storage/5I7PEANZ/Li et al. - 2015 - Brain structures and functional connectivity assoc.pdf}
 }
 
+@misc{liCaltech101,
+  title = {Caltech 101},
+  author = {Li, Fei-Fei and Andreetto and Marco, Marc'Aurelio and Ranzato, Marc'Aurelio},
+  doi = {10.22002/D1.20086}
+}
+
 @article{liDeepLIFTDeepLabelSpecific2022,
   title = {Deep-{{LIFT}}: {{Deep Label-Specific Feature Learning}} for {{Image Annotation}}},
   shorttitle = {Deep-{{LIFT}}},
@@ -2169,6 +2242,23 @@
   doi = {10.1109/TCYB.2021.3049630},
   url = {https://ieeexplore.ieee.org/document/9352498/},
   urldate = {2023-02-20}
+}
+
+@article{liDeepLIFTDeepLabelSpecific2022a,
+  title = {Deep-{{LIFT}}: {{Deep Label-Specific Feature Learning}} for {{Image Annotation}}},
+  shorttitle = {Deep-{{LIFT}}},
+  author = {Li, Junbing and Zhang, Changqing and Zhou, Joey Tianyi and Fu, Huazhu and Xia, Shuyin and Hu, Qinghua},
+  date = {2022-08},
+  journaltitle = {IEEE Transactions on Cybernetics},
+  shortjournal = {IEEE Trans. Cybern.},
+  volume = {52},
+  number = {8},
+  pages = {7732--7741},
+  issn = {2168-2267, 2168-2275},
+  doi = {10.1109/TCYB.2021.3049630},
+  url = {https://ieeexplore.ieee.org/document/9352498/},
+  urldate = {2023-05-07},
+  file = {/Users/eragon/Zotero/storage/8DSXU3YH/Li et al. - 2022 - Deep-LIFT Deep Label-Specific Feature Learning fo.pdf}
 }
 
 @unpublished{liFpnnFieldProbing2016,
@@ -2432,6 +2522,22 @@
   file = {/Users/eragon/Zotero/storage/G9DSS3BH/Li et al. - 2018 - Visualizing the Loss Landscape of Neural Nets.pdf}
 }
 
+@online{loshchilovDecoupledWeightDecay2019,
+  title = {Decoupled {{Weight Decay Regularization}}},
+  author = {Loshchilov, Ilya and Hutter, Frank},
+  date = {2019-01-04},
+  eprint = {1711.05101},
+  eprinttype = {arxiv},
+  eprintclass = {cs, math},
+  doi = {10.48550/arXiv.1711.05101},
+  url = {http://arxiv.org/abs/1711.05101},
+  urldate = {2023-05-09},
+  abstract = {L\$\_2\$ regularization and weight decay regularization are equivalent for standard stochastic gradient descent (when rescaled by the learning rate), but as we demonstrate this is \textbackslash emph\{not\} the case for adaptive gradient algorithms, such as Adam. While common implementations of these algorithms employ L\$\_2\$ regularization (often calling it "weight decay" in what may be misleading due to the inequivalence we expose), we propose a simple modification to recover the original formulation of weight decay regularization by \textbackslash emph\{decoupling\} the weight decay from the optimization steps taken w.r.t. the loss function. We provide empirical evidence that our proposed modification (i) decouples the optimal choice of weight decay factor from the setting of the learning rate for both standard SGD and Adam and (ii) substantially improves Adam's generalization performance, allowing it to compete with SGD with momentum on image classification datasets (on which it was previously typically outperformed by the latter). Our proposed decoupled weight decay has already been adopted by many researchers, and the community has implemented it in TensorFlow and PyTorch; the complete source code for our experiments is available at https://github.com/loshchil/AdamW-and-SGDW},
+  pubstate = {preprint},
+  keywords = {Computer Science - Machine Learning,Computer Science - Neural and Evolutionary Computing,Mathematics - Optimization and Control},
+  file = {/Users/eragon/Zotero/storage/54R5MVU4/Loshchilov and Hutter - 2019 - Decoupled Weight Decay Regularization.pdf}
+}
+
 @article{losWarningStimulusRetrieval2021,
   title = {The Warning Stimulus as Retrieval Cue: {{The}} Role of Associative Memory in Temporal Preparation},
   shorttitle = {The Warning Stimulus as Retrieval Cue},
@@ -2646,6 +2752,22 @@
   abstract = {In this work, we aim to realize a method for embedding human knowledge into deep neural networks. While the conventional method to embed human knowledge has been applied for non-deep machine learning, it is challenging to apply it for deep learning models due to the enormous number of model parameters. To tackle this problem, we focus on the attention mechanism of an attention branch network (ABN). In this paper, we propose a fine-tuning method that utilizes a single-channel attention map which is manually edited by a human expert. Our fine-tuning method can train a network so that the output attention map corresponds to the edited ones. As a result, the fine-tuned network can output an attention map that takes into account human knowledge. Experimental results with ImageNet, CUB-200-2010, and IDRiD demonstrate that it is possible to obtain a clear attention map for a visual explanation and improve the classification performance. Our findings can be a novel framework for optimizing networks through human intuitive editing via a visual interface and suggest new possibilities for human-machine cooperation in addition to the improvement of visual explanations.},
   keywords = {Computer Science - Computer Vision and Pattern Recognition,done},
   file = {/Users/eragon/Zotero/storage/2SVPKSTS/Mitsuhara et al. - 2019 - Embedding Human Knowledge into Deep Neural Network.pdf}
+}
+
+@online{mitsuharaEmbeddingHumanKnowledge2019a,
+  title = {Embedding {{Human Knowledge}} into {{Deep Neural Network}} via {{Attention Map}}},
+  author = {Mitsuhara, Masahiro and Fukui, Hiroshi and Sakashita, Yusuke and Ogata, Takanori and Hirakawa, Tsubasa and Yamashita, Takayoshi and Fujiyoshi, Hironobu},
+  date = {2019-12-19},
+  eprint = {1905.03540},
+  eprinttype = {arxiv},
+  eprintclass = {cs},
+  doi = {10.48550/arXiv.1905.03540},
+  url = {http://arxiv.org/abs/1905.03540},
+  urldate = {2023-05-08},
+  abstract = {In this work, we aim to realize a method for embedding human knowledge into deep neural networks. While the conventional method to embed human knowledge has been applied for non-deep machine learning, it is challenging to apply it for deep learning models due to the enormous number of model parameters. To tackle this problem, we focus on the attention mechanism of an attention branch network (ABN). In this paper, we propose a fine-tuning method that utilizes a single-channel attention map which is manually edited by a human expert. Our fine-tuning method can train a network so that the output attention map corresponds to the edited ones. As a result, the fine-tuned network can output an attention map that takes into account human knowledge. Experimental results with ImageNet, CUB-200-2010, and IDRiD demonstrate that it is possible to obtain a clear attention map for a visual explanation and improve the classification performance. Our findings can be a novel framework for optimizing networks through human intuitive editing via a visual interface and suggest new possibilities for human-machine cooperation in addition to the improvement of visual explanations.},
+  pubstate = {preprint},
+  keywords = {Computer Science - Computer Vision and Pattern Recognition},
+  file = {/Users/eragon/Zotero/storage/UFXBIUL3/Mitsuhara et al. - 2019 - Embedding Human Knowledge into Deep Neural Network.pdf}
 }
 
 @article{mittelstadtPrinciplesAloneCannot2019,
@@ -3019,6 +3141,23 @@
   pubstate = {preprint},
   keywords = {Computer Science - Computer Vision and Pattern Recognition},
   file = {/Users/eragon/Zotero/storage/VD3KHYFH/Petsiuk et al. - 2018 - RISE Randomized Input Sampling for Explanation of.pdf}
+}
+
+@online{poliHyenaHierarchyLarger2023,
+  title = {Hyena {{Hierarchy}}: {{Towards Larger Convolutional Language Models}}},
+  shorttitle = {Hyena {{Hierarchy}}},
+  author = {Poli, Michael and Massaroli, Stefano and Nguyen, Eric and Fu, Daniel Y. and Dao, Tri and Baccus, Stephen and Bengio, Yoshua and Ermon, Stefano and Ré, Christopher},
+  date = {2023-04-19},
+  eprint = {2302.10866},
+  eprinttype = {arxiv},
+  eprintclass = {cs},
+  doi = {10.48550/arXiv.2302.10866},
+  url = {http://arxiv.org/abs/2302.10866},
+  urldate = {2023-05-11},
+  abstract = {Recent advances in deep learning have relied heavily on the use of large Transformers due to their ability to learn at scale. However, the core building block of Transformers, the attention operator, exhibits quadratic cost in sequence length, limiting the amount of context accessible. Existing subquadratic methods based on low-rank and sparse approximations need to be combined with dense attention layers to match Transformers, indicating a gap in capability. In this work, we propose Hyena, a subquadratic drop-in replacement for attention constructed by interleaving implicitly parametrized long convolutions and data-controlled gating. In recall and reasoning tasks on sequences of thousands to hundreds of thousands of tokens, Hyena improves accuracy by more than 50 points over operators relying on state-spaces and other implicit and explicit methods, matching attention-based models. We set a new state-of-the-art for dense-attention-free architectures on language modeling in standard datasets (WikiText103 and The Pile), reaching Transformer quality with a 20\% reduction in training compute required at sequence length 2K. Hyena operators are twice as fast as highly optimized attention at sequence length 8K, and 100x faster at sequence length 64K.},
+  pubstate = {preprint},
+  keywords = {Computer Science - Computation and Language,Computer Science - Machine Learning},
+  file = {/Users/eragon/Zotero/storage/3YM2F3FY/Poli et al. - 2023 - Hyena Hierarchy Towards Larger Convolutional Lang.pdf}
 }
 
 @article{polonskyWhatImage2005,
@@ -3399,6 +3538,24 @@
   abstract = {We investigated a unique way in which adolescent peer influence occurs on social media. We developed a novel functional MRI (fMRI) paradigm to simulate Instagram, a popular social photo-sharing tool, and measured adolescents’ behavioral and neural responses to likes, a quantifiable form of social endorsement and potential source of peer influence. Adolescents underwent fMRI while viewing photos ostensibly submitted to Instagram. They were more likely to like photos depicted with many likes than photos with few likes; this finding showed the influence of virtual peer endorsement and held for both neutral photos and photos of risky behaviors (e.g., drinking, smoking). Viewing photos with many (compared with few) likes was associated with greater activity in neural regions implicated in reward processing, social cognition, imitation, and attention. Furthermore, when adolescents viewed risky photos (as opposed to neutral photos), activation in the cognitive-control network decreased. These findings highlight possible mechanisms underlying peer influence during adolescence.},
   pmcid = {PMC5387999},
   file = {/Users/eragon/Zotero/storage/CANDS4CV/Sherman et al. - 2016 - The Power of the Like in Adolescence.pdf}
+}
+
+@article{shortenSurveyImageData2019,
+  title = {A Survey on {{Image Data Augmentation}} for {{Deep Learning}}},
+  author = {Shorten, Connor and Khoshgoftaar, Taghi M.},
+  date = {2019-12},
+  journaltitle = {Journal of Big Data},
+  shortjournal = {J Big Data},
+  volume = {6},
+  number = {1},
+  pages = {60},
+  issn = {2196-1115},
+  doi = {10.1186/s40537-019-0197-0},
+  url = {https://journalofbigdata.springeropen.com/articles/10.1186/s40537-019-0197-0},
+  urldate = {2023-05-08},
+  abstract = {Deep convolutional neural networks have performed remarkably well on many Computer Vision tasks. However, these networks are heavily reliant on big data to avoid overfitting. Overfitting refers to the phenomenon when a network learns a function with very high variance such as to perfectly model the training data. Unfortunately, many application domains do not have access to big data, such as medical image analysis. This survey focuses on Data Augmentation, a data-space solution to the problem of limited data. Data Augmentation encompasses a suite of techniques that enhance the size and quality of training datasets such that better Deep Learning models can be built using them. The image augmentation algorithms discussed in this survey include geometric transformations, color space augmentations, kernel filters, mixing images, random erasing, feature space augmentation, adversarial training, generative adversarial networks, neural style transfer, and meta-learning. The application of augmentation methods based on GANs are heavily covered in this survey. In addition to augmentation techniques, this paper will briefly discuss other characteristics of Data Augmentation such as test-time augmentation, resolution impact, final dataset size, and curriculum learning. This survey will present existing methods for Data Augmentation, promising developments, and meta-level decisions for implementing Data Augmentation. Readers will understand how Data Augmentation can improve the performance of their models and expand limited datasets to take advantage of the capabilities of big data.},
+  langid = {english},
+  file = {/Users/eragon/Zotero/storage/5A6GH22Q/Shorten and Khoshgoftaar - 2019 - A survey on Image Data Augmentation for Deep Learn.pdf}
 }
 
 @online{shrikumarComputationallyEfficientMeasures2018,
@@ -4179,6 +4336,18 @@
   file = {/Users/eragon/Zotero/storage/SSU2VK7T/Wickramanayake et al. - Explanation-based Data Augmentation for Image Clas.pdf}
 }
 
+@software{wightmanRwightmanPytorchimagemodelsV02023,
+  title = {Rwightman/Pytorch-Image-Models: V0.8.10dev0 {{Release}}},
+  shorttitle = {Rwightman/Pytorch-Image-Models},
+  author = {Wightman, Ross and Raw, Nathan and Soare, Alexander and Arora, Aman and Ha, Chris and Reich, Christoph and Guan, Fredo and Kaczmarzyk, Jakub and {mrT23} and Mike and SeeFun and {contrastive} and Rizin, Mohammed and Kim, Hyeongchan and Kertész, Csaba and Mehta, Dushyant and Cucurull, Guillem and Singh, Kushajveer and {hankyul} and Tatsunami, Yuki and Lavin, Andrew and Zhuang, Juntang and Hollemans, Matthijs and Rashad, Mohamed and Sameni, Sepehr and Shults, Vyacheslav and Lucain and Wang, Xiao and Kwon, Yonghye and Uchida, Yusuke},
+  date = {2023-02-07},
+  doi = {10.5281/zenodo.7618837},
+  url = {https://zenodo.org/record/7618837},
+  urldate = {2023-05-07},
+  abstract = {Feb 7, 2023 New inference benchmark numbers added in results folder. Add convnext LAION CLIP trained weights and initial set of in1k fine-tunes convnext\_base.clip\_laion2b\_augreg\_ft\_in1k - 86.2\% @ 256x256 convnext\_base.clip\_laiona\_augreg\_ft\_in1k\_384 - 86.5\% @ 384x384 convnext\_large\_mlp.clip\_laion2b\_augreg\_ft\_in1k - 87.3\% @ 256x256 convnext\_large\_mlp.clip\_laion2b\_augreg\_ft\_in1k\_384 - 87.9\% @ 384x384 Add DaViT models. Supports features\_only=True. Adapted from https://github.com/dingmyu/davit by Fredo. Use a common NormMlpClassifierHead across MaxViT, ConvNeXt, DaViT Add EfficientFormer-V2 model, update EfficientFormer, and refactor LeViT (closely related architectures). Weights on HF hub. New EfficientFormer-V2 arch, significant refactor from original at (https://github.com/snap-research/EfficientFormer). Supports features\_only=True. Minor updates to EfficientFormer. Refactor LeViT models to stages, add features\_only=True support to new conv variants, weight remap required. Move ImageNet meta-data (synsets, indices) from /results to timm/data/\_info. Add ImageNetInfo / DatasetInfo classes to provide labelling for various ImageNet classifier layouts in timm Update inference.py to use, try: python inference.py /folder/to/images --model convnext\_small.in12k --label-type detail --topk 5 Ready for 0.8.10 pypi pre-release (final testing). Jan 20, 2023 Add two convnext 12k -{$>$} 1k fine-tunes at 384x384 convnext\_tiny.in12k\_ft\_in1k\_384 - 85.1 @ 384 convnext\_small.in12k\_ft\_in1k\_384 - 86.2 @ 384 Push all MaxxViT weights to HF hub, and add new ImageNet-12k -{$>$} 1k fine-tunes for rw base MaxViT and CoAtNet 1/2 models model top1 top5 samples / sec Params (M) GMAC Act (M) maxvit\_xlarge\_tf\_512.in21k\_ft\_in1k 88.53 98.64 21.76 475.77 534.14 1413.22 maxvit\_xlarge\_tf\_384.in21k\_ft\_in1k 88.32 98.54 42.53 475.32 292.78 668.76 maxvit\_base\_tf\_512.in21k\_ft\_in1k 88.20 98.53 50.87 119.88 138.02 703.99 maxvit\_large\_tf\_512.in21k\_ft\_in1k 88.04 98.40 36.42 212.33 244.75 942.15 maxvit\_large\_tf\_384.in21k\_ft\_in1k 87.98 98.56 71.75 212.03 132.55 445.84 maxvit\_base\_tf\_384.in21k\_ft\_in1k 87.92 98.54 104.71 119.65 73.80 332.90 maxvit\_rmlp\_base\_rw\_384.sw\_in12k\_ft\_in1k 87.81 98.37 106.55 116.14 70.97 318.95 maxxvitv2\_rmlp\_base\_rw\_384.sw\_in12k\_ft\_in1k 87.47 98.37 149.49 116.09 72.98 213.74 coatnet\_rmlp\_2\_rw\_384.sw\_in12k\_ft\_in1k 87.39 98.31 160.80 73.88 47.69 209.43 maxvit\_rmlp\_base\_rw\_224.sw\_in12k\_ft\_in1k 86.89 98.02 375.86 116.14 23.15 92.64 maxxvitv2\_rmlp\_base\_rw\_224.sw\_in12k\_ft\_in1k 86.64 98.02 501.03 116.09 24.20 62.77 maxvit\_base\_tf\_512.in1k 86.60 97.92 50.75 119.88 138.02 703.99 coatnet\_2\_rw\_224.sw\_in12k\_ft\_in1k 86.57 97.89 631.88 73.87 15.09 49.22 maxvit\_large\_tf\_512.in1k 86.52 97.88 36.04 212.33 244.75 942.15 coatnet\_rmlp\_2\_rw\_224.sw\_in12k\_ft\_in1k 86.49 97.90 620.58 73.88 15.18 54.78 maxvit\_base\_tf\_384.in1k 86.29 97.80 101.09 119.65 73.80 332.90 maxvit\_large\_tf\_384.in1k 86.23 97.69 70.56 212.03 132.55 445.84 maxvit\_small\_tf\_512.in1k 86.10 97.76 88.63 69.13 67.26 383.77 maxvit\_tiny\_tf\_512.in1k 85.67 97.58 144.25 31.05 33.49 257.59 maxvit\_small\_tf\_384.in1k 85.54 97.46 188.35 69.02 35.87 183.65 maxvit\_tiny\_tf\_384.in1k 85.11 97.38 293.46 30.98 17.53 123.42 maxvit\_large\_tf\_224.in1k 84.93 96.97 247.71 211.79 43.68 127.35 coatnet\_rmlp\_1\_rw2\_224.sw\_in12k\_ft\_in1k 84.90 96.96 1025.45 41.72 8.11 40.13 maxvit\_base\_tf\_224.in1k 84.85 96.99 358.25 119.47 24.04 95.01 maxxvit\_rmlp\_small\_rw\_256.sw\_in1k 84.63 97.06 575.53 66.01 14.67 58.38 coatnet\_rmlp\_2\_rw\_224.sw\_in1k 84.61 96.74 625.81 73.88 15.18 54.78 maxvit\_rmlp\_small\_rw\_224.sw\_in1k 84.49 96.76 693.82 64.90 10.75 49.30 maxvit\_small\_tf\_224.in1k 84.43 96.83 647.96 68.93 11.66 53.17 maxvit\_rmlp\_tiny\_rw\_256.sw\_in1k 84.23 96.78 807.21 29.15 6.77 46.92 coatnet\_1\_rw\_224.sw\_in1k 83.62 96.38 989.59 41.72 8.04 34.60 maxvit\_tiny\_rw\_224.sw\_in1k 83.50 96.50 1100.53 29.06 5.11 33.11 maxvit\_tiny\_tf\_224.in1k 83.41 96.59 1004.94 30.92 5.60 35.78 coatnet\_rmlp\_1\_rw\_224.sw\_in1k 83.36 96.45 1093.03 41.69 7.85 35.47 maxxvitv2\_nano\_rw\_256.sw\_in1k 83.11 96.33 1276.88 23.70 6.26 23.05 maxxvit\_rmlp\_nano\_rw\_256.sw\_in1k 83.03 96.34 1341.24 16.78 4.37 26.05 maxvit\_rmlp\_nano\_rw\_256.sw\_in1k 82.96 96.26 1283.24 15.50 4.47 31.92 maxvit\_nano\_rw\_256.sw\_in1k 82.93 96.23 1218.17 15.45 4.46 30.28 coatnet\_bn\_0\_rw\_224.sw\_in1k 82.39 96.19 1600.14 27.44 4.67 22.04 coatnet\_0\_rw\_224.sw\_in1k 82.39 95.84 1831.21 27.44 4.43 18.73 coatnet\_rmlp\_nano\_rw\_224.sw\_in1k 82.05 95.87 2109.09 15.15 2.62 20.34 coatnext\_nano\_rw\_224.sw\_in1k 81.95 95.92 2525.52 14.70 2.47 12.80 coatnet\_nano\_rw\_224.sw\_in1k 81.70 95.64 2344.52 15.14 2.41 15.41 maxvit\_rmlp\_pico\_rw\_256.sw\_in1k 80.53 95.21 1594.71 7.52 1.85 24.86},
+  organization = {{Zenodo}}
+}
+
 @inproceedings{wu3DShapenetsDeep2015,
   title = {{{3D}} Shapenets: {{A}} Deep Representation for Volumetric Shapes},
   booktitle = {Proceedings of the {{IEEE}} Conference on Computer Vision and Pattern Recognition},
@@ -4615,6 +4784,25 @@
   file = {/Users/eragon/Zotero/storage/E9AVXLRH/Zhao et al. - 2021 - Exploiting Explanations for Model Inversion Attack.pdf}
 }
 
+@article{zhaoM2DetSingleShotObject2019,
+  title = {{{M2Det}}: {{A Single-Shot Object Detector Based}} on {{Multi-Level Feature Pyramid Network}}},
+  shorttitle = {{{M2Det}}},
+  author = {Zhao, Qijie and Sheng, Tao and Wang, Yongtao and Tang, Zhi and Chen, Ying and Cai, Ling and Ling, Haibin},
+  date = {2019-07-17},
+  journaltitle = {Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume = {33},
+  number = {01},
+  pages = {9259--9266},
+  issn = {2374-3468},
+  doi = {10.1609/aaai.v33i01.33019259},
+  url = {https://ojs.aaai.org/index.php/AAAI/article/view/4962},
+  urldate = {2023-05-08},
+  abstract = {Feature pyramids are widely exploited by both the state-of-the-art one-stage object detectors (e.g., DSSD, RetinaNet, RefineDet) and the two-stage object detectors (e.g., Mask RCNN, DetNet) to alleviate the problem arising from scale variation across object instances. Although these object detectors with feature pyramids achieve encouraging results, they have some limitations due to that they only simply construct the feature pyramid according to the inherent multiscale, pyramidal architecture of the backbones which are originally designed for object classification task. Newly, in this work, we present Multi-Level Feature Pyramid Network (MLFPN) to construct more effective feature pyramids for detecting objects of different scales. First, we fuse multi-level features (i.e. multiple layers) extracted by backbone as the base feature. Second, we feed the base feature into a block of alternating joint Thinned U-shape Modules and Feature Fusion Modules and exploit the decoder layers of each Ushape module as the features for detecting objects. Finally, we gather up the decoder layers with equivalent scales (sizes) to construct a feature pyramid for object detection, in which every feature map consists of the layers (features) from multiple levels. To evaluate the effectiveness of the proposed MLFPN, we design and train a powerful end-to-end one-stage object detector we call M2Det by integrating it into the architecture of SSD, and achieve better detection performance than state-of-the-art one-stage detectors. Specifically, on MSCOCO benchmark, M2Det achieves AP of 41.0 at speed of 11.8 FPS with single-scale inference strategy and AP of 44.2 with multi-scale inference strategy, which are the new stateof-the-art results among one-stage detectors. The code will be made available on https://github.com/qijiezhao/M2Det.},
+  issue = {01},
+  langid = {english},
+  file = {/Users/eragon/Zotero/storage/MD5X57ZP/Zhao et al. - 2019 - M2Det A Single-Shot Object Detector Based on Mult.pdf}
+}
+
 @inproceedings{zhaoUnderstandingEvaluatingRacial2021,
   title = {Understanding and {{Evaluating Racial Biases}} in {{Image Captioning}}},
   author = {Zhao, Dora and Wang, Angelina and Russakovsky, Olga},
@@ -4745,16 +4933,4 @@
   date = {2016},
   eprint = {1611.01578},
   eprinttype = {arxiv}
-}
-
-@misc{li_andreeto_ranzato_perona_2022, title={Caltech 101}, DOI={10.22002/D1.20086}, abstractNote={Pictures of objects belonging to 101 categories. About 40 to 800 images per category. Most categories have about 50 images. Collected in September 2003 by Fei-Fei Li, Marco Andreetto, and Marc'Aurelio Ranzato. The size of each image is roughly 300 x 200 pixels. We have carefully clicked outlines of each object in these pictures, these are included under the 'Annotations.tar'. There is also a MATLAB script to view the annotations, 'show_annotations.m'.}, publisher={CaltechDATA}, author={Li, Fei-Fei and Andreeto, Marco and Ranzato, Marc'Aurelio and Perona, Pietro}, date={2022}}
-
-@misc{rw2019timm,
-  author = {Ross Wightman},
-  title = {PyTorch Image Models},
-  date = {2019},
-  publisher = {GitHub},
-  journal = {GitHub repository},
-  doi = {10.5281/zenodo.4414861},
-  howpublished = {\url{https://github.com/rwightman/pytorch-image-models}}
 }

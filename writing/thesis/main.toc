@@ -2,84 +2,85 @@
 \contentsline {chapter}{\numberline {1}Introduction}{9}{chapter.1}%
 \contentsline {section}{\numberline {1.1}Problem Statement}{9}{section.1.1}%
 \contentsline {section}{\numberline {1.2}Motivation}{9}{section.1.2}%
-\contentsline {section}{\numberline {1.3}Context and Novelty}{9}{section.1.3}%
+\contentsline {section}{\numberline {1.3}Context and Novelty}{10}{section.1.3}%
 \contentsline {section}{\numberline {1.4}Challenges}{10}{section.1.4}%
 \contentsline {section}{\numberline {1.5}Research Questions}{10}{section.1.5}%
-\contentsline {section}{\numberline {1.6}Thesis Outline}{10}{section.1.6}%
-\contentsline {chapter}{\numberline {2}Background}{11}{chapter.2}%
-\contentsline {section}{\numberline {2.1}Interpretability}{11}{section.2.1}%
-\contentsline {section}{\numberline {2.2}Gradient Based Explanations}{11}{section.2.2}%
-\contentsline {section}{\numberline {2.3}Augmentation}{11}{section.2.3}%
-\contentsline {chapter}{\numberline {3}State of the Art}{12}{chapter.3}%
-\contentsline {section}{\numberline {3.1}Gradient Based Explanations}{12}{section.3.1}%
-\contentsline {section}{\numberline {3.2}Augmentation}{15}{section.3.2}%
-\contentsline {subsection}{\numberline {3.2.1}Limitations}{18}{subsection.3.2.1}%
-\contentsline {chapter}{\numberline {4}Implementation}{19}{chapter.4}%
-\contentsline {section}{\numberline {4.1}\textcolor {red}{Overview}}{19}{section.4.1}%
-\contentsline {section}{\numberline {4.2}Datasets}{20}{section.4.2}%
-\contentsline {subsection}{\numberline {4.2.1}CIFAR 100}{20}{subsection.4.2.1}%
-\contentsline {subsection}{\numberline {4.2.2}Stanford dogs}{20}{subsection.4.2.2}%
-\contentsline {subsection}{\numberline {4.2.3}ASL Alphabet}{21}{subsection.4.2.3}%
-\contentsline {subsection}{\numberline {4.2.4}Plant Disease}{22}{subsection.4.2.4}%
-\contentsline {subsection}{\numberline {4.2.5}Caltech101}{23}{subsection.4.2.5}%
-\contentsline {section}{\numberline {4.3}\textcolor {red}{Proxy Attention}}{23}{section.4.3}%
-\contentsline {section}{\numberline {4.4}Challenges and Potential Solutions}{23}{section.4.4}%
-\contentsline {subsection}{\numberline {4.4.1}Proxy Method}{24}{subsection.4.4.1}%
-\contentsline {subsubsection}{Image Statistics Based Replacement}{24}{section*.11}%
-\contentsline {subsubsection}{Data Augmentation Based Replacement}{24}{section*.12}%
-\contentsline {subsubsection}{\textcolor {red}{GAN Based Replacement}}{25}{section*.13}%
-\contentsline {subsubsection}{Modifying the Weights}{25}{section*.14}%
-\contentsline {subsubsection}{Multiply with Attention Map}{25}{section*.15}%
-\contentsline {subsection}{\numberline {4.4.2}Training Biases}{25}{subsection.4.4.2}%
-\contentsline {subsubsection}{Method Bias}{26}{section*.17}%
-\contentsline {subsubsection}{Mask Bias}{26}{section*.18}%
-\contentsline {subsubsection}{Learning Bias}{26}{section*.19}%
-\contentsline {subsubsection}{\textcolor {red}{Dataset Bias}}{26}{section*.20}%
-\contentsline {subsection}{\numberline {4.4.3}Hyper Parameters}{26}{subsection.4.4.3}%
-\contentsline {subsubsection}{Gradient Method}{26}{section*.21}%
-\contentsline {subsubsection}{Gradient Threshold}{27}{section*.22}%
-\contentsline {subsubsection}{Multiply Weight}{28}{section*.24}%
-\contentsline {subsubsection}{Proxy Step Schedule}{28}{section*.25}%
-\contentsline {subsubsection}{Subset Of Wrongly Classified}{28}{section*.26}%
-\contentsline {section}{\numberline {4.5}Data Loading and Pre-Processing}{28}{section.4.5}%
-\contentsline {subsection}{\numberline {4.5.1}Data Directory structure}{29}{subsection.4.5.1}%
-\contentsline {subsection}{\numberline {4.5.2}Custom Data Loading}{29}{subsection.4.5.2}%
-\contentsline {subsection}{\numberline {4.5.3}Label function}{30}{subsection.4.5.3}%
-\contentsline {subsection}{\numberline {4.5.4}Clearing proxy images}{30}{subsection.4.5.4}%
-\contentsline {subsection}{\numberline {4.5.5}Augmentations}{30}{subsection.4.5.5}%
-\contentsline {section}{\numberline {4.6}Architectures}{31}{section.4.6}%
-\contentsline {subsection}{\numberline {4.6.1}TIMM}{31}{subsection.4.6.1}%
-\contentsline {subsection}{\numberline {4.6.2}ResNet - 18,50}{31}{subsection.4.6.2}%
-\contentsline {subsection}{\numberline {4.6.3}VGG16}{31}{subsection.4.6.3}%
-\contentsline {subsection}{\numberline {4.6.4}EfficientNetB0}{31}{subsection.4.6.4}%
-\contentsline {subsection}{\numberline {4.6.5}ViT Base Patch $16\times 224$}{31}{subsection.4.6.5}%
-\contentsline {section}{\numberline {4.7}Grid Search}{31}{section.4.7}%
-\contentsline {section}{\numberline {4.8}Training Resumption}{32}{section.4.8}%
-\contentsline {subsection}{\numberline {4.8.1}Checkpoints}{32}{subsection.4.8.1}%
-\contentsline {subsection}{\numberline {4.8.2}Broken Trials}{32}{subsection.4.8.2}%
-\contentsline {subsection}{\numberline {4.8.3}Challenges with External Libraries}{32}{subsection.4.8.3}%
-\contentsline {section}{\numberline {4.9}Optimizations}{33}{section.4.9}%
-\contentsline {subsection}{\numberline {4.9.1}Proxy Step specific}{33}{subsection.4.9.1}%
-\contentsline {subsection}{\numberline {4.9.2}Workers}{33}{subsection.4.9.2}%
-\contentsline {subsection}{\numberline {4.9.3}Mixed Precision}{33}{subsection.4.9.3}%
-\contentsline {subsection}{\numberline {4.9.4}No grad}{34}{subsection.4.9.4}%
-\contentsline {subsection}{\numberline {4.9.5}Pillow SIMD}{34}{subsection.4.9.5}%
-\contentsline {section}{\numberline {4.10}Tensorboard}{34}{section.4.10}%
-\contentsline {section}{\numberline {4.11}Optimizer}{34}{section.4.11}%
-\contentsline {section}{\numberline {4.12}LR scheduler}{34}{section.4.12}%
-\contentsline {section}{\numberline {4.13}Loss function}{35}{section.4.13}%
-\contentsline {section}{\numberline {4.14}Batch Size Finder}{35}{section.4.14}%
-\contentsline {section}{\numberline {4.15}Result Aggregation}{36}{section.4.15}%
-\contentsline {section}{\numberline {4.16}Inference}{36}{section.4.16}%
-\contentsline {chapter}{\numberline {5}Results}{37}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Accuracy}{37}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Explanability}{37}{section.5.2}%
-\contentsline {subsection}{\numberline {5.2.1}CIFAR 100}{37}{subsection.5.2.1}%
-\contentsline {chapter}{\numberline {6}Discussion}{41}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Research Questions}{41}{section.6.1}%
-\contentsline {section}{\numberline {6.2}General Discussion}{41}{section.6.2}%
-\contentsline {chapter}{\numberline {7}Conclusion}{42}{chapter.7}%
-\contentsline {section}{\numberline {7.1}Contributions}{42}{section.7.1}%
-\contentsline {section}{\numberline {7.2}Lessons Learned}{42}{section.7.2}%
-\contentsline {section}{\numberline {7.3}Future Work}{42}{section.7.3}%
-\contentsline {chapter}{\numberline {8}Appendix}{43}{chapter.8}%
+\contentsline {section}{\numberline {1.6}Thesis Outline}{11}{section.1.6}%
+\contentsline {chapter}{\numberline {2}Background}{12}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Interpretability}{12}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Gradient Based Explanations}{12}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Augmentation}{12}{section.2.3}%
+\contentsline {chapter}{\numberline {3}State of the Art}{13}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Gradient Based Explanations}{13}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Augmentation}{16}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Similar Methods}{19}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Limitations}{20}{subsection.3.2.2}%
+\contentsline {chapter}{\numberline {4}Implementation}{21}{chapter.4}%
+\contentsline {section}{\numberline {4.1}\textcolor {red}{Overview}}{21}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Datasets}{22}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}CIFAR 100}{22}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}Stanford dogs}{22}{subsection.4.2.2}%
+\contentsline {subsection}{\numberline {4.2.3}ASL Alphabet}{23}{subsection.4.2.3}%
+\contentsline {subsection}{\numberline {4.2.4}Plant Disease}{24}{subsection.4.2.4}%
+\contentsline {subsection}{\numberline {4.2.5}Caltech101}{25}{subsection.4.2.5}%
+\contentsline {section}{\numberline {4.3}\textcolor {red}{Proxy Attention}}{25}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Challenges and Potential Solutions}{25}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Proxy Method}{25}{subsection.4.4.1}%
+\contentsline {subsubsection}{Image Statistics Based Replacement}{26}{section*.11}%
+\contentsline {subsubsection}{Data Augmentation Based Replacement}{26}{section*.12}%
+\contentsline {subsubsection}{\textcolor {red}{GAN Based Replacement}}{26}{section*.13}%
+\contentsline {subsubsection}{Modifying the Weights}{26}{section*.14}%
+\contentsline {subsubsection}{Multiply with Attention Map}{27}{section*.15}%
+\contentsline {subsection}{\numberline {4.4.2}Training Biases}{27}{subsection.4.4.2}%
+\contentsline {subsubsection}{Method Bias}{27}{section*.17}%
+\contentsline {subsubsection}{Mask Bias}{27}{section*.18}%
+\contentsline {subsubsection}{Learning Bias}{28}{section*.19}%
+\contentsline {subsection}{\numberline {4.4.3}Hyper Parameters}{28}{subsection.4.4.3}%
+\contentsline {subsubsection}{Gradient Method}{28}{section*.20}%
+\contentsline {subsubsection}{Gradient Threshold}{28}{section*.21}%
+\contentsline {subsubsection}{Multiply Weight}{29}{section*.23}%
+\contentsline {subsubsection}{Proxy Step Schedule}{29}{section*.24}%
+\contentsline {subsubsection}{Subset Of Wrongly Classified}{30}{section*.25}%
+\contentsline {section}{\numberline {4.5}Data Loading and Pre-Processing}{30}{section.4.5}%
+\contentsline {subsection}{\numberline {4.5.1}Data Directory structure}{30}{subsection.4.5.1}%
+\contentsline {subsection}{\numberline {4.5.2}Custom Data Loading}{30}{subsection.4.5.2}%
+\contentsline {subsection}{\numberline {4.5.3}Label function}{31}{subsection.4.5.3}%
+\contentsline {subsection}{\numberline {4.5.4}Clearing proxy images}{32}{subsection.4.5.4}%
+\contentsline {subsection}{\numberline {4.5.5}Augmentations}{32}{subsection.4.5.5}%
+\contentsline {section}{\numberline {4.6}Architectures}{32}{section.4.6}%
+\contentsline {subsection}{\numberline {4.6.1}TIMM}{33}{subsection.4.6.1}%
+\contentsline {subsection}{\numberline {4.6.2}\textcolor {red}{ResNet - 18,50}}{33}{subsection.4.6.2}%
+\contentsline {subsection}{\numberline {4.6.3}\textcolor {red}{VGG16}}{33}{subsection.4.6.3}%
+\contentsline {subsection}{\numberline {4.6.4}\textcolor {red}{EfficientNetB0}}{33}{subsection.4.6.4}%
+\contentsline {subsection}{\numberline {4.6.5}\textcolor {red}{ViT Base Patch $16\times 224$}}{33}{subsection.4.6.5}%
+\contentsline {section}{\numberline {4.7}Grid Search}{33}{section.4.7}%
+\contentsline {section}{\numberline {4.8}Training Resumption}{33}{section.4.8}%
+\contentsline {subsection}{\numberline {4.8.1}Checkpoints}{34}{subsection.4.8.1}%
+\contentsline {subsection}{\numberline {4.8.2}Broken Trials}{34}{subsection.4.8.2}%
+\contentsline {subsection}{\numberline {4.8.3}Challenges with External Libraries}{34}{subsection.4.8.3}%
+\contentsline {section}{\numberline {4.9}Optimizations}{35}{section.4.9}%
+\contentsline {subsection}{\numberline {4.9.1}Proxy Step specific}{35}{subsection.4.9.1}%
+\contentsline {subsection}{\numberline {4.9.2}Grid Search}{35}{subsection.4.9.2}%
+\contentsline {subsection}{\numberline {4.9.3}Workers}{35}{subsection.4.9.3}%
+\contentsline {subsection}{\numberline {4.9.4}Mixed Precision}{36}{subsection.4.9.4}%
+\contentsline {subsection}{\numberline {4.9.5}No grad}{36}{subsection.4.9.5}%
+\contentsline {subsection}{\numberline {4.9.6}Pillow SIMD}{36}{subsection.4.9.6}%
+\contentsline {section}{\numberline {4.10}Tensorboard}{36}{section.4.10}%
+\contentsline {section}{\numberline {4.11}Optimizer}{37}{section.4.11}%
+\contentsline {section}{\numberline {4.12}LR scheduler}{37}{section.4.12}%
+\contentsline {section}{\numberline {4.13}Loss function}{37}{section.4.13}%
+\contentsline {section}{\numberline {4.14}Batch Size Finder}{37}{section.4.14}%
+\contentsline {section}{\numberline {4.15}Result Aggregation}{38}{section.4.15}%
+\contentsline {section}{\numberline {4.16}Inference}{39}{section.4.16}%
+\contentsline {chapter}{\numberline {5}Results}{40}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Accuracy}{40}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Explanability}{40}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}CIFAR 100}{40}{subsection.5.2.1}%
+\contentsline {chapter}{\numberline {6}Discussion}{44}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Research Questions}{44}{section.6.1}%
+\contentsline {section}{\numberline {6.2}General Discussion}{44}{section.6.2}%
+\contentsline {chapter}{\numberline {7}Conclusion}{45}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Contributions}{45}{section.7.1}%
+\contentsline {section}{\numberline {7.2}Lessons Learned}{45}{section.7.2}%
+\contentsline {section}{\numberline {7.3}Future Work}{45}{section.7.3}%
+\contentsline {chapter}{\numberline {8}Appendix}{46}{chapter.8}%

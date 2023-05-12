@@ -19,8 +19,29 @@
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
 \usepackage{subcaption}
-\usepackage{hyperref}
+
 \usepackage{xcolor,colortbl}
+\usepackage[colorlinks]{hyperref}
+
+\def\tmp#1#2#3{%
+  \definecolor{Hy#1color}{#2}{#3}%
+  \hypersetup{#1color=Hy#1color}}
+\tmp{link}{HTML}{800006}
+\tmp{cite}{HTML}{2E7E2A}
+\tmp{file}{HTML}{131877}
+\tmp{url} {HTML}{8A0087}
+\tmp{menu}{HTML}{727500}
+\tmp{run} {HTML}{137776}
+\def\tmp#1#2{%
+  \colorlet{Hy#1bordercolor}{Hy#1color#2}%
+  \hypersetup{#1bordercolor=Hy#1bordercolor}}
+\tmp{link}{!60!white}
+\tmp{cite}{!60!white}
+\tmp{file}{!60!white}
+\tmp{url} {!60!white}
+\tmp{menu}{!60!white}
+\tmp{run} {!60!white}
+
 \definecolor{red}{rgb}{1.00,0.00,0.00}
 \definecolor{blue}{rgb}{0.00,0.00,1.00}
 \newcommand{\cred}[1] {\textcolor{red}{#1}}
@@ -38,7 +59,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Source: http://en.wikibooks.org/wiki/LaTeX/Hyperlinks %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage{hyperref}
+
 \usepackage{graphicx}
 % \usepackage{algopseudocode}
 \usepackage{algorithm}
