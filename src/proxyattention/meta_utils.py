@@ -14,7 +14,7 @@ from pytorch_grad_cam import (
     GradCAMPlusPlus,
     HiResCAM,
     ScoreCAM,
-    EigenGradCAM
+    EigenGradCAM,
 )
 from pytorch_grad_cam.utils.image import (
     deprocess_image,
@@ -45,8 +45,10 @@ image_extensions = set(
     k for k, v in mimetypes.types_map.items() if v.startswith("image/")
 )
 
+
 def get_parent_name(x):
     return str(x).split("/")[-2]
+
 
 transform = transforms.Compose(
     [
@@ -56,6 +58,8 @@ transform = transforms.Compose(
 )
 
 tfm = transforms.ToPILImage()
+
+
 # %%
 class ImageClassDs(Dataset):
     def __init__(
@@ -84,7 +88,8 @@ class ImageClassDs(Dataset):
     def __len__(self) -> int:
         return len(self.df)
 
-#Paired Dataset for Image Segmentation
+
+# Paired Dataset for Image Segmentation
 class ImageSegmentationDs(Dataset):
     def __init__(
         self, df: pd.DataFrame, imfolder: str, train: bool = True, transforms=None
@@ -114,20 +119,28 @@ class ImageSegmentationDs(Dataset):
     def __len__(self) -> int:
         return len(self.df)
 
+
 # %%
 def clear_proxy_images(config: Dict[str, str]):
     all_files = get_files(config["ds_path"])
     try:
-        _ = [Path.unlink(x) for x in tqdm(all_files, total = len(all_files)) if "proxy" in str(x)]
+        _ = [
+            Path.unlink(x)
+            for x in tqdm(all_files, total=len(all_files))
+            if "proxy" in str(x)
+        ]
     except:
         pass
     print("[INFO] Cleared all existing proxy images")
 
+
 def get_name_without_proxy(save_name):
-    save_name = str(save_name) # convert Path object to string for manipulation
-    start_index = save_name.find("proxy") # find index of "proxy" substring
-    end_index = save_name.find(".jpeg") # find index of ".jpeg" substring
-    return save_name[:start_index] + save_name[end_index+5:] # concatenate everything before "label" and after ".jpeg"
+    save_name = str(save_name)  # convert Path object to string for manipulation
+    start_index = save_name.find("proxy")  # find index of "proxy" substring
+    end_index = save_name.find(".jpeg")  # find index of ".jpeg" substring
+    return (
+        save_name[:start_index] + save_name[end_index + 5 :]
+    )  # concatenate everything before "label" and after ".jpeg"
 
 
 def create_folds(config):
@@ -146,7 +159,6 @@ def create_folds(config):
     random.shuffle(all_files)
     if config["subset_images"] is not None:
         all_files = all_files[: config["subset_images"]]
-   
 
     # Put them in a data frame for encoding
     df = pd.DataFrame.from_dict(
@@ -224,13 +236,8 @@ def create_dls(train, val, config):
             # transforms.ColorJitter(hue=0.05, saturation=0.05),
             transforms.RandomHorizontalFlip(),
             transforms.RandomRotation(20, interpolation=Image.BILINEAR),
-            
             transforms.ToTensor(),  # use ToTensor() last to get everything between 0 & 1
-            transforms.Normalize(
-                mean=[0.485, 0.456, 0.406],
-                std=[0.229, 0.224, 0.225]
-            ),
-
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ]
     )
 
@@ -238,11 +245,7 @@ def create_dls(train, val, config):
         [
             transforms.Resize((config["image_size"], config["image_size"])),
             transforms.ToTensor(),  # use ToTensor() last to get everything between 0 & 1
-            transforms.Normalize(
-                mean=[0.485, 0.456, 0.406],
-                std=[0.229, 0.224, 0.225]
-            ),
-
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ]
     )
     # data_transforms_train = torch.jit.script(data_transforms_train)
@@ -308,6 +311,7 @@ def get_batch(dataset, idxs):
     # tdl.to(default_device())
     # return tdl.one_batch()
     pass
+
 
 def is_iter(o):
     "Test whether `o` can be used in a `for` loop"
@@ -402,21 +406,28 @@ def read_pickle(fname="pickler.pkl"):
         obj = pickle.load(f)
     return obj
 
-def check_proxy(string): return "p" in str(string)
+
+def check_proxy(string):
+    return "p" in str(string)
+
+
 def calc_stats(values):
     return f"min: {values.min()} \nmax: {values.max()} \navg: {values.mean()}"
-def convert_float(df, cols, totype= float):
+
+
+def convert_float(df, cols, totype=float):
     for col in cols:
         df[col] = df[col].astype(totype)
 
-def fix_tensorboard_names(df)->pd.DataFrame:
+
+def fix_tensorboard_names(df) -> pd.DataFrame:
     """Fixes the names of the columns in the tensorboard csv file."""
     df = df[df["global_run_count"].isna() == False]
 
     convert_float(df, ["global_run_count"], int)
     df = df.fillna(0)
     # Fix naming
-    df = df.rename(columns={"Acc/Val":"accuracy", "proxy_steps":"step_schedule"})
+    df = df.rename(columns={"Acc/Val": "accuracy", "proxy_steps": "step_schedule"})
     # Fix types
     convert_float(df, ["change_subset_attention", "proxy_threshold", "accuracy"], float)
     convert_float(df, ["transfer_imagenet"], bool)
@@ -424,21 +435,39 @@ def fix_tensorboard_names(df)->pd.DataFrame:
     df["has_proxy"] = df["step_schedule"].apply(check_proxy)
     return df
 
-
-def return_grouped_results(df, group_cols ,filter = None, index_cols = (["ds_name", ("accuracy")]), print_latex = False):
-
+def return_grouped_results(
+    df,
+    group_cols,
+    filter=None,
+    index_cols=(["ds_name", ("accuracy")]),
+    print_latex=False,
+    save_latex=None,
+    caption=None,
+    label=None,
+):
     if filter != None:
         df = df.reset_index()
         for key in filter.keys():
             df = df[df[key] == filter[key]]
-    final_df = pd.DataFrame(df.groupby(group_cols, as_index=True).mean(numeric_only = True)["accuracy"]).sort_values(index_cols, ascending=False)
+    final_df = pd.DataFrame(
+        df.groupby(group_cols, as_index=True).mean(numeric_only=True)["accuracy"]
+    ).sort_values(index_cols, ascending=False)
     if print_latex == True:
         clipboard.copy(final_df.to_latex())
-
+    if save_latex is not None:
+        temp_latex = """\\begin{table}[]\n\\resizebox{\columnwidth}{!}{%""" + "\n"
+        temp_latex += final_df.to_latex() + "\n"
+        # temp_latex += "\end{tabular}%\\}"
+        temp_latex += "}\n"
+        temp_latex += "\caption{" + caption + "}" + "\n"
+        temp_latex += "\label{" + label + "}"   + "\n"
+        temp_latex += "\end{table}" 
+        with open(save_latex, "w+") as f:
+            f.write(temp_latex)
     return final_df
 
-def show_cam_on_image(image, mask, weight = 0.6):
-    mask,current_image, colormap = deprocess_image(tfm(mask)), image, cv2.COLORMAP_JET
+def show_cam_on_image(image, mask, weight=0.6):
+    mask, current_image, colormap = deprocess_image(tfm(mask)), image, cv2.COLORMAP_JET
     current_image = current_image.permute(1, 2, 0).cpu().numpy()
     # image = np.asarray(image)
     heatmap = cv2.applyColorMap(np.uint8(255 * mask), colormap)
@@ -449,8 +478,8 @@ def show_cam_on_image(image, mask, weight = 0.6):
     im = np.uint8(255 * cam)
     return Image.fromarray(im)
 
-def plot_images_grad(image, grads, title,weight = 0.6, figsize=(10,10)):
 
+def plot_images_grad(image, grads, title, weight=0.6, figsize=(10, 10)):
     cams = [show_cam_on_image(image[i], grads[i], weight) for i in range(len(image))]
     rows = 4
     cols = 4
@@ -458,33 +487,34 @@ def plot_images_grad(image, grads, title,weight = 0.6, figsize=(10,10)):
 
     for i in range(rows):
         for j in range(cols):
-            img_index = i*cols + j
+            img_index = i * cols + j
             if img_index < len(cams):
                 axes[i][j].imshow(cams[img_index])
                 axes[i][j].set_title(title[img_index])
-            axes[i][j].axis('off')
+            axes[i][j].axis("off")
     # plt.show()
     return plt
 
-def plot_grid(image_list,title_list = None, rows = 4, cols = 4, figsize=(10,10)):
 
+def plot_grid(image_list, title_list=None, rows=4, cols=4, figsize=(10, 10)):
     fig, axes = plt.subplots(rows, cols, figsize=figsize)
     if rows > 1:
         for i in range(rows):
             for j in range(cols):
-                img_index = i*cols + j
+                img_index = i * cols + j
                 if img_index < len(image_list):
                     axes[i][j].imshow(tfm(image_list[img_index]))
                     if title_list != None:
                         axes[i][j].set_title(title_list[img_index])
-                axes[i][j].axis('off')
+                axes[i][j].axis("off")
     else:
         for j in range(cols):
             img_index = j
             axes[j].imshow(tfm(image_list[img_index]))
             if title_list != None:
                 axes[j].set_title(title_list[img_index])
-            axes[j].axis('off')
+            axes[j].axis("off")
+
 
 def find_target_layer(config, model):
     if config["model"] == "resnet18":
@@ -508,21 +538,21 @@ def find_target_layer(config, model):
         raise ValueError("Unsupported model type!")
 
 
-def get_single_cam(compare, method = GradCAMPlusPlus):
-    target_layer = find_target_layer(config={"model": compare[0]}, model = compare[-1])
+def get_single_cam(compare, method=GradCAMPlusPlus):
+    target_layer = find_target_layer(config={"model": compare[0]}, model=compare[-1])
 
-    return method(
-        model=compare[-1].cpu(), target_layers=target_layer, use_cuda=False
-    )
+    return method(model=compare[-1].cpu(), target_layers=target_layer, use_cuda=False)
+
 
 def iter_dl_and_plot(dataloader, cam_1, cam_2):
     image, _ = next(iter(dataloader))
-    #cam1 has proxy while cam2 does not
+    # cam1 has proxy while cam2 does not
     grads_1 = cam_1(input_tensor=image, targets=None)
     grads_2 = cam_2(input_tensor=image, targets=None)
 
     plot_images_grad(image, grads_1, title="proxy")
     plot_images_grad(image, grads_2, title="noproxy")
+
 
 def get_row_from_index(read_agg_res, index_check):
     temp_df = read_agg_res[read_agg_res["count"] == index_check].reset_index()
@@ -536,9 +566,9 @@ def get_row_from_index(read_agg_res, index_check):
     ds_name = temp_df["ds_name"].values[0]
 
     model = timm.create_model(
-    model_name=model_name,
-    pretrained=True,
-    num_classes=int(num_classes),
+        model_name=model_name,
+        pretrained=True,
+        num_classes=int(num_classes),
     )
 
     sd = model.state_dict()
@@ -553,3 +583,5 @@ def get_row_from_index(read_agg_res, index_check):
     model.eval()
 
     return model_name, save_path, num_classes, ds_name, model
+
+# %%

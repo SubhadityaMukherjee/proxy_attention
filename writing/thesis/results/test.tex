@@ -1,0 +1,108 @@
+\begin{table}[]
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{llllllllllr}
+\toprule
+  &   &          &       &          &   &      &      &   &   &   accuracy \\
+experiment\_name & ds\_name & pixel\_replacement\_method & transfer\_imagenet & gradient\_method & step\_schedule & change\_subset\_attention & proxy\_threshold & model & proxy\_image\_weight &            \\
+\midrule
+proxy\_run & plantdisease & blended & True  & gradcamplusplus & [5, 'p', 9, 'p', 9, 'p', 9, 'p', 4] & 0.80 & 0.85 & resnet18 & 0.2 &  99.147778 \\
+  &   &          &       &          &   &      &      & efficientnet\_b0 & 0.2 &  99.101112 \\
+  &   &          &       &          & [20, 'p', 19] & 0.80 & 0.85 & resnet50 & 0.2 &  99.023333 \\
+  &   & baseline & True  & baseline & [40] & 0.80 & 0.85 & resnet18 & 0.2 &  98.949997 \\
+  &   &          &       &          &   &      &      & resnet50 & 0.2 &  98.949997 \\
+  &   &          &       &          &   &      &      & efficientnet\_b0 & 0.2 &  98.900002 \\
+  &   & blended & True  & gradcamplusplus & [20, 'p', 19] & 0.80 & 0.85 & resnet18 & 0.2 &  98.826668 \\
+  &   &          &       &          & [5, 'p', 9, 'p', 9, 'p', 9, 'p', 4] & 0.80 & 0.85 & resnet50 & 0.2 &  98.786666 \\
+  &   &          &       &          & [20, 'p', 19] & 0.80 & 0.85 & efficientnet\_b0 & 0.2 &  98.680000 \\
+  & dogs & blended & True  & gradcamplusplus & [20, 'p', 19] & 0.80 & 0.85 & resnet50 & 0.2 &  95.497701 \\
+  &   &          &       &          & [5, 'p', 9, 'p', 9, 'p', 9, 'p', 4] & 0.80 & 0.85 & resnet50 & 0.2 &  95.495351 \\
+hypers & dogs & blended & True  & gradcamplusplus & [5, 'p', 9, 'p', 9, 'p', 9, 'p', 4] & 0.20 & 0.80 & efficientnet\_b0 & 0.8 &  94.985541 \\
+  &   &          &       &          &   &      & 0.10 & efficientnet\_b0 & 0.1 &  94.911736 \\
+  &   &          &       &          &   &      & 0.40 & efficientnet\_b0 & 0.95 &  94.890021 \\
+  &   &          &       &          &   &      &      &   & 0.1 &  94.845623 \\
+  &   &          &       &          &   &      & 0.10 & efficientnet\_b0 & 0.8 &  94.786770 \\
+  &   &          &       &          &   &      & 0.40 & efficientnet\_b0 & 0.8 &  94.782388 \\
+  &   &          &       &          &   &      & 0.85 & efficientnet\_b0 & 0.4 &  94.762321 \\
+  &   &          &       &          &   &      & 0.10 & efficientnet\_b0 & 0.4 &  94.737558 \\
+  &   &          &       &          &   &      & 0.80 & efficientnet\_b0 & 0.1 &  94.723004 \\
+  &   &          &       &          &   &      & 0.85 & efficientnet\_b0 & 0.1 &  94.658141 \\
+  &   &          &       &          &   &      &      &   & 0.8 &  94.612412 \\
+  &   &          &       &          &   &      & 0.10 & efficientnet\_b0 & 0.95 &  94.565847 \\
+  &   &          &       &          &   &      & 0.80 & efficientnet\_b0 & 0.4 &  94.493133 \\
+  &   &          &       &          &   &      & 0.40 & efficientnet\_b0 & 0.4 &  94.491127 \\
+  &   &          &       &          &   &      & 0.80 & efficientnet\_b0 & 0.95 &  94.342921 \\
+  &   &          &       &          &   & 0.80 & 0.10 & efficientnet\_b0 & 0.1 &  94.259889 \\
+  &   &          &       &          &   & 0.20 & 0.85 & efficientnet\_b0 & 0.95 &  94.168065 \\
+  &   &          &       &          &   & 0.80 & 0.40 & efficientnet\_b0 & 0.1 &  94.059174 \\
+  &   &          &       &          &   &      & 0.80 & efficientnet\_b0 & 0.1 &  93.934564 \\
+  &   &          &       &          &   &      & 0.85 & efficientnet\_b0 & 0.1 &  93.825628 \\
+proxy\_run & dogs & blended & True  & gradcamplusplus & [5, 'p', 9, 'p', 9, 'p', 9, 'p', 4] & 0.80 & 0.85 & efficientnet\_b0 & 0.2 &  93.775998 \\
+hypers & dogs & blended & True  & gradcamplusplus & [5, 'p', 9, 'p', 9, 'p', 9, 'p', 4] & 0.95 & 0.10 & efficientnet\_b0 & 0.1 &  93.739473 \\
+  &   &          &       &          &   &      & 0.80 & efficientnet\_b0 & 0.1 &  93.667570 \\
+  &   &          &       &          &   &      & 0.10 & efficientnet\_b0 & 0.4 &  93.641037 \\
+  &   &          &       &          &   & 0.80 & 0.10 & efficientnet\_b0 & 0.4 &  93.635178 \\
+  &   &          &       &          &   & 0.95 & 0.85 & efficientnet\_b0 & 0.1 &  93.537454 \\
+  &   &          &       &          &   & 0.80 & 0.85 & efficientnet\_b0 & 0.4 &  93.477830 \\
+  &   &          &       &          &   & 0.95 & 0.40 & efficientnet\_b0 & 0.1 &  93.474980 \\
+  &   &          &       &          &   & 0.80 & 0.40 & efficientnet\_b0 & 0.4 &  93.454578 \\
+  &   &          &       &          &   & 0.95 & 0.40 & efficientnet\_b0 & 0.4 &  93.381793 \\
+  &   &          &       &          &   & 0.80 & 0.85 & efficientnet\_b0 & 0.95 &  93.340756 \\
+  &   &          &       &          &   &      & 0.80 & efficientnet\_b0 & 0.8 &  93.310438 \\
+  &   &          &       &          &   &      & 0.40 & efficientnet\_b0 & 0.95 &  93.272232 \\
+  &   &          &       &          &   &      & 0.80 & efficientnet\_b0 & 0.4 &  93.260863 \\
+  &   &          &       &          &   &      &      &   & 0.95 &  93.206565 \\
+  &   &          &       &          &   &      & 0.10 & efficientnet\_b0 & 0.8 &  93.144636 \\
+  &   &          &       &          &   &      & 0.85 & efficientnet\_b0 & 0.8 &  93.078824 \\
+  &   &          &       &          &   & 0.95 & 0.80 & efficientnet\_b0 & 0.4 &  93.060067 \\
+  &   &          &       &          &   & 0.80 & 0.40 & efficientnet\_b0 & 0.8 &  92.772569 \\
+  &   &          &       &          &   &      & 0.10 & efficientnet\_b0 & 0.95 &  92.710780 \\
+proxy\_run & dogs & baseline & True  & baseline & [40] & 0.80 & 0.85 & resnet50 & 0.2 &  92.011574 \\
+hypers & dogs & blended & True  & gradcamplusplus & [5, 'p', 9, 'p', 9, 'p', 9, 'p', 4] & 0.95 & 0.85 & efficientnet\_b0 & 0.4 &  91.892663 \\
+proxy\_run & dogs & blended & True  & gradcamplusplus & [20, 'p', 19] & 0.80 & 0.85 & efficientnet\_b0 & 0.2 &  91.410772 \\
+  &   &          &       &          & [5, 'p', 9, 'p', 9, 'p', 9, 'p', 4] & 0.80 & 0.85 & resnet18 & 0.2 &  87.411429 \\
+  &   &          &       & gradcam & [5, 'p', 9, 'p', 9, 'p', 9, 'p', 4] & 0.80 & 0.85 & resnet18 & 0.2 &  86.384286 \\
+transform & dogs & blended & True  & gradcamplusplus & [5, 'p', 9, 'p', 9, 'p', 9, 'p', 4] & 0.80 & 0.80 & vit\_base\_patch16\_224 & 0.1 &  86.055481 \\
+proxy\_run & dogs & baseline & True  & baseline & [40] & 0.80 & 0.85 & efficientnet\_b0 & 0.2 &  85.825546 \\
+transform & dogs & blended & True  & gradcamplusplus & [5, 'p', 9, 'p', 9, 'p', 9, 'p', 4] & 0.80 & 0.40 & vit\_base\_patch16\_224 & 0.1 &  84.646194 \\
+  &   &          &       &          &   &      & 0.10 & vit\_base\_patch16\_224 & 0.1 &  83.396380 \\
+proxy\_run & dogs & blended & True  & gradcam & [20, 'p', 19] & 0.80 & 0.85 & resnet18 & 0.2 &  80.473335 \\
+transform & dogs & blended & True  & gradcamplusplus & [20, 'p', 19] & 0.80 & 0.80 & vit\_base\_patch16\_224 & 0.1 &  77.851952 \\
+  &   &          &       &          &   &      & 0.10 & vit\_base\_patch16\_224 & 0.1 &  77.555257 \\
+  &   &          &       &          &   &      & 0.40 & vit\_base\_patch16\_224 & 0.1 &  76.939624 \\
+  &   & baseline & True  & baseline & [40] & 0.80 & 0.10 & vit\_base\_patch16\_224 & 0.1 &  71.562080 \\
+proxy\_run & dogs & baseline & True  & baseline & [40] & 0.80 & 0.85 & resnet18 & 0.2 &  71.414997 \\
+transform & dogs & baseline & True  & baseline & [40] & 0.80 & 0.85 & vit\_base\_patch16\_224 & 0.1 &  66.777924 \\
+  &   &          &       &          &   &      & 0.80 & vit\_base\_patch16\_224 & 0.1 &  65.242546 \\
+  &   &          &       &          &   &      & 0.40 & vit\_base\_patch16\_224 & 0.1 &  60.703159 \\
+proxy\_run & cifar100 & blended & True  & gradcamplusplus & [5, 'p', 9, 'p', 9, 'p', 9, 'p', 4] & 0.80 & 0.85 & resnet50 & 0.2 &  83.106666 \\
+  &   &          &       &          & [20, 'p', 19] & 0.80 & 0.85 & resnet50 & 0.2 &  82.090001 \\
+  &   &          &       &          & [5, 'p', 9, 'p', 9, 'p', 9, 'p', 4] & 0.80 & 0.85 & efficientnet\_b0 & 0.2 &  81.665000 \\
+  &   &          &       &          & [20, 'p', 19] & 0.80 & 0.85 & efficientnet\_b0 & 0.2 &  79.037500 \\
+  &   & baseline & True  & baseline & [40] & 0.80 & 0.85 & resnet50 & 0.2 &  78.699997 \\
+  &   & blended & True  & gradcamplusplus & [5, 'p', 9, 'p', 9, 'p', 9, 'p', 4] & 0.80 & 0.85 & resnet18 & 0.2 &  76.778000 \\
+  &   &          &       &          & [20, 'p', 19] & 0.80 & 0.85 & resnet18 & 0.2 &  75.559998 \\
+  &   & baseline & True  & baseline & [40] & 0.80 & 0.85 & efficientnet\_b0 & 0.2 &  75.220001 \\
+  &   &          &       &          &   &      &      & resnet18 & 0.2 &  71.000000 \\
+  & caltech101 & blended & True  & gradcamplusplus & [5, 'p', 9, 'p', 9, 'p', 9, 'p', 4] & 0.80 & 0.85 & efficientnet\_b0 & 0.2 &  97.773901 \\
+  &   &          &       &          & [20, 'p', 19] & 0.80 & 0.85 & resnet50 & 0.2 &  97.543017 \\
+  &   &          &       &          & [5, 'p', 9, 'p', 9, 'p', 9, 'p', 4] & 0.80 & 0.85 & resnet50 & 0.2 &  96.790467 \\
+  &   &          &       &          & [20, 'p', 19] & 0.80 & 0.85 & efficientnet\_b0 & 0.2 &  96.697289 \\
+  &   & baseline & True  & baseline & [40] & 0.80 & 0.85 & resnet50 & 0.2 &  95.581802 \\
+  &   &          &       &          &   &      &      & efficientnet\_b0 & 0.2 &  94.313210 \\
+  & asl & baseline & True  & baseline & [40] & 0.80 & 0.85 & resnet50 & 0.2 &  99.989998 \\
+  &   & blended & True  & gradcamplusplus & [20, 'p', 19] & 0.80 & 0.85 & resnet50 & 0.2 &  99.986666 \\
+  &   & baseline & True  & baseline & [40] & 0.80 & 0.85 & efficientnet\_b0 & 0.2 &  99.949997 \\
+  &   & blended & True  & gradcamplusplus & [5, 'p', 9, 'p', 9, 'p', 9, 'p', 4] & 0.80 & 0.85 & resnet18 & 0.2 &  99.929999 \\
+  &   &          &       &          &   &      &      & resnet50 & 0.2 &  99.926667 \\
+  &   & baseline & True  & baseline & [40] & 0.80 & 0.85 & resnet18 & 0.2 &  99.910004 \\
+  &   & blended & True  & gradcamplusplus & [20, 'p', 19] & 0.80 & 0.85 & efficientnet\_b0 & 0.2 &  99.903330 \\
+  &   &          &       &          &   &      &      & resnet18 & 0.2 &  99.880000 \\
+  &   &          &       &          & [5, 'p', 9, 'p', 9, 'p', 9, 'p', 4] & 0.80 & 0.85 & efficientnet\_b0 & 0.2 &  99.844443 \\
+0 & 0 & baseline & False & baseline & 0 & 0.00 & 0.00 & 0 & 0 &   3.928889 \\
+\bottomrule
+\end{tabular}
+
+}
+\caption{Test}
+\label{test}
+\end{table}
