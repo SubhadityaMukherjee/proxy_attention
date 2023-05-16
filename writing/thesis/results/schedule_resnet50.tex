@@ -1,0 +1,29 @@
+\begin{table}[H]
+\centering
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lllr}
+\toprule
+    &                   &          &   accuracy \\
+ds\_name & step\_schedule & model &            \\
+\midrule
+plantdisease & 20,p,19 & resnet50 &  99.023333 \\
+    & No Proxy & resnet50 &  98.949997 \\
+    & 5,p,9,p,9,p,9,p,4 & resnet50 &  98.786666 \\
+dogs & 20,p,19 & resnet50 &  95.497701 \\
+    & 5,p,9,p,9,p,9,p,4 & resnet50 &  95.495351 \\
+    & No Proxy & resnet50 &  92.011574 \\
+cifar100 & 5,p,9,p,9,p,9,p,4 & resnet50 &  83.106666 \\
+    & 20,p,19 & resnet50 &  82.090001 \\
+    & No Proxy & resnet50 &  78.699997 \\
+caltech101 & 20,p,19 & resnet50 &  97.543017 \\
+    & 5,p,9,p,9,p,9,p,4 & resnet50 &  96.790467 \\
+    & No Proxy & resnet50 &  95.581802 \\
+asl & No Proxy & resnet50 &  99.989998 \\
+    & 20,p,19 & resnet50 &  99.986666 \\
+    & 5,p,9,p,9,p,9,p,4 & resnet50 &  99.926667 \\
+\bottomrule
+\end{tabular}
+}
+\caption{Accuracy grouped by Schedule for ResNet50}
+\label{tab:gpschedulere}
+\end{table}

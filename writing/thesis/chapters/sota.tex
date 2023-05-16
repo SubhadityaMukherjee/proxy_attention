@@ -42,6 +42,7 @@ Deep Lift
 Deep Visual Explanations
 
 % Embedding Knowledge Into Deep Attention Map
+- \cite{mitsuharaEmbeddingHumanKnowledge2019}
 - method for embedding human knowledge into deep neural networks
 - challenging to apply it for deep learning models due to the enormous number of model parameters
 - we focus on the attention mechanism of an attention branch network (ABN).
@@ -152,30 +153,33 @@ transformation with a parameter-free procedure of always selecting a transformat
 - We experimented with four methods for the schedule of M during training: constant magnitude, random magnitude, a linearly increasing magnitude, and a random magnitude with increasing upper bound
 
 \subsection{Similar Methods}
-- Some papers have similar ideas, different domains
-- This section explains how they are different from our method
+% - Some papers have similar ideas, different domains
+% - This section explains how they are different from our method
+Some of the papers in the literature have similar ideas to ours, but with different focuses. To maintain the novelty of our method, this subsection explains how they are different from Proxy Attention.
 
 % M2Det
-- \cite{zhaoM2DetSingleShotObject2019}
-- The Multi-level Feature Pyramid Network has similar ideas but does not use the outputs of [[XAI]] algorithms. 
-- This uses channel wise attention : ours is independant of that
-- This takes images and passes them through multiple networks and then aggregates the features obtained from each of those networks. : ours uses a trained network and is independent of all that. Unlike the former, ours does not use a compressed feature map but uses a trained network to predict an explainability map instead.
+% - \cite{zhaoM2DetSingleShotObject2019}
+% - The Multi-level Feature Pyramid Network has similar ideas but does not use the outputs of [[XAI]] algorithms. 
+% - This uses channel wise attention : ours is independant of that
+% - This takes images and passes them through multiple networks and then aggregates the features obtained from each of those networks. : ours uses a trained network and is independent of all that. Unlike the former, ours does not use a compressed feature map but uses a trained network to predict an explainability map instead.
+Zhao et al. propose M2Det \cite{zhaoM2DetSingleShotObject2019}, a single-shot object detection framework that uses a multi-level feature pyramid network that shares similar principles of using attention in the network. While the authors propose a multi-level feature pyramid network, they do not use the outputs of XAI algorithms. M2Det also uses channel-wise attention, while our method is independent of that. M2Det takes images and passes them through multiple networks and then aggregates the features obtained from each of those networks. Our method uses a trained network and is independent of these steps. Unlike the former, our method does not use a compressed feature map but uses a trained network to predict an explainability map instead.
 
 % Saliency Mix
-- \cite{uddinSaliencyMixSaliencyGuided2021}
-- Similar to CutMix \cite{yunCutMixRegularizationStrategy2019}
-- extracts salient regions and pastes them on the corresponding location in the target image
-- The salient region is extracted around the maximum intensity pixel location in the saliency map
-- selects a representative image patch with the help of a saliency map and mixes this indicative patch with the target image
-- models that are trained with SaliencyMix help to improve the object detection performance
-- It first extracts a saliency map of the source image to highlight the objects of interest and then selects a patch surrounding the peak salient region to mix with the target image.
-- Another image $I_{s} \in \mathbb{R}^{W \times H \times C}$
-    - $I_{a} = M \odot I_{s} + M' \odot I_{t}$
-	- $M \in \{0,1\}^{W, H}$
-    - labels $y_{a} = \lambda y_{t}+ (1-\lambda)y_{s}$
-- Different from Proxy Attention.
-    - Proxy attention does not mix images and labels, instead uses the attention map to re-weight the image 
-    - More schedules and hyperparameters to tune
+% - \cite{uddinSaliencyMixSaliencyGuided2021}
+% - Similar to CutMix \cite{yunCutMixRegularizationStrategy2019}
+% - extracts salient regions and pastes them on the corresponding location in the target image
+% - The salient region is extracted around the maximum intensity pixel location in the saliency map
+% - selects a representative image patch with the help of a saliency map and mixes this indicative patch with the target image
+% - models that are trained with SaliencyMix help to improve the object detection performance
+% - It first extracts a saliency map of the source image to highlight the objects of interest and then selects a patch surrounding the peak salient region to mix with the target image.
+% - Another image $I_{s} \in \mathbb{R}^{W \times H \times C}$
+%     - $I_{a} = M \odot I_{s} + M' \odot I_{t}$
+% 	- $M \in \{0,1\}^{W, H}$
+%     - labels $y_{a} = \lambda y_{t}+ (1-\lambda)y_{s}$
+% - Different from Proxy Attention.
+%     - Proxy attention does not mix images and labels, instead uses the attention map to re-weight the image 
+%     - More schedules and hyperparameters to tune
+Similar to CutMix \cite{yunCutMixRegularizationStrategy2019}, SaliencyMix \cite{uddinSaliencyMixSaliencyGuided2021} extracts salient regions from images and uses these regions to replace parts of the target image. These regions are chosen based on the maximum intensities of pixels in the saliency maps. The authors find that the models trained with SaliencyMix help to improve the object detection performance. Considering the fact that SaliencyMix uses saliency maps to extract regions of interest, it is similar to Proxy Attention. However, Proxy Attention does not mix images and labels and instead uses the attention map to re-weight the image. Proxy Attention also has more schedules and hyperparameters that can be tuned to improve the performance of the model.
 
 % Keep augment
 - cite \cite{gongKeepAugmentSimpleInformationPreserving2021}
@@ -202,6 +206,8 @@ transformation with a parameter-free procedure of always selecting a transformat
 - Different from Proxy
  - Use the saliency map to ensure that the regions of interest are not affected by the augmentation , instead of using this information to help the network understand the image
  - Meant to work properly with standard augmentation techniques, instead of stand alone
+
+- \cred{Self supervised learning}
 
 \subsection{Limitations}
 While each of these papers has its strengths, a few limitations were identified. These limitations do not affect the methods themselves but rather how they are used in the project context.

@@ -1,0 +1,22 @@
+\begin{table}[H]
+\centering
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lllr}
+\toprule
+    &      &                 &   accuracy \\
+ds\_name & proxy\_threshold & model &            \\
+\midrule
+plantdisease & 0.85 & efficientnet\_b0 &  98.966429 \\
+dogs & 0.10 & efficientnet\_b0 &  94.013290 \\
+    & 0.40 & efficientnet\_b0 &  93.942449 \\
+    & 0.80 & efficientnet\_b0 &  93.898466 \\
+    & 0.85 & efficientnet\_b0 &  93.628152 \\
+cifar100 & 0.85 & efficientnet\_b0 &  80.534667 \\
+caltech101 & 0.85 & efficientnet\_b0 &  97.259245 \\
+asl & 0.85 & efficientnet\_b0 &  99.866152 \\
+\bottomrule
+\end{tabular}
+}
+\caption{Accuracy grouped by Proxy Threshold for EfficientNetB0}
+\label{tab:proxy_threshold}
+\end{table}

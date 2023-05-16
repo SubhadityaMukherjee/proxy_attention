@@ -55,6 +55,33 @@ This section shows the accuracies per model for the Plantdisease dataset. The re
     \label{fig:plantdisease_results}
 \end{figure}
 
+\subsection{Results Grouped By Schedule}
+This section explores the validation accuracy obtained for different step schedules. The results are shown in Figure \ref{fig:schedresnet50_results}. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{results/schedule_resnet50.pdf}
+    \caption{Comparing Accuracies of models trained with and without Proxy Attention on the ResNet50 \cite{heDeepResidualLearning2016} architecture for different step schedules}.
+    \label{fig:schedresnet50_results}
+\end{figure}
+
+\subsection{Results Grouped By Proxy Threshold}
+This section explores the validation accuracy obtained for different Proxy thresholds. The results are shown in Figure \ref{fig:proxy_threshold}. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{results/proxy_threshold_results.pdf}
+    \caption{Comparing Accuracies of models trained with and without Proxy Attention on the EfficientNetB0 \cite{tanEfficientnetRethinkingModel2019} architectures for different Proxy Thresholds}
+    \label{fig:proxy_threshold}
+\end{figure}
+
+\subsection{Results Grouped By Proxy Image Weight}
+This section explores the validation accuracy obtained for different Proxy image weights. The results are shown in Figure \ref{fig:proxy_weight}. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{results/proxy_weight_results.pdf}
+    \caption{Comparing Accuracies of models trained with and without Proxy Attention on the EfficientNetB0 \cite{tanEfficientnetRethinkingModel2019} architectures for different Proxy Image Weights}
+    \label{fig:proxy_weight}
+\end{figure}
+
 
 
 \section{Explanability}

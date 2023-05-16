@@ -76,7 +76,6 @@
   \lstdefinestyle{ascii-tree}{
     literate={├─}{|}1 {─}{--}1 {└}{+}1 
   }
-
 \usepackage[
 	top    = 1cm,
 	bottom = 1.80cm,
@@ -86,12 +85,12 @@
 \setlength{\parindent}{0pt}
 \setlist[itemize]{noitemsep, topsep=0pt}
 \usepackage{setspace}\onehalfspacing\frenchspacing\flushbottom\sloppy
-     % https://tex.stackexchange.com/questions/65355/flushbottom-vs-raggedbottom
-     \setlength{\dimen0}{\textheight}
-     \addtolength{\dimen0}{-\topskip}
-     \divide\dimen0\baselineskip
-     \setlength{\textheight}{\number\dimen0 \baselineskip}
-     \addtolength{\textheight}{\topskip}
+%      % https://tex.stackexchange.com/questions/65355/flushbottom-vs-raggedbottom
+%      \setlength{\dimen0}{\textheight}
+%      \addtolength{\dimen0}{-\topskip}
+%      \divide\dimen0\baselineskip
+%      \setlength{\textheight}{\number\dimen0 \baselineskip}
+%      \addtolength{\textheight}{\topskip}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Source: http://en.wikibooks.org/wiki/LaTeX/Hyperlinks %
@@ -243,7 +242,7 @@ sorting=none
     \centering\includegraphics[width=\textwidth]{images/banner.png}
     \vspace{5mm}
         {\bf
-        {\Huge Proxy Attention : Approximating Attention in CNNs using XAI Techniques\\
+        {\Huge Proxy Attention : Approximating Attention in CNNs using Gradient Based Techniques\\
         % \vspace{2mm}Som\\
         }
         }
