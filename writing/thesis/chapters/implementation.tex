@@ -1,9 +1,15 @@
-\chapter{Implementation}
+\chapter{Implementation} \label{ch:implementation}
+\cred{Summary}
+\section{Overview}
+This section provides an overview of the code structure and the datasets used in this project. The code is written in Python 3.10.10 , and uses PyTorch version 2.0.0. The entire codebase is available on \href{https://github.com/SubhadityaMukherjee/proxy_attention}{GitHub}. (As of now, the code is private, but will be made public after the evaluation is complete.) The entire requirements are listed in the \textit{requirements.txt} file in the root directory of the codebase. The structure of the codebase is shown in Figure ~\ref{fig:overview_code}.
 
-\section{\cred{Overview}}
+A separate directory is used for each dataset, with each dataset being split into training and testing subdirectories. The results directory contains the aggregated runs, which are used directly in the report. The figures and tables are generated from the aggregated runs using the \textit{log\_viewer.ipynb} file. The runs directory contains the runs of the model. Each run has a folder with the run number, which contains the tensorboard logs and the checkpoints. 
+
+The \textit{src} directory contains the source code for this project. The \textit{main.py} file is the entry point for the code and is used to configure the runtime hyperparameters. The \textit{proxyattention} folder contains the code for the model and the \textit{meta\_utils.py} file contains utilities that are reused across the codebase while the \textit{training.py} file contains all the code required for Proxy Attention and training the models.
+
+
 \begin{figure}[H]
     \centering
-    \label{fig:overview_code}
     \begin{forest}
         for tree={
         font=\ttfamily,
@@ -50,11 +56,11 @@
                             [training.py]
                     ]
                     [main.py]
-                    [inference.py]
             ]
         ]
     \end{forest}
     \caption{Code Directory Structure}
+    \label{fig:overview_code}
 
 \end{figure}
 
@@ -68,24 +74,13 @@ The images provided by the datasets are of varying sizes, but are resized to a s
 The CIFAR 100 dataset, introduced by \cite{krizhevskyLearningMultipleLayers}, is an image dataset with 60000 colour images with dimensions 32x32 pixels. As the name suggests, the dataset has 100 unique classes. Each of these classes has 500 training images. Some classes are - \textbf{airplane, bird, truck, ship, deer and dog}. This dataset is used as a coarse-grained classification dataset in this project.\\
 The dataset and complete class information can be found \href{https://www.kaggle.com/datasets/fedesoriano/cifar100}{here}.
 
-% \begin{figure}[h]
-% \resizebox{.8\textwidth}{!}{
-
-% 	\includegraphics{images/cifar100.png}
-% 	% \ref{fig:cifar100}
-% \end{figure}
-
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{images/cifar100.pdf}
     \caption{A batch of images from the CIFAR100 dataset}
     \label{fig:cifar100}
 \end{figure}
-% \subsection*{IIT pets}
-% \resizebox{.8\textwidth}{!}{
 
-% 	\includegraphics{images/iitpets.png}
-% }
 \subsection{Stanford dogs}
 The Stanford Dogs dataset \cite{khoslaNovelDatasetFineGrained} is a popular fine-grained image classification dataset. There are more than 20k images in this dataset categorized into  120 classes of dog breeds like the \textbf{Afghan Hound , Appenzeller} etc. Being a fine-grained dataset, the images are very similar to each other and the classification task is much harder.\\
 This dataset was chosen to further evaluate the explainability of Proxy Attention.\\
@@ -98,19 +93,6 @@ The dataset and complete class information can be found \href{http://vision.stan
 \end{figure}
 
 
-
-% \subsection{Imagenette}
-
-% \begin{figure}[h]
-% 	\centering
-% 	\includegraphics[width=0.8\textwidth]{images/imagenette.pdf}
-% 	\caption{Imagenette Sample}
-% 	\label{fig:imagenette}
-% \end{figure}
-
-% \resizebox{.8\textwidth}{!}{
-% 	\includegraphics{images/imagenette.png}
-% }
 \subsection{ASL Alphabet}
 The ASL dataset is a collection of hand pose images from the American Sign Language. There is no pose information with this dataset, but the images can be used for classification using the provided class labels.
 The dataset chosen to evaluate Proxy Attention is the ASL Alphabet dataset, a more specific subset that has all the letters of the English alphabet along with the special characters \textbf{del, space and nothing}. The background is mostly the same, with minor changes. The data is also recorded from people with a similar skin tone, which makes the task easier.\\
@@ -123,10 +105,6 @@ The dataset and complete class information can be found \href{https://www.kaggle
     \label{fig:asl}
 
 \end{figure}
-% \resizebox{.8\textwidth}{!}{
-% 	\includegraphics{images/asl.png}
-% }
-
 
 \subsection{Plant Disease}
 This dataset consists of images of plant diseases across a variety of plants. The dataset is also a fine-grained classification dataset with 39 classes. Other than a few diseases, most of them are quite similar to each other, making the classification task harder. Some examples of the classes are \textbf{apple scab, blueberry healthy, cherry powdery mildew} etc.\\
@@ -261,7 +239,6 @@ Potential solutions include:
 
 \subsection{Hyper Parameters} \label{sec:hyperparameters}
 Proxy Attention is a novel method, and so there is no previous research on the best hyperparameters to use. The objective in choosing them is to find a balance between performance, computational overhead, and memory usage. The following section discusses the different hyperparameters that were tested and the reasoning behind their selection.
-\cred{add values for all hyperparameters}
 
 \subsubsection{Gradient Method}
 Many gradient-based methods are available for generating attention maps from trained networks. While many of these methods were mentioned in the survey, it was impossible to test them all. Since Proxy Attention's effectiveness depends quite a bit on the gradient method used, it was important to test them.
@@ -467,15 +444,22 @@ Tensorboard is a utility for managing and visualizing training logs. In this pro
 Another useful feature of Tensorboard is the ability to see live updates while training is in progress. This is useful for debugging and ensuring the training is progressing as expected.
 
 \section{Optimizer}
-- AdamW is used as the optimizer
-- lr is set to 1e-3
-- weight decay is set to 1e-5
-- \cred{ref?}
+While ADAM \cite{kingmaAdamMethodStochastic2014} is one of the most used optimizers in the deep learning community, Lonschiolov et al. \cite{loshchilovDecoupledWeightDecay2019} show that many libraries implement weight decay incorrectly. This finding was inspired by the choice of many researchers to use SGD with momentum instead of ADAM as it somehow seemed to perform better in many cases, but the reason for the difference in performance was not well understood. After finding the issue, Lonschiolov et al. proposed a simple fix to the weight decay implementation in ADAM, which they called ADAMW.
+
+The error comes from the incorrect assumption that weight decay and L2 regularization are the same. While in the case of SGD, this indeed is the case, it is not true for other optimizers, especially ADAM. In the case of ADAM, WD first applies the update and then subtracts a portion of the weight. While L2 regularization adds the weight decay term to the gradients and then computes the moving average of the gradients and the corresponding squares before applying them to the update. Many of the deep learning libraries use L2 regularization instead of weight decay in their implementations, which leads to a significant difference in performance. Another important point to note is that the weight decay must be disabled for the optmizers as doing so will lead to L2 regularization being applied, which defeats the purpose of using ADAMW.
+In this project, the ADAMW optimizer is used with a learning rate of $10^{-3}$ and a weight decay of $10^{-5}$.
 
 \section{LR scheduler}
-- One Cycle LR is used as the learning rate scheduler
-- max lr is set to 2e-3
-- \cred{ref?}
+Choosing an appropriate learning rate is an important step when training a neural network. A learning rate that is too high might lead to the model overshooting the local minima when traversing the loss landscape. While a learning rate that is too low might lead to the model taking a long time to converge. A learning rate scheduler is used to find the optimal learning rate during training. The LR scheduler used in this project is the One Cycle LR scheduler proposed by Smith et al. \cite{smithSuperConvergenceVeryFast2018}.
+
+In their paper, the authors propose a cyclic LR scheduler that moves from a lower LR to a higher LR in cycles. An LR finder is used to find the maximum LR that can be used for training. The LR finder is a simple algorithm that starts with a very low LR and increases it by a tiny amount for a number of iterations. If the loss starts to increase fast for the chosen LR, the LR finder terminates and the maximum LR is obtained. 
+The One Cycle policy builds up on previous research done on warming up the learning rate at the beginning of training. While other approaches move directly to a higher LR after the initial warmup, Leslie et al. suggest a slower approach to the same. In the middle, the LR rizing can be thought of as a regularization method.
+
+In addition to the cycle of LR, the authors also propose a cycle of momentum. They suggest that the momentum should be high at the beginning of training and should be decreased as the LR increases. This is because using a higher momentum at the beginning of training allows the model to quickly traverse the loss landscape and attempt to find local minima, but in later stages, a lower momentum is beneficial as it helps the model to converge to a local minima stably instead of overshooting it. Using a cyclic momentum removes some of the guess work involved in choosing the optimal momentum value for training, as the momentum is from lower to higher values in a cycle. 
+
+Other benefits of the One Cycle Policy include the ability to use higher batch sizes and LRs, while also reducing the need for other regularization techniques due to the inherent regularization effect of the One Cycle Policy.
+
+In this thesis, an LR finder is not used to find the maximum LR but set to $2\times 10^{-3}$ instead. While this is suboptimial, since the focus of this work was not to find the best performance, but just test the effects of Proxy Attention, this choice was made to reduce the number of hyperparameters that needed to be tuned. Future researchers should feel free to experiment with the LR finder to improve the accuracy further.
 
 \section{Loss function}
 - Cross Entropy Loss is used as the loss function
@@ -505,3 +489,5 @@ Inference refers to using a trained model to make predictions on new data. In th
 This script follows from the result aggregation and can use queries over the dataframe generated in the previous step. Since the generated dataframe also contains the path to the saved model, this script can use that information along with the names of the architecture, dataset and other hyper-parameters to load the required models easily.
 The inference script also contains functions for comparing both the accuracies and the explainability of two pre-trained models given a validation dataset or a list of images.\\
 For a batch of images and given a set of hyperparameters, the script loads two models - one trained with Proxy Attention and one trained without. The same dataloader is passed through both models to obtain predictions. Only EigenGradCAM is used for this evaluation phase to ensure a fair comparison, and since GradCAM++ was used for training, it would not be fair to use it for evaluation as well. \cred{modify this a bit}
+
+\cred{\section{Auto-Generating the tables and plots for the report}}

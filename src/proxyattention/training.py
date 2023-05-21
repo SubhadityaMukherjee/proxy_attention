@@ -234,9 +234,6 @@ def one_epoch(config, pbar, model, optimizer, dataloaders, target_layers, schedu
     input_wrong = []
     label_wrong = []
 
-
-    scheduler = lr_scheduler.CosineAnnealingLR(optimizer, len(dataloaders["train"]))
-
     criterion = nn.CrossEntropyLoss()
 
     for phase in ["train", "val"]:
@@ -277,6 +274,7 @@ def one_epoch(config, pbar, model, optimizer, dataloaders, target_layers, schedu
                 if phase == "train":
                     scaler.scale(loss).backward()
                     scaler.step(optimizer)
+                    scaler.step(scheduler)
                     scaler.update()
             # else:
             #     # Disable fp16 for ViT
