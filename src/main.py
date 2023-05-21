@@ -122,8 +122,8 @@ config = {
 
 search_space = {
     # "change_subset_attention" : [0.8, 0.5, 0.2],
-    "change_subset_attention": [0.8, 0.2, 0.95],
-    # "change_subset_attention": [0.8],
+    # "change_subset_attention": [0.8, 0.2, 0.95],
+    "change_subset_attention": [0.2],
     # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
     # "model": ["resnet18", "vgg16", "resnet50"],
     # "model": ["resnet18", "efficientnet_b0"],

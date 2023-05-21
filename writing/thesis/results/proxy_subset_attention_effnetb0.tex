@@ -1,0 +1,17 @@
+\begin{table}[H]
+\centering
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lllr}
+\toprule
+     &      &                 &   accuracy \\
+ds\_name & change\_subset\_attention & model &            \\
+\midrule
+dogs & 0.20 & efficientnet\_b0 &  94.756529 \\
+     & 0.95 & efficientnet\_b0 &  94.259120 \\
+     & 0.80 & efficientnet\_b0 &  93.858173 \\
+\bottomrule
+\end{tabular}
+}
+\caption{Accuracy grouped by subset (\%) of images used for Proxy Attention for EfficientNetB0}
+\label{tab:proxy_weight}
+\end{table}
