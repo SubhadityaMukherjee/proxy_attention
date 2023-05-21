@@ -127,10 +127,10 @@ search_space = {
     # "model": ["resnet18", "vgg16", "resnet50", "vit_base_patch16_224"],
     # "model": ["resnet18", "vgg16", "resnet50"],
     # "model": ["resnet18", "efficientnet_b0"],
-    # "model": ["efficientnet_b0", "resnet50", "vgg16"],
+    "model": ["efficientnet_b0", "resnet50", "vgg16", "resnet18"],
     # "model": ["resnet18"],
     # "model": ["vit_base_patch16_224"],
-    "model": ["efficientnet_b0"],
+    # "model": ["efficientnet_b0"],
     # "proxy_image_weight" : [0.1, 0.4, 0.8, 0.95],
     # "proxy_image_weight": [0.2, 0.95],
     # "proxy_image_weight": [0.1,0.8],
@@ -145,8 +145,9 @@ search_space = {
     # "ds_name" : ["asl", "imagenette"],
     # "clear_every_step": [True, False],
     # "ds_name": ["cifar100", "asl", "plantdisease", "dogs", "caltech101"],
-    "ds_name": ["cifar100", "asl", "plantdisease", "caltech101"],
+    # "ds_name": ["cifar100", "asl", "plantdisease", "caltech101"],
     # "ds_name": ["dogs"],
+    "ds_name": ["places256"],
     # "ds_name": ["dogs", "caltech101", "asl", "imagenette", "plantdisease"],
     # "clear_every_step": [True, False],
     "clear_every_step": [False],
@@ -252,6 +253,11 @@ dataset_info = {
         "name_fn": proxyattention.meta_utils.get_parent_name,
         "num_classes": 39,
     },
+    "places256": {
+        "path": Path(f"{main_ds_dir}/places256/"),
+        "name_fn": proxyattention.meta_utils.get_parent_name,
+        "num_classes": 256,
+    },
 }
 
 
@@ -298,10 +304,10 @@ if __name__ == "__main__":
         )
         params = dict(zip(search_space.keys(), combination))
         config = {**config, **params}
-        if config["ds_name"] == "caltech-101":
-            config["ds_name"] = "caltech101"
-        if config["model"] == "vit_base_path16_224":
-            config["model"] = "vit_base_patch16_224"
+        # if config["ds_name"] == "caltech-101":
+        #     config["ds_name"] = "caltech101"
+        # if config["model"] == "vit_base_path16_224":
+        #     config["model"] = "vit_base_patch16_224"
         
         # if config["model"] != "vgg16":
 

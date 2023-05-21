@@ -274,7 +274,7 @@ def one_epoch(config, pbar, model, optimizer, dataloaders, target_layers, schedu
                 if phase == "train":
                     scaler.scale(loss).backward()
                     scaler.step(optimizer)
-                    scaler.step(scheduler)
+                    # scaler.step(scheduler)
                     scaler.update()
             # else:
             #     # Disable fp16 for ViT

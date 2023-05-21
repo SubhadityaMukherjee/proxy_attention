@@ -72,7 +72,11 @@ class ImageClassDs(Dataset):
 
     def __getitem__(self, index: int) -> Dict[str, torch.Tensor]:
         im_path = self.x[index]
-        x = Image.open(im_path)
+        try:
+            x = Image.open(im_path)
+        except:
+            print(f"Failed to open {im_path}")
+            return None
         if len(x.getbands()) != 3:
             x = x.convert("RGB")
 
