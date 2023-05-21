@@ -1920,6 +1920,14 @@ INPUT ./results/summary_ds.tex
 INPUT results/summary_ds.tex
 INPUT ./results/summary_ds.tex
 INPUT results/summary_ds.tex
+INPUT ./images/banner.png
+INPUT ./images/banner.png
+INPUT images/banner.png
+INPUT ./images/banner.png
+INPUT ./images/banner.png
+INPUT ./images/banner.png
+INPUT images/banner.png
+INPUT ./images/banner.png
 INPUT ./results/schedule_resnet50.tex
 INPUT results/schedule_resnet50.tex
 INPUT ./results/schedule_resnet50.tex

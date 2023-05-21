@@ -92,6 +92,6 @@
 \contentsline {section}{\numberline {7.3}Future Work}{54}{section.7.3}%
 \contentsline {chapter}{\numberline {8}Appendix}{55}{chapter.8}%
 \contentsline {subsection}{\numberline {8.0.1}Summary of Results Per Dataset}{55}{subsection.8.0.1}%
-\contentsline {subsection}{\numberline {8.0.2}Summary of Results Grouped By Schedule}{55}{subsection.8.0.2}%
-\contentsline {subsection}{\numberline {8.0.3}Summary of Results Grouped By Proxy Threshold}{56}{subsection.8.0.3}%
-\contentsline {subsection}{\numberline {8.0.4}Summary of Results Grouped By Proxy Image Weight}{56}{subsection.8.0.4}%
+\contentsline {subsection}{\numberline {8.0.2}Summary of Results Grouped By Schedule}{57}{subsection.8.0.2}%
+\contentsline {subsection}{\numberline {8.0.3}Summary of Results Grouped By Proxy Threshold}{57}{subsection.8.0.3}%
+\contentsline {subsection}{\numberline {8.0.4}Summary of Results Grouped By Proxy Image Weight}{58}{subsection.8.0.4}%
