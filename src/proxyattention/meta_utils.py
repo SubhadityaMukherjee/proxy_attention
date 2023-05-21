@@ -479,10 +479,10 @@ def show_cam_on_image(image, mask, weight=0.6):
     return Image.fromarray(im)
 
 
-def plot_images_grad(image, grads, title, weight=0.6, figsize=(10, 10)):
+def plot_images_grad(image, grads, title, weight=0.6, figsize=(20, 5)):
     cams = [show_cam_on_image(image[i], grads[i], weight) for i in range(len(image))]
-    rows = 4
-    cols = 4
+    rows = 2
+    cols = 8
     fig, axes = plt.subplots(rows, cols, figsize=figsize)
 
     for i in range(rows):
