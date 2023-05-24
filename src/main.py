@@ -147,7 +147,7 @@ search_space = {
     # "ds_name": ["cifar100", "asl", "plantdisease", "dogs", "caltech101"],
     # "ds_name": ["cifar100", "asl", "plantdisease", "caltech101"],
     # "ds_name": ["dogs"],
-    "ds_name": ["places256"],
+    "ds_name": ["tsing", "places256"],
     # "ds_name": ["dogs", "caltech101", "asl", "imagenette", "plantdisease"],
     # "clear_every_step": [True, False],
     "clear_every_step": [False],
@@ -254,9 +254,14 @@ dataset_info = {
         "num_classes": 39,
     },
     "places256": {
-        "path": Path(f"{main_ds_dir}/places256/"),
+        "path": Path(f"{main_ds_dir}/places256/train/"),
         "name_fn": proxyattention.meta_utils.get_parent_name,
         "num_classes": 256,
+    },
+    "tsing": {
+        "path": Path(f"{main_ds_dir}/tsing/train/"),
+        "name_fn": proxyattention.meta_utils.get_parent_name,
+        "num_classes": 130,
     },
 }
 

@@ -78,6 +78,8 @@ from .meta_utils import *
 
 cudnn.benchmark = True
 logging.basicConfig(level=logging.ERROR)
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 #%%
 import sys
 # %%
