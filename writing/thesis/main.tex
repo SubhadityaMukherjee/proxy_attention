@@ -50,6 +50,7 @@
 \usepackage{wrapfig}    % inline figures
 \usepackage{enumitem}
 \usepackage{comment}
+\usepackage{mathrsfs}
 \usepackage{lipsum}
 \usepackage{graphicx} % Use for Images
 \usepackage{here}     % Forced Figure Placement
@@ -86,11 +87,6 @@
 \setlist[itemize]{noitemsep, topsep=0pt}
 \usepackage{setspace}\onehalfspacing\frenchspacing\flushbottom\sloppy
 %      % https://tex.stackexchange.com/questions/65355/flushbottom-vs-raggedbottom
-%      \setlength{\dimen0}{\textheight}
-%      \addtolength{\dimen0}{-\topskip}
-%      \divide\dimen0\baselineskip
-%      \setlength{\textheight}{\number\dimen0 \baselineskip}
-%      \addtolength{\textheight}{\topskip}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Source: http://en.wikibooks.org/wiki/LaTeX/Hyperlinks %
@@ -98,19 +94,11 @@
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage[english]{babel}
-% \usepackage{biblatex}
-% \usepackage[refsection=chapter]{biblatex}
-% \usepackage{biblatex}
 \usepackage[
 backend=biber,
 sorting=none
 ]{biblatex}
 \addbibresource{My Library.bib}
-% \bibliographystyle{unsrt}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 'dedication' environment: To add a dedication paragraph at the start of book %
-% Source: http://www.tug.org/pipermail/texhax/2010-June/015184.html            %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \let\cleardoublepage\clearpage
 \newenvironment{dedication}
 {
