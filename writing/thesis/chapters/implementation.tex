@@ -1,5 +1,5 @@
 \chapter{Implementation} \label{ch:implementation}
-\cred{Summary}
+\textcolor{red}{Summary}
 \section{Overview}
 This section provides an overview of the code structure and the datasets used in this project. The code is written in Python 3.10.10 , and uses PyTorch version 2.0.0. The entire codebase is available on \href{https://github.com/SubhadityaMukherjee/proxy_attention}{GitHub}. (As of now, the code is private, but will be made public after the evaluation is complete.) The entire requirements are listed in the \textit{requirements.txt} file in the root directory of the codebase. The structure of the codebase is shown in Figure ~\ref{fig:overview_code}.
 
@@ -127,7 +127,36 @@ The dataset and complete class information can be found \href{https://www.kaggle
     \label{fig:calt}
 \end{figure}
 
-\section{\cred{Proxy Attention}}
+\subsection{Places Dataset}
+% - \cite{zhouPlaces10Million2018}
+% - We release 2.5 million images from 205 scene categories to the public
+% - This is a subset of the MIT places dataset consisting of 205 classes.
+% - eg: engine room, excavation, kitchen
+The Places dataset \cite{zhouPlaces10Million2018} contains 2.5 million images of different scenes. These scenes contain both indoor and outdoor scenes and have been categorized into 205 classes, including engine room, excavation, and kitchen. This dataset used for this research is a subset of the MIT places dataset, which comprises a total of 10\% out of the original 10 million images. The large-scale nature of the dataset allows for extensive exploration of scene recognition and understanding tasks but here it is used as a coarse-grained image classification dataset.\\
+The dataset and complete class information can be found \href{https://www.kaggle.com/datasets/mittalshubham/images256}{here}.
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=1\textwidth]{images/places.pdf}
+%     \caption{A batch of images from the Places dataset}
+%     \label{fig:places}
+% \end{figure}
+
+
+\subsection{Tsinghua Dogs}
+% - \cite{zouNewDatasetDog2020}
+% - Tsinghua Dogs is a fine-grained classification dataset for dogs, over 65\% of whose images are collected from people's real life. Each dog breed in the dataset contains at least 200 images and a maximum of 7,449 images, basically in proportion to their frequency of occurrence in China, so it significantly increases the diversity for each breed over existing dataset (see Fig. 1). Furthermore, Tsinghua Dogs annotated bounding boxes of the dog’s whole body and head in each image (see Fig. 2), which can be used for supervising the training of learning algorithms as well as testing them. 
+% - Great Danes exhibit large variations in appearance, while (b) Norwich terriers and (c) Australian terriers are quite similar to each other.
+The Tsinghua Dogs dataset \cite{zouNewDatasetDog2020} is a comprehensive fine-grained classification dataset specifically designed for dog breeds. It contains a substantial collection of images, with over 65\% of them collected from real-life sources. Each breed is represented by a minimum of 200 images and a maximum of 7,449 images. According to the authors, these values are somewhat proportionate to their relative population in China. This approach ensures increased diversity for each breed compared to existing datasets. The Tsinghua Dogs dataset also provides annotated bounding boxes for each dog's whole body and head in the images, for object detection tasks, but this information is not used for this project. With a wide range of breeds included, such as Great Danes and Norwich Terriers, the dataset exhibits significant variations in appearance. While some breeds are quite similar to each other, others are rather different, which further adds to the complexity of the image classification task. 
+The dataset and complete class information can be found \href{https://cg.cs.tsinghua.edu.cn/ThuDogs/}{here}.
+
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=1\textwidth]{images/tsing.pdf}
+%     \caption{A batch of images from the Tsinghua Dogs dataset}
+%     \label{fig:tsing}
+% \end{figure}
+
+\section{\textcolor{red}{Proxy Attention}}
 - Let $I_{s} \in \mathbb{R}^{W \times H \times C}$ be a random source image
 - applied saliency map $I_{vs}$ 
 	- $I_{vs} = f(I_{s}) \in \mathbb{R}^{W \times H}$
@@ -193,14 +222,14 @@ Due to this reason, these methods were not considered for the final implementati
 Data Augmentation techniques involve computing some transformation over images. Many of these methods were covered in the literature survey (Section ~\ref{sec:augmentation}), some of which replaced the pixels with random values, pixels sampled from either the current image or another image in the dataset, or even deleted the pixels. Most of these methods do not consider the model itself, but some, such as Saliency Mix \cite{uddinSaliencyMixSaliencyGuided2021} use saliency measures to find patches from other images in the dataset that are used to replace the chosen pixels.
 These methods inspired Proxy Attention, but instead of replacing image patches or deleting pixels, it uses a gradient-based method to down-weight the pixels that might have led to the wrong prediction. This method moves away from using naive statistical information but enables the model to learn from its mistakes eventually.
 
-\subsubsection{\cred{GAN Based Replacement}}
+\subsubsection{\textcolor{red}{GAN Based Replacement}}
 
 
 \subsubsection{Modifying the Weights}
 Instead of replacing the pixels, another possible method would be to modify the network weights directly. While many research papers elaborate on methods to perform this procedure, this domain still needs to be researched enough to be used easily. Research on this domain has been done from the early 90s \cite{schmidhuberSelfReferentialWeightMatrix1993}, but practical implementation of such a network that learns to modify its weight while training has not been extremely successful \cite{irieModernSelfReferentialWeight2022}.
 That being the case, implementing such a method is left to future research.
 
-\cred{add some papers}
+\textcolor{red}{add some papers}
 
 \subsubsection{Multiply with Attention Map}
 The method chosen for this research does not directly replace the image's pixels but weights them using the attention map generated by passing the image through the trained model.
@@ -244,7 +273,7 @@ Proxy Attention is a novel method, and so there is no previous research on the b
 Many gradient-based methods are available for generating attention maps from trained networks. While many of these methods were mentioned in the survey, it was impossible to test them all. Since Proxy Attention's effectiveness depends quite a bit on the gradient method used, it was important to test them.
 
 The important factor considered while choosing these methods was the difference in complexity and the power of explanation they provide. While algorithms like GradCAM++ \cite{chattopadhayGradCAMGeneralizedGradientBased2018} provide more nuanced and better explanations of the image, older algorithms like Vanilla Gradients \cite{zeilerVisualizingUnderstandingConvolutional2013} are not so accurate. The objective here was to understand if using a more powerful method would improve performance with respect to classification accuracy when used with Proxy Attention. If this is the case, then it is possible to use more powerful methods to further improve performance in the future.
-The gradient methods that were tested are as \cred{follows}:
+The gradient methods that were tested are as \textcolor{red}{follows}:
 \begin{itemize}
     \item \textbf{GradCAM++} \cite{chattopadhayGradCAMGeneralizedGradientBased2018}.
     \item \textbf{GradCAM} \cite{selvarajuGradCAMVisualExplanations}
@@ -265,7 +294,7 @@ A visualization of the different thresholds tested is shown in Figure \ref{fig:t
 \subsubsection{Multiply Weight}
 The Multiply Weight hyperparameter is used to control how strongly the attention map is applied to the image. The values are in the range $[0,1]$. A higher value would mean that the image is more strongly affected by the attention map, while a lower value would mean that the image is less affected. This is a balancing act as choosing too high of a value would mean that the image is affected too much, and important features might be lost from the image. Choosing too low of a value would mean that the image is not affected enough, rendering the Proxy step useless. The optimal value of this hyperparameter is found based on the results of the experiments conducted.
 
-\cred{generate and add figure here}
+\textcolor{red}{generate and add figure here}
 
 \subsubsection{Proxy Step Schedule}
 Proxy Attention is a novel method, which means that there was no previous literature on how often to apply the Proxy step. To test this, multiple schedules were tested to understand how the network performs when the Proxy step is applied at different times.\\
@@ -368,7 +397,7 @@ This section discusses the architectures used and the library used to implement 
 The library used to load the models is called \textbf{TIMM} \cite{wightmanRwightmanPytorchimagemodelsV02023}. It is a PyTorch library that provides a vast number of models with the option of loading pretrained versions of the same. The library also provides an easy way to customize the loading options for transfer learning, including the ability to choose the number of classes, the number of layers to freeze, Global Pooling options, etc.\\
 The following models were used in this project:
 
-\subsection{\cred{ResNet - 18,50}}
+\subsection{\textcolor{red}{ResNet - 18,50}}
 - prev misconception : deeper the network, better performance ; but vanishing grads
 - skip connections : loss of info
 - act of n-1)th conv added to out of n+1)th ; adds relu, skips nth layer
@@ -376,9 +405,9 @@ The following models were used in this project:
 - enabling the network to skip one ReLU activation in between if it does not provide any useful information or provides no information at all i.e, 0, and the network will be using the previous information, thus maintaining consistent performance
 - If anyways both the layers are providing significant information, thus having previous information will anyways boost the performance.
 
-\subsection{\cred{VGG16}}
-\subsection{\cred{EfficientNetB0}}
-\subsection{\cred{ViT Base Patch $16\times224$}}
+\subsection{\textcolor{red}{VGG16}}
+\subsection{\textcolor{red}{EfficientNetB0}}
+\subsection{\textcolor{red}{ViT Base Patch $16\times224$}}
 
 \section{Grid Search}
 A grid search was performed to test the effectiveness of Proxy Attention and to find the best combination of hyperparameters. The grid search was performed on a single machine with a single GPU. An analysis script was written to determine what trials to run instead of using a separate optimization framework (Ref ~\ref{sec:result_aggregation}).
@@ -437,7 +466,8 @@ The only caveat is that only some operations are stable in half precision. Opera
 Since a single machine was used for training, it was important to reduce memory usage wherever possible. Since it was not necessary to store the gradients for the validation step as they are not used for anything, one of the ways to reduce memory consumption is to disable gradient computation for the validation step. This is done by using the \texttt{torch.no\_grad()} context manager.  The optimizer's \texttt{zero\_grad()} method is used to clear the gradients (using \texttt{set\_to\_none=True}). The additional parameter \texttt{set\_to\_none} is shown to have better performance (Refer to the ~\href{https://pytorch.org/tutorials/recipes/recipes/tuning_guide.html}{Official PyTorch tuning guide} for more information.) as it involves fewer operations.
 
 \subsection{Pillow SIMD}
-One of the bottlenecks in the training process is loading images from the SSD. A few years ago the image processing library Pillow, used to be one of the majorly used libraries for loading images. In recent times, it has been superceded by the \href{https://github.com/uploadcare/pillow-simd}{Pillow SIMD} library, which uses SIMD instructions to improve performance. It is a drop-in replacement for Pillow and requires no changes to the code but can increase image I/O speeds by a significant margin (~\href{https://python-pillow.org/pillow-perf/}{Benchmark comparison between Pillow and Pillow SIMD}). \cred{Add more info about SIMD}
+SIMD (Single Instruction, Multiple Data) is a computational technique that allows for the simultaneous execution of the same operation on multiple data points by utilizing multiple processing elements. It is particularly advantageous when compiled for specific processors, leading to improved performance in tasks such as graphics and image processing. SIMD operates synchronously and deterministically, making it suitable for operations that traditionally rely on the capabilities of a GPU. Since one of the major bottlenecks in the training process is loading images from the SSD, using SIMD operations is a way to reduce the latency. A few years ago the image processing library Pillow, used to be one of the majorly used libraries for loading images. In recent times, it has been superceded by the \href{https://github.com/uploadcare/pillow-simd}{Pillow SIMD} library, which uses SIMD instructions to improve performance. Pillow SIMD's API is a drop-in replacement for Pillow and requires no changes to the code but increases image I/O speeds by a significant margin (Refer to ~\href{https://python-pillow.org/pillow-perf/}{Benchmark comparison between Pillow and Pillow SIMD}).
+
 
 \section{Tensorboard}
 Tensorboard is a utility for managing and visualizing training logs. In this project, it is used to store the training configurations, metrics, images and other information that is generated during training. Since Tensorboard uses a custom file format to store this information, it can be used to store any information. Unlike many other logging utilities, Tensorboard stores all its logs locally. While storing them online might be useful in some cases, it is more difficult to manage and quite unnecessary for this project.
@@ -462,11 +492,10 @@ Other benefits of the One Cycle Policy include the ability to use higher batch s
 In this thesis, an LR finder is not used to find the maximum LR but set to $2\times 10^{-3}$ instead. While this is suboptimial, since the focus of this work was not to find the best performance, but just test the effects of Proxy Attention, this choice was made to reduce the number of hyperparameters that needed to be tuned. Future researchers should feel free to experiment with the LR finder to improve the accuracy further.
 
 \section{Loss function}
-- Cross Entropy Loss is used as the loss function
-- \cred{ref?}
+The Cross Entropy Loss function is a popular loss function that is used in multi-class image classification tasks. Derived from the field of information theory, it uses the concept of entropy to quantifies the discrepancy between two given probability distributions. In this project, the Cross Entropy Loss is used for training the models. The formula for computing the loss is given by $\mathscr{l}(x,y) = L = \{l_{1}, ..., l_{N}\}^{T}$ where $l_{n} = -w_{y_{n}}log \frac{exp(x_{n, y_{n}})}{\Sigma_{c=1}^{C}exp(x_{n,c})}$, $x$ is the input, $y$ is the target, $C$ is the number of classes. By evaluating the predicted class probabilities against the ground truth labels, the loss function captures the dissimilarity between the predicted and actual class distributions. 
 
 \section{Batch Size Finder}
-To maximize training performance, a batch size finder \ref{fig:bsfinder} is used to find the optimal batch size for each model.
+To maximize training performance, a batch size finder (Ref ~\ref{fig:bsfinder}) is used to find the optimal batch size for each model.
 
 The batch size finder algorithm is rather simple. It starts by testing for a small batch size of 2. This batch size is then successively, either incremented or decremented, based on the current GPU configuration's ability to support that batch of data.
 A random batch of data with the size that is to be tested is generated and passed through the required model. If the GPU fails to accommodate the current batch of data, the loop terminates, and the required batch size is obtained. The rest of the steps required to train a network are also performed on this randomly generated data.
@@ -488,6 +517,6 @@ Since the script for aggregating logs is rather useful, it was made publicly ava
 Inference refers to using a trained model to make predictions on new data. In this project, a large number of models were trained. A separate script was created to use any of the previously trained models for inference.\\
 This script follows from the result aggregation and can use queries over the dataframe generated in the previous step. Since the generated dataframe also contains the path to the saved model, this script can use that information along with the names of the architecture, dataset and other hyper-parameters to load the required models easily.
 The inference script also contains functions for comparing both the accuracies and the explainability of two pre-trained models given a validation dataset or a list of images.\\
-For a batch of images and given a set of hyperparameters, the script loads two models - one trained with Proxy Attention and one trained without. The same dataloader is passed through both models to obtain predictions. Only EigenGradCAM is used for this evaluation phase to ensure a fair comparison, and since GradCAM++ was used for training, it would not be fair to use it for evaluation as well. \cred{modify this a bit}
+For a batch of images and given a set of hyperparameters, the script loads two models - one trained with Proxy Attention and one trained without. The same dataloader is passed through both models to obtain predictions. Only EigenGradCAM is used for this evaluation phase to ensure a fair comparison, and since GradCAM++ was used for training, it would not be fair to use it for evaluation as well. \textcolor{red}{modify this a bit}
 
-\cred{\section{Auto-Generating the tables and plots for the report}}
+\textcolor{red}{\section{Auto-Generating the tables and plots for the report}}
