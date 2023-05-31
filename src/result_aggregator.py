@@ -2,7 +2,7 @@
 Run result aggregator
 - Read all tensorbord logs and save as a pandas dataframe for analysis
 """
-
+#%%
 import os
 import pandas as pd
 from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
@@ -14,13 +14,14 @@ from PIL import Image
 import pickle
 import argparse
 
+#%%
 parser = argparse.ArgumentParser(description="Process some training options.")
 
 parser.add_argument(
     "-i", "--save_images", action="store_true", help="Save images to table"
 )
 args = parser.parse_args()
-
+#%%
 # main_path = "/mnt/d/CODE/thesis_runs/proper_runs"
 
 computer_choice = "linux"
@@ -115,7 +116,11 @@ def process_event_acc(event_acc, save_ims=False) -> dict:
 
 def process_runs(main_path, save_ims=False) -> pd.DataFrame:
     """Process all runs and return a dataframe of all results"""
-    all_files = get_event_files(main_path=main_path)
+    old_logs = read_pickle(fname="./results/aggregated_runs.csv")[0]["index"].values
+
+    new_logs = get_event_files(main_path=main_path)
+
+    all_files = [log for log in new_logs if log not in old_logs]
     all_dict = {}
     for files in tqdm(all_files, total=len(all_files)):
         try:
@@ -126,9 +131,12 @@ def process_runs(main_path, save_ims=False) -> pd.DataFrame:
             all_dict[files] = temp_dict
         except IndexError:
             pass
-    return pd.DataFrame.from_records(all_dict).T.reset_index()
+    new_dict = pd.DataFrame.from_records(all_dict).T.reset_index()
+    # merge with old dataframe
+    combined_df = pd.concat([old_logs, new_dict], axis=0)
+    return combined_df
 
-
+#%%
 if args.save_images: # Save images to table
     combined_df = process_runs(main_path=main_path, save_ims=True)
 else: # Don't save images to table
