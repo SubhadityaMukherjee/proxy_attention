@@ -11,8 +11,8 @@
 
 \section{Other Domains}
 \begin{itemize}
-\item Why is it not SSL?
-\item Why not use distillation?
+\item \textbf{Why is it not SSL?} SSL involves using generating pseudo-labels in the case of real labels not being available and Proxy Attention simply uses Gradient based methods to guide the network to the correct parts of the image. Future research could also explore using Proxy Attention together with SSL.
+\item \textbf{Why not use distillation?} Proxy Attention was created with the hope of speeding up training with minimal increase in the usage of computational resources. Distillation refers to using a model that was already trained on a similar task to improve the learning process of the current model. While distillation works very well and is useful in many regards, it goes against the aims of Proxy Attention as training the original network would have used up even more computational resources. That is not to say that distillation is not advantageous, but just that it is just not in the scope of this study.
 \end{itemize}
 
 \section{Model Architecture and Attention Modules}

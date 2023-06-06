@@ -1,8 +1,38 @@
 \chapter{State of the Art} \label{ch:sota}
 This chapter discusses the current state of the art in the fields of Gradient Based Explanations and Augmentations for CNNs. The chapter is divided into two sections, one for each of the fields. The first section discusses the various methods used to explain the predictions of CNNs. The second section discusses the various methods used to augment the training data for CNNs. This chapter also discusses the limitations of the current methods and the motivation behind Proxy Attention.
 
-\section{Gradient Based Explanations}
+\section{Gradient Based Explanations} \label{sec:gradient_based_explanations}
 \textcolor{red}{Need for Explanations}
+% 1. **Interpretability**: Providing explanations for the predictions made by deep learning models is crucial in making these models interpretable. This helps in understanding the decision-making process of the models and promotes trust among stakeholders.
+
+% 2. **Debugging**: Explaining the output of a deep learning model can be beneficial for debugging purposes. If a model makes an unexpected prediction, inspecting the explanation can help identify what went wrong.
+
+% 3. **Fairness**: Explainability can help ensure fairness by allowing us to see if the model is using inappropriate features to make its decisions, such as race, gender, or other protected characteristics. 
+
+% 4. **Safety**: In safety-critical systems such as self-driving cars or medical diagnosis, it's important to understand why the system made a certain decision. Explainability can provide insights into these decisions and help prevent potentially harmful outcomes.
+
+% 5. **Regulatory compliance**: Some regulations require decisions made by AI systems to be explainable. GDPR, for instance, includes a "right to explanation" of automated decisions.
+
+% 6. **Trust**: If a system can explain its actions in a way that humans understand, it is more likely to be trusted by the users. 
+
+% 7. **Robustness**: Understanding a model's decision-making process can lead to designing more robust models, as it allows us to uncover the model's weak spots.
+
+% 8. **Ethics**: Explainability can help ensure that the AI is behaving ethically, by providing transparency into the factors driving its decisions.
+
+% 9. **Education**: Explainability can help non-experts learn more about how a complex system works, and can make it easier to teach machine learning concepts.
+
+% 10. **Generalization**: By understanding why a model makes certain decisions, we can determine if it is generalizing well to new data, or if it is merely overfitting to the training data.
+
+% 11. **Bias detection**: Explainability can be used to detect and mitigate any bias in the decisions made by the AI, leading to fairer outcomes.
+
+% 12. **Feature Importance**: It helps in determining which features are important for making predictions, providing insights about the problem space.
+
+% 13. **User Experience**: Explainability can improve the user experience by making the AI's outputs more understandable and relatable.
+
+% 14. **Model Improvement**: Explainability can lead to model improvement. Once we understand why a model is making certain mistakes, we can try to adjust the model or the data it is trained on to correct these issues.
+
+% 15. **Model Selection**: When comparing multiple models, explainability can assist in selecting the model that not only performs well but also makes decisions in a way that aligns with human understanding or domain knowledge.
+
 % Deconvnet
 One of the earlier approaches to Saliency maps for CNNs was proposed by Zeiler et al. \cite{zeilerVisualizingUnderstandingConvolutional2013} termed DeconvNet. DeconvNet works by inverting the network's operations in the forward pass. After attaching the DeconvNet layers to the network, propagating through these layers represents features that the original CNN possessed. The relevant reconstruction can be obtained for a single class by setting all the activations other than the one corresponding to the class to zero. The resulting image is then used to generate the saliency map. A Deconv layer replaces the Conv layer, and the ReLU operation has negative values clamped. While the pooling operation is not strictly invertible, the authors use switch variables that store the maximum value position for each pooling operation. While the DeconvNet works to a certain extent, the results are less accurate than the ones obtained by other methods and are also biased towards the representations of the first layer.
 
@@ -60,6 +90,60 @@ Another approach to creating attention maps involves using an LSTM \cite{corniaP
 
 \section{Augmentation} \label{sec:augmentation}
 \textcolor{red}{Need for Augmentation}
+% - sufficient open datasets like Imagenet [Russakovsky et al., 2015], MS-COCO [Lin et al., 2014] and PASCAL VOC [Everingham et al., 2015] are crucial to the development of deep learning models. 
+% - - The core idea of data augmentation is to improve the sufficiency and diversity of training data by generating synthetic dataset 
+% - The augmented data can be regarded as being extracted from a distribution that is close to the real one 
+% - augmented dataset can represent more comprehensive characteristics 
+% - data augmentation methods are tasks-independent 
+% - Because the operations are performed on the image data and labels at the same time, and the label types are different under different tasks, the data augmentation methods for object detection task can not be directly applied to semantic segmentation task  
+% - [[Image Erasing]]
+% - delete one or more sub-regions in the image 
+% - replace the pixel values of these sub-regions with constant values or random values 
+% - Hide-and-Seek 
+% - random erasing 
+% - GridMask 
+% - Cutout 
+% - FenceMask 
+% - simulation of object occ
+
+% - [[Image Mix]]
+% - mixing two or more images or sub-regions of images into one. 
+% - mixup
+
+% - [[Image Manipulation]]
+% - image transformations, such as rotation, flipping, and cropping, etc 
+% - manipulate the images directly and are easy to implement 
+% - CutMix 
+% - [[Fmix]]
+% - AugMix 
+% - [[ManifoldMix]]
+
+% - [[Auto Augment]]
+% - search algorithm and search space 
+% - The search algorithm is designed to find the best policy regarding highest validation accuracy 
+% - The search space contains many policies which details various augmentation operations and magnitudes with which the operations are applied 
+% - [[Fast AutoAugment]]
+% - [[Population Based Augmentation]]
+% - [[RandAugment]]
+
+
+% - [[Feature Augmentation]]
+% - Rather than conduct augmentation only in the input space, feature augmentation performs the transformation in a learned feature space 
+% - [DeVries and Taylor, 2017a] 
+% - when traversing along the manifold it is more likely to encounter realistic samples in feature space than compared to input space 
+% - feat match, moment exchange
+
+% - [[Deep Generative Models]]
+% - The ultimate goal of data augmentation is to draw samples from the distribution, which represent the generating mechanism of dataset 
+% - the data distribution we generate data from should not be different with the original one 
+% - StarGAN, pix2pix
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=.9\textwidth]{images/data_aug_categories.png}
+    \caption{Categories of Data Augmentation (sourced from \cite{yangImageDataAugmentation2022})}
+    \label{fig:categorization_augmentation}
+\end{figure}
+
 % Augmix
 Another augmentation strategy proposed by \cite{hendrycksAugMixSimpleData2020} first applies multiple transformations randomly and in parallel chains to each image. These transformations can include combinations of Translation, Rotation, Shearing and others. The outputs of these combinations are then mixed to form a new image, which is further mixed with the original image to form the new image. This combination improves performance in cases where data shifts are encountered in production. Once the images are mixed, a skip connection is used to combine the results of the chains. AugMix also uses the Jensen-Shannon Divergence consistency loss \cite{linDivergenceMeasuresBased} to ensure the images are stable across various inputs. Considering $KL$ to be Kullback-Leibler Divergence, the Jensen-Shannon Divergence can be defined as $
     JS(p_{orig}; p_{augmix1};p_{augmix2}) = \frac{1}{3}(KL[p_{orig}||M||]+KL[p_{augmix1}||M||]+KL[p_{augmix2}||M||])
@@ -138,7 +222,8 @@ Similar to CutMix \cite{yunCutMixRegularizationStrategy2019}, SaliencyMix \cite{
 % Keep augment
 Unlike many augmentation techniques that involve replacing or modifying patches of images or the entire image, KeepAugment \cite{gongKeepAugmentSimpleInformationPreserving2021} uses saliency maps to identify salient regions to ensure that they are not modified during augmentation. They use a selective cut and paste algorithm that uses thresholds to determine the regions that are not to be modified. KeepAugment aims to solve the issue of distribution shifts that generally occur as applying any augmentation sometimes drastically changes the content of the images. The authors also propose two methods to reduce the computational cost of KeepAugment, namely computing saliency maps at a lower resolution and upscaling later, and using additional layers in the network to reduce compute costs. While KeepAugment uses saliency maps to identify regions of interest, it does not use them to improve the performance of the network. Proxy Attention, conversely, uses saliency maps to re-weight the image which helps the network focus on the regions that are important for classification and improve its performance. Proxy Attention also does not require any additional layers to be added to the network and is independent of the network architecture.
 
-- \textcolor{red}{Self supervised learning}
+Self supervised learning (SSL) is also a domain that might seem similar to Proxy Attention at first glance. Training any NN requires a large amount of labeled data, since this is not always readily available, many methods to overcome these limitations have been developed over the years. SSL refers to using a network trained on a task similar to the one at hand to generate pseudo-labels that can be used in place of annotations for datasets that do not have any labels. Since the similar task (also called a pretext task) already generates some learnable features, a NN can use these features to speed up their learning process. In many cases SSL is an iterative process, but no human annotion is added to the data. 
+In contrast, while Proxy Attention could be though to have a pretext task, the task is the same as the one being performed. No extra labels are generated. Proxy Attention can even potentially be used together with SSL.
 
 \subsection{Limitations}
 While each of these papers has its strengths, a few limitations were identified. These limitations do not affect the methods themselves but rather how they are used in the project context.

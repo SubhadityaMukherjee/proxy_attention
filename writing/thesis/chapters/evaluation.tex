@@ -10,7 +10,25 @@ This section explores the validation accuracy obtained by the models for differe
 \subsection{Results Per Dataset}
 This subsection shows the accuracies per model for each dataset. Tabulated results can be found in the appendix in Table ~\ref{tab:summary_ds}.
 
-\subsubsection{Dogs Results}
+\subsection{Tsing Results}
+This section shows the accuracies per model for the Tsing dataset. The results are shown in Figure \ref{fig:tsing_results}. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{results/tsing_results.pdf}
+    \caption{Comparing Accuracies of models trained with and without Proxy Attention on the Tsing dataset}
+    \label{fig:tsing_results}
+\end{figure}
+
+\subsection{Places256 Results}
+This section shows the accuracies per model for the Places256 dataset. The results are shown in Figure \ref{fig:places256_results}. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{results/places256_results.pdf}
+    \caption{Comparing Accuracies of models trained with and without Proxy Attention on the Places256 dataset}
+    \label{fig:places256_results}
+\end{figure}
+
+\subsection{Dogs Results}
 This section shows the accuracies per model for the Dogs dataset. The results are shown in Figure \ref{fig:dogs_results}. 
 \begin{figure}[H]
     \centering
@@ -55,6 +73,7 @@ This section shows the accuracies per model for the Plantdisease dataset. The re
     \label{fig:plantdisease_results}
 \end{figure}
 
+
 \subsection{Results Grouped By Schedule}
 This section explores the validation accuracy obtained for different step schedules. The results are shown in Figure \ref{fig:schedresnet50_results}. 
 \begin{figure}[H]
@@ -69,19 +88,50 @@ This section explores the validation accuracy obtained for different Proxy thres
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{results/proxy_threshold_results.pdf}
-    \caption{Comparing Accuracies of models trained with and without Proxy Attention on the EfficientNetB0 \cite{tanEfficientnetRethinkingModel2019} architectures for different Proxy Thresholds}
+    \caption{Comparing Accuracies of EfficientNetB0 \cite{tanEfficientnetRethinkingModel2019} trained with Proxy Attention on the Stanford Dogs dataset\cite{khoslaNovelDatasetFineGrained} for different Proxy Thresholds}
     \label{fig:proxy_threshold}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{results/proxy_threshold_results_tsing.pdf}
+    \caption{Comparing Accuracies of Resnet18 \cite{heDeepResidualLearning2016} trained with Proxy Attention on the Tsinghua Dogs Dataset \cite{zouNewDatasetDog2020} for different Proxy Thresholds}
+    \label{fig:proxy_threshold2}
 \end{figure}
 
 \subsection{Results Grouped By Proxy Image Weight}
 This section explores the validation accuracy obtained for different Proxy image weights. The results are shown in Figure \ref{fig:proxy_weight}. 
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{results/proxy_weight_results.pdf}
-    \caption{Comparing Accuracies of models trained with and without Proxy Attention on the EfficientNetB0 \cite{tanEfficientnetRethinkingModel2019} architectures for different Proxy Image Weights}
+    \caption{Comparing Accuracies of EfficientNetB0 \cite{tanEfficientnetRethinkingModel2019} trained with Proxy Attention on the Stanford Dogs dataset\cite{khoslaNovelDatasetFineGrained} for different Proxy Image Weights}
     \label{fig:proxy_weight}
 \end{figure}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{results/proxy_weight_results_tsing.pdf}
+    \caption{Comparing Accuracies of Resnet18 \cite{heDeepResidualLearning2016} trained with Proxy Attention on the Tsinghua Dogs Dataset \cite{zouNewDatasetDog2020} for different Proxy Image Weights}
+    \label{fig:proxy_weight2}
+\end{figure}
+
+\subsection{Results Grouped By Proxy Image Subset}
+This section explores the validation accuracy obtained for different Proxy image subsets. The results are shown in Figure \ref{fig:proxy_subset}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{results/proxy_subset_attention_results.pdf}
+    \caption{Comparing Accuracies of EfficientNetB0 \cite{tanEfficientnetRethinkingModel2019} trained with Proxy Attention on the Stanford Dogs dataset\cite{khoslaNovelDatasetFineGrained} for different Proxy Image Subsets}
+    \label{fig:proxy_subset}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{results/proxy_subset_results_tsing.pdf}
+    \caption{Comparing Accuracies of Resnet18 \cite{heDeepResidualLearning2016} trained with Proxy Attention on the Tsinghua Dogs Dataset \cite{zouNewDatasetDog2020} for different Proxy Image Subsets}
+    \label{fig:proxy_subset2}
+\end{figure}
 
 
 \section{Explanability}
