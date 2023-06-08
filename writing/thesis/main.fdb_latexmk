@@ -1,12 +1,12 @@
 # Fdb version 4
-["biber main"] 1686233752 "main.bcf" "main.bbl" "main" 1686233805 0
+["biber main"] 1686233752 "main.bcf" "main.bbl" "main" 1686235856 0
   "My Library.bib" 1686232337 560773 13df69bb61b2edb6a5d194209c75dcaf ""
-  "main.bcf" 1686233805 118692 1a0700e741a308491af0e572301d19bd "pdflatex"
+  "main.bcf" 1686235855 118692 1a0700e741a308491af0e572301d19bd "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1686233802 "/Users/eragon/Documents/CODE/Github/proxy_attention/writing/thesis/main.tex" "main.pdf" "main" 1686233805 0
+["pdflatex"] 1686235853 "/Users/eragon/Documents/CODE/Github/proxy_attention/writing/thesis/main.tex" "main.pdf" "main" 1686235856 0
   "/Users/eragon/Documents/CODE/Github/proxy_attention/writing/thesis/main.tex" 1684930914 8888 f0e000b335d6dfe0ed7ee3bbc672e3f6 ""
   "/usr/local/texlive/2022basic/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2022basic/texmf-dist/fonts/tfm/adobe/helvetic/phvr7t.tfm" 1136768653 2520 53e01eef820ca829e42c1333c3fd02b9 ""
@@ -283,7 +283,7 @@
   "chapters/appendix.tex" 1684407080 1080 443762a4498d6a7d66d75add9fe8a0ad ""
   "chapters/conclusions.tex" 1684407080 5728 6f3792d53432b2e4cc7bf89190edf6e2 ""
   "chapters/discussion.tex" 1686053014 729 c7f0e8a7150b78baa5b43e71ecd608b0 ""
-  "chapters/evaluation.tex" 1685535034 7652 a92263467289e5582e57e3c0725a55a6 ""
+  "chapters/evaluation.tex" 1686235850 7679 d5806e8fb6bf85cab154ece23addbcbe ""
   "chapters/faq.tex" 1686056937 7108 9d945d3ace27f44a786db3899a0f4073 ""
   "chapters/implementation.tex" 1686055436 57615 dc75ab6ee9a80ee2b1d70b37d202571a ""
   "chapters/introduction.tex" 1686233799 7116 7040cd7db65e38c7c5852a1263ec2ea7 ""
@@ -304,14 +304,14 @@
   "images/grad_threshold.pdf" 1682768572 223414 30fce297919f3815415a7c076eab36e7 ""
   "images/methods.pdf" 1682768983 95110 95e0a672ec0cc7aa02903acbb32080d8 ""
   "images/plantdisease.pdf" 1682770584 946950 b796b3e7850ac053d704a4859ca6418c ""
-  "main.aux" 1686233805 50892 4711ab798075d20fc1ce722661d61c60 "pdflatex"
+  "main.aux" 1686235855 50919 dc82c1722dc6e53a3267674a116e58c5 "pdflatex"
   "main.bbl" 1686233755 239844 d9910c70dfaacdf38dedde52add57a9a "biber main"
-  "main.lof" 1686233805 7008 cab26b4db75a701a537fa9008fbe262b "pdflatex"
-  "main.lot" 1686233805 724 2704a260a5424b67c7a30167f5225a2c "pdflatex"
-  "main.out" 1686233805 14903 04ca177755a135546c636e9fadf1a30f "pdflatex"
-  "main.run.xml" 1686233805 2305 45a15ab55dcc23c59be4eaa4484b97a2 "pdflatex"
+  "main.lof" 1686235855 7008 cab26b4db75a701a537fa9008fbe262b "pdflatex"
+  "main.lot" 1686235855 724 2704a260a5424b67c7a30167f5225a2c "pdflatex"
+  "main.out" 1686235855 15041 61c8cadb0dc5cb718860c8da6851bbb6 "pdflatex"
+  "main.run.xml" 1686235855 2305 45a15ab55dcc23c59be4eaa4484b97a2 "pdflatex"
   "main.tex" 1684930914 8888 f0e000b335d6dfe0ed7ee3bbc672e3f6 ""
-  "main.toc" 1686233805 9404 ab655955f456804f1ff765af4e7255cc "pdflatex"
+  "main.toc" 1686235855 9431 8cfac934ac8a2d26477b2d5eee4ade0c "pdflatex"
   "resnet18_cifar100_eval.tex" 1684664618 2424 4e6a2b4368a64e5c22e887ce1dc67275 ""
   "results/asl_results.pdf" 1685528312 14478 cfae3bf3402a926103ceadc2f5ed3ce4 ""
   "results/caltech101_results.pdf" 1685528312 14836 c90d9238e535772f4b592bd46b98dd12 ""

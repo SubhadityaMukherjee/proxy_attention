@@ -96,8 +96,8 @@
 \contentsline {subsection}{\numberline {5.1.11}Results Grouped By Proxy Image Weight}{58}{subsection.5.1.11}%
 \contentsline {subsection}{\numberline {5.1.12}Results Grouped By Proxy Image Subset}{60}{subsection.5.1.12}%
 \contentsline {section}{\numberline {5.2}Explanability}{62}{section.5.2}%
-\contentsline {subsection}{\numberline {5.2.1}CIFAR 100, ResNet18}{63}{subsection.5.2.1}%
-\contentsline {subsection}{\numberline {5.2.2}CIFAR 100, EfficientNetB0}{65}{subsection.5.2.2}%
+\contentsline {subsection}{\numberline {5.2.1}CIFAR 100, ResNet18, EigenGradCAM}{63}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}CIFAR 100, EfficientNetB0,EigenGradCAM}{65}{subsection.5.2.2}%
 \contentsline {chapter}{\numberline {6}Discussion}{67}{chapter.6}%
 \contentsline {section}{\numberline {6.1}Research Questions}{67}{section.6.1}%
 \contentsline {section}{\numberline {6.2}Discussion of Results}{67}{section.6.2}%
