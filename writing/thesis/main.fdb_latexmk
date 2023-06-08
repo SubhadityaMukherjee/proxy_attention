@@ -1,12 +1,12 @@
 # Fdb version 4
-["biber main"] 1686063195 "main.bcf" "main.bbl" "main" 1686063618 0
-  "My Library.bib" 1686059853 558394 c0a0102edde8267a9addfba490b7804a ""
-  "main.bcf" 1686063618 117691 00fa093a6cbf376dafcade0661059341 "pdflatex"
+["biber main"] 1686233752 "main.bcf" "main.bbl" "main" 1686233805 0
+  "My Library.bib" 1686232337 560773 13df69bb61b2edb6a5d194209c75dcaf ""
+  "main.bcf" 1686233805 118692 1a0700e741a308491af0e572301d19bd "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1686063615 "/Users/eragon/Documents/CODE/Github/proxy_attention/writing/thesis/main.tex" "main.pdf" "main" 1686063618 0
+["pdflatex"] 1686233802 "/Users/eragon/Documents/CODE/Github/proxy_attention/writing/thesis/main.tex" "main.pdf" "main" 1686233805 0
   "/Users/eragon/Documents/CODE/Github/proxy_attention/writing/thesis/main.tex" 1684930914 8888 f0e000b335d6dfe0ed7ee3bbc672e3f6 ""
   "/usr/local/texlive/2022basic/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2022basic/texmf-dist/fonts/tfm/adobe/helvetic/phvr7t.tfm" 1136768653 2520 53e01eef820ca829e42c1333c3fd02b9 ""
@@ -286,9 +286,9 @@
   "chapters/evaluation.tex" 1685535034 7652 a92263467289e5582e57e3c0725a55a6 ""
   "chapters/faq.tex" 1686056937 7108 9d945d3ace27f44a786db3899a0f4073 ""
   "chapters/implementation.tex" 1686055436 57615 dc75ab6ee9a80ee2b1d70b37d202571a ""
-  "chapters/introduction.tex" 1684924148 6922 cefde3feae4b0e608a815e8543c1c3eb ""
+  "chapters/introduction.tex" 1686233799 7116 7040cd7db65e38c7c5852a1263ec2ea7 ""
   "chapters/key.tex" 1686054740 490 262df5f2f120da7aeabc69900a2a9f0e ""
-  "chapters/sota.tex" 1686063615 41646 72ddd9a88a1e265fcd9a9fac4e8a8387 ""
+  "chapters/sota.tex" 1686233427 43500 15beec338a2c8acd4cd1e7bad5e5d5ad ""
   "efficientnet_b0_cifar100_eval.tex" 1684664808 2512 4213bcb2cd2fa3383936a4c03a177a56 ""
   "images/asl.pdf" 1682770584 722367 49225d7e8e52250ac73e3a8db6699ce9 ""
   "images/banner.png" 1678100986 12386 47e4c7ee17a3d77036a48ed53deccd86 ""
@@ -304,14 +304,14 @@
   "images/grad_threshold.pdf" 1682768572 223414 30fce297919f3815415a7c076eab36e7 ""
   "images/methods.pdf" 1682768983 95110 95e0a672ec0cc7aa02903acbb32080d8 ""
   "images/plantdisease.pdf" 1682770584 946950 b796b3e7850ac053d704a4859ca6418c ""
-  "main.aux" 1686063618 48796 e1f263b6a7ce2a9bff6a94f7d27ed408 "pdflatex"
-  "main.bbl" 1686063198 226777 cde93f6868ab6b5e6613ec5de99e66d6 "biber main"
-  "main.lof" 1686063618 7010 9699c9273ec1a436fef5f71589997cea "pdflatex"
-  "main.lot" 1686063618 724 7e2f2a22a44cac6655976167f3a48494 "pdflatex"
-  "main.out" 1686063618 14322 9c0a86e3b7d9096c1e5123e66aa07daf "pdflatex"
-  "main.run.xml" 1686063618 2305 45a15ab55dcc23c59be4eaa4484b97a2 "pdflatex"
+  "main.aux" 1686233805 50892 4711ab798075d20fc1ce722661d61c60 "pdflatex"
+  "main.bbl" 1686233755 239844 d9910c70dfaacdf38dedde52add57a9a "biber main"
+  "main.lof" 1686233805 7008 cab26b4db75a701a537fa9008fbe262b "pdflatex"
+  "main.lot" 1686233805 724 2704a260a5424b67c7a30167f5225a2c "pdflatex"
+  "main.out" 1686233805 14903 04ca177755a135546c636e9fadf1a30f "pdflatex"
+  "main.run.xml" 1686233805 2305 45a15ab55dcc23c59be4eaa4484b97a2 "pdflatex"
   "main.tex" 1684930914 8888 f0e000b335d6dfe0ed7ee3bbc672e3f6 ""
-  "main.toc" 1686063618 9056 2da4c019ae832f703628ad20216c798d "pdflatex"
+  "main.toc" 1686233805 9404 ab655955f456804f1ff765af4e7255cc "pdflatex"
   "resnet18_cifar100_eval.tex" 1684664618 2424 4e6a2b4368a64e5c22e887ce1dc67275 ""
   "results/asl_results.pdf" 1685528312 14478 cfae3bf3402a926103ceadc2f5ed3ce4 ""
   "results/caltech101_results.pdf" 1685528312 14836 c90d9238e535772f4b592bd46b98dd12 ""

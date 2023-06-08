@@ -1,20 +1,20 @@
 [0] Config.pm:307> INFO - This is Biber 2.19
 [0] Config.pm:310> INFO - Logfile is 'main.blg'
-[32] biber-darwin:340> INFO - === Tue Jun  6, 2023, 16:53:17
-[41] Biber.pm:419> INFO - Reading 'main.bcf'
-[93] Biber.pm:979> INFO - Found 67 citekeys in bib section 0
-[99] Biber.pm:4419> INFO - Processing section 0
-[104] Biber.pm:4610> INFO - Looking for bibtex file 'My Library.bib' for section 0
-[131] bibtex.pm:1713> INFO - LaTeX decoding ...
-[402] bibtex.pm:1519> INFO - Found BibTeX data source 'My Library.bib'
-[695] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
-[695] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[695] Biber.pm:4239> INFO - Sorting list 'none/global//global/global' of type 'entry' with template 'none' and locale 'en-US'
-[695] Biber.pm:4245> INFO - No sort tailoring available for locale 'en-US'
-[719] bbl.pm:660> INFO - Writing 'main.bbl' with encoding 'UTF-8'
-[751] bbl.pm:763> INFO - Output to main.bbl
-[751] Biber.pm:131> WARN - Possible typo (case mismatch) between datasource keys: 'jiangMLVCNNMultiloopviewConvolutional2019' and 'jiangMLVCNNMultiLoopViewConvolutional2019' in file 'My Library.bib'
-[751] Biber.pm:131> WARN - Possible typo (case mismatch) between datasource keys: 'kumawatLp3dcnnUnveilingLocal2019' and 'kumawatLP3DCNNUnveilingLocal2019' in file 'My Library.bib'
-[751] Biber.pm:131> WARN - Possible typo (case mismatch) between datasource keys: 'zhangInductiveMultihypergraphLearning2018' and 'zhangInductiveMultiHypergraphLearning2018' in file 'My Library.bib'
-[751] Biber.pm:131> WARN - ISBN '978-3-540-19839-0 978-1-4471-2063-6' in entry 'schmidhuberSelfReferentialWeightMatrix1993' is invalid - run biber with '--validate_datamodel' for details.
-[751] Biber.pm:133> INFO - WARNINGS: 4
+[36] biber-darwin:340> INFO - === Thu Jun  8, 2023, 16:15:54
+[45] Biber.pm:419> INFO - Reading 'main.bcf'
+[98] Biber.pm:979> INFO - Found 71 citekeys in bib section 0
+[106] Biber.pm:4419> INFO - Processing section 0
+[111] Biber.pm:4610> INFO - Looking for bibtex file 'My Library.bib' for section 0
+[139] bibtex.pm:1713> INFO - LaTeX decoding ...
+[420] bibtex.pm:1519> INFO - Found BibTeX data source 'My Library.bib'
+[728] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[728] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[728] Biber.pm:4239> INFO - Sorting list 'none/global//global/global' of type 'entry' with template 'none' and locale 'en-US'
+[728] Biber.pm:4245> INFO - No sort tailoring available for locale 'en-US'
+[753] bbl.pm:660> INFO - Writing 'main.bbl' with encoding 'UTF-8'
+[782] bbl.pm:763> INFO - Output to main.bbl
+[782] Biber.pm:131> WARN - Possible typo (case mismatch) between datasource keys: 'jiangMLVCNNMultiloopviewConvolutional2019' and 'jiangMLVCNNMultiLoopViewConvolutional2019' in file 'My Library.bib'
+[783] Biber.pm:131> WARN - Possible typo (case mismatch) between datasource keys: 'kumawatLp3dcnnUnveilingLocal2019' and 'kumawatLP3DCNNUnveilingLocal2019' in file 'My Library.bib'
+[783] Biber.pm:131> WARN - Possible typo (case mismatch) between datasource keys: 'zhangInductiveMultihypergraphLearning2018' and 'zhangInductiveMultiHypergraphLearning2018' in file 'My Library.bib'
+[783] Biber.pm:131> WARN - ISBN '978-3-540-19839-0 978-1-4471-2063-6' in entry 'schmidhuberSelfReferentialWeightMatrix1993' is invalid - run biber with '--validate_datamodel' for details.
+[783] Biber.pm:133> INFO - WARNINGS: 4
