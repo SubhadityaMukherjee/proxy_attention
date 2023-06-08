@@ -117,6 +117,7 @@ def process_event_acc(event_acc, save_ims=False) -> dict:
 def process_runs(main_path, save_ims=False) -> pd.DataFrame:
     """Process all runs and return a dataframe of all results"""
     old_logs = read_pickle(fname="./results/aggregated_runs.csv")[0]["index"].values
+    old_logs_full = read_pickle(fname="./results/aggregated_runs.csv")[0]
 
     new_logs = get_event_files(main_path=main_path)
 
@@ -133,7 +134,7 @@ def process_runs(main_path, save_ims=False) -> pd.DataFrame:
             pass
     new_dict = pd.DataFrame.from_records(all_dict).T.reset_index()
     # merge with old dataframe
-    combined_df = pd.concat([old_logs, new_dict], axis=0)
+    combined_df = pd.concat([old_logs_full, new_dict], axis=0)
     return combined_df
 
 #%%
