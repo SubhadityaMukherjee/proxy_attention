@@ -3,10 +3,15 @@
 \resizebox{\columnwidth}{!}{
 \begin{tabular}{lllr}
 \toprule
-      &     &          &   accuracy \\
-ds\_name & change\_subset\_attention & model &            \\
+ &  &  & accuracy \\
+ds_name & change_subset_attention & model &  \\
 \midrule
-tsing & 0.2 & resnet18 &  77.352975 \\
+\multirow[t]{3}{*}{tsing} & 0.950000 & resnet18 & 77.523333 \\
+\cline{2-4}
+ & 0.200000 & resnet18 & 77.352975 \\
+\cline{2-4}
+ & 0.800000 & resnet18 & 77.176665 \\
+\cline{1-4} \cline{2-4}
 \bottomrule
 \end{tabular}
 }

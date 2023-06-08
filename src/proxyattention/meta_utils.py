@@ -536,7 +536,8 @@ def find_target_layer(config, model):
         # elif config["model"] == "vit_small_patch32_224":
         return [model.norm]
     elif config["model"] == "vit_base_patch16_224":
-        return [model.norm]
+        # return [model.norm]
+        return [model.blocks[-1].norm1]
         # target_layers = model.layers[-1].blocks[-1].norm1
     else:
         raise ValueError("Unsupported model type!")
