@@ -41,6 +41,15 @@ dataset_info = {
         ),
         "num_classes": 39,
     },
+    "places256": {
+        "path": Path(f"{main_ds_dir}/places256/train/"),
+        "num_classes": 256,
+    },
+    "tsing": {
+        "path": Path(f"{main_ds_dir}/tsing/train/"),
+        "num_classes": 130,
+    },
+
 }
 #%%
 for name in tqdm(dataset_info.keys(), total = len(dataset_info.keys())):
