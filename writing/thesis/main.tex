@@ -57,14 +57,16 @@
 \usepackage{pslatex}	% Use PostScript Fonts
 \usepackage{fancyhdr} % Use headers
 \usepackage{float}
+\usepackage[export]{adjustbox}
+\usepackage[compact]{titlesec}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Source: http://en.wikibooks.org/wiki/LaTeX/Hyperlinks %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \usepackage{graphicx}
-\usepackage{titlesec}
 \titlespacing*{\section}{0pt}{0.1\baselineskip}{0.2\baselineskip}
 \titlespacing*{\subsection}{0pt}{0.1\baselineskip}{0.2\baselineskip}
+
 
 % \usepackage{algopseudocode}
 \usepackage{algorithm}
@@ -274,7 +276,6 @@ sorting=none
 % \input{chapters/proposed.tex}
 % \thispagestyle{body}
 \input{chapters/implementation.tex}
-\input{chapters/faq.tex}
 % \thispagestyle{body}
 \input{chapters/evaluation.tex}
 \input{chapters/discussion.tex}
@@ -282,11 +283,5 @@ sorting=none
 \input{chapters/conclusions.tex}
 % \thispagestyle{body}
 \input{chapters/appendix.tex}
-% \thispagestyle{body}
-
-% \bibliographystyle{ieeetr}
-% \bibliography{biblio}
-
-% \include{chapters/appendix}
 \printbibliography
 \end{document}

@@ -8,67 +8,65 @@ Note that complete performance logs can be found in the appendix.
 This section explores the validation accuracy obtained by the models for different hyperparameters and datasets. Since the task at hand is a classification task, this measure is a direct comparison of the performance of the models.
 
 \subsection{Results Per Dataset}
-This subsection shows the accuracies per model for each dataset. Tabulated results can be found in the appendix in Table ~\ref{tab:summary_ds}.
+This subsection shows the accuracies per model for each dataset. Tabulated results can be found in the appendix.
 
-\subsection{Tsing Results}
-This section shows the accuracies per model for the Tsing dataset. The results are shown in Figure \ref{fig:tsing_results}. 
+\subsection{Tsinghua Dogs and Places256 Results}
+This section shows the accuracies per model for the Tsinghua Dogs and Places256 datasets. The results are shown in Figure \ref{fig:tsing_places256_results}.
+
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{results/tsing_results.pdf}
-    \caption{Comparing Accuracies of models trained with and without Proxy Attention on the Tsing dataset}
-    \label{fig:tsing_results}
+    % \centering
+    \begin{subfigure}[h]{.5\textwidth}
+        \includegraphics[width=\linewidth, right]{results/tsing_results.pdf}
+        \caption{Tsinghua Dogs Dataset}
+    \end{subfigure}
+    % \hfill
+    \begin{subfigure}[h]{.5\textwidth}
+        \includegraphics[width=\linewidth, left]{results/places256_results.pdf}
+        \caption{Places256 Dataset}
+    \end{subfigure}
+    \caption{Comparing Accuracies of models trained with and without Proxy Attention on the Tsinghua Dogs and Places256 datasets}
+    \label{fig:tsing_places256_results}
 \end{figure}
 
-\subsection{Places256 Results}
-This section shows the accuracies per model for the Places256 dataset. The results are shown in Figure \ref{fig:places256_results}. 
+\subsection{Stanford Dogs and Cifar100 Results}
+This section shows the accuracies per model for the Stanford Dogs and Cifar100 datasets. The results are shown in Figure \ref{fig:dogs_cifar100_results}.
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{results/places256_results.pdf}
-    \caption{Comparing Accuracies of models trained with and without Proxy Attention on the Places256 dataset}
-    \label{fig:places256_results}
+    % \centering
+    \begin{subfigure}[h]{.5\textwidth}
+        \includegraphics[width=\linewidth, right]{results/dogs_results.pdf}
+        \caption{Stanford Dogs Dataset}
+    \end{subfigure}
+    % \hfill
+    \begin{subfigure}[h]{.5\textwidth}
+        \includegraphics[width=\linewidth, left]{results/cifar100_results.pdf}
+        \caption{Cifar100 Dataset}
+    \end{subfigure}
+    \caption{Comparing Accuracies of models trained with and without Proxy Attention on the Stanford Dogs and Cifar100 datasets}
+    \label{fig:dogs_cifar100_results}
 \end{figure}
 
-\subsection{Dogs Results}
-This section shows the accuracies per model for the Dogs dataset. The results are shown in Figure \ref{fig:dogs_results}. 
+\subsection{Caltech101 and Asl Results}
+This section shows the accuracies per model for the Caltech101 and Asl datasets. The results are shown in Figure \ref{fig:caltech101_asl_results}.
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{results/dogs_results.pdf}
-    \caption{Comparing Accuracies of models trained with and without Proxy Attention on the Dogs dataset}
-    \label{fig:dogs_results}
-\end{figure}
-
-\subsection{Cifar100 Results}
-This section shows the accuracies per model for the Cifar100 dataset. The results are shown in Figure \ref{fig:cifar100_results}. 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{results/cifar100_results.pdf}
-    \caption{Comparing Accuracies of models trained with and without Proxy Attention on the Cifar100 dataset}
-    \label{fig:cifar100_results}
-\end{figure}
-
-\subsection{Caltech101 Results}
-This section shows the accuracies per model for the Caltech101 dataset. The results are shown in Figure \ref{fig:caltech101_results}. 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{results/caltech101_results.pdf}
-    \caption{Comparing Accuracies of models trained with and without Proxy Attention on the Caltech101 dataset}
-    \label{fig:caltech101_results}
-\end{figure}
-
-\subsection{Asl Results}
-This section shows the accuracies per model for the Asl dataset. The results are shown in Figure \ref{fig:asl_results}. 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{results/asl_results.pdf}
-    \caption{Comparing Accuracies of models trained with and without Proxy Attention on the Asl dataset}
-    \label{fig:asl_results}
+    % \centering
+    \begin{subfigure}[h]{.5\textwidth}
+        \includegraphics[width=\linewidth, right]{results/caltech101_results.pdf}
+        \caption{Caltech101 Dataset}
+    \end{subfigure}
+    % \hfill
+    \begin{subfigure}[h]{.5\textwidth}
+        \includegraphics[width=\linewidth, left]{results/asl_results.pdf}
+        \caption{Asl Dataset}
+    \end{subfigure}
+    \caption{Comparing Accuracies of models trained with and without Proxy Attention on the Caltech101 and Asl datasets}
+    \label{fig:caltech101_asl_results}
 \end{figure}
 
 \subsection{Plantdisease Results}
 This section shows the accuracies per model for the Plantdisease dataset. The results are shown in Figure \ref{fig:plantdisease_results}. 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1\textwidth]{results/plantdisease_results.pdf}
+    \includegraphics[width=.6\linewidth]{results/plantdisease_results.pdf}
     \caption{Comparing Accuracies of models trained with and without Proxy Attention on the Plantdisease dataset}
     \label{fig:plantdisease_results}
 \end{figure}
@@ -78,7 +76,7 @@ This section shows the accuracies per model for the Plantdisease dataset. The re
 This section explores the validation accuracy obtained for different step schedules. The results are shown in Figure \ref{fig:schedresnet50_results}. 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1\textwidth]{results/schedule_resnet50.pdf}
+    \includegraphics[width=.6\textwidth]{results/schedule_resnet50.pdf}
     \caption{Comparing Accuracies of models trained with and without Proxy Attention on the ResNet50 \cite{heDeepResidualLearning2016} architecture for different step schedules}.
     \label{fig:schedresnet50_results}
 \end{figure}
@@ -86,71 +84,179 @@ This section explores the validation accuracy obtained for different step schedu
 \subsection{Results Grouped By Proxy Threshold}
 This section explores the validation accuracy obtained for different Proxy thresholds. The results are shown in Figure \ref{fig:proxy_threshold}. 
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{results/proxy_threshold_results.pdf}
-    \caption{Comparing Accuracies of EfficientNetB0 \cite{tanEfficientnetRethinkingModel2019} trained with Proxy Attention on the Stanford Dogs dataset\cite{khoslaNovelDatasetFineGrained} for different Proxy Thresholds}
+    \begin{subfigure}[h]{.5\textwidth}
+        \includegraphics[width=\linewidth, right]{results/proxy_threshold_results.pdf}
+        \caption{EfficientNetB0 \cite{tanEfficientnetRethinkingModel2019} trained with Proxy Attention on the Stanford Dogs dataset\cite{khoslaNovelDatasetFineGrained}}
+    \end{subfigure}
+    % \hfill
+    \begin{subfigure}[h]{.5\textwidth}
+        \includegraphics[width=\linewidth, left]{results/proxy_threshold_results_tsing.pdf}
+        \caption{Resnet18 \cite{heDeepResidualLearning2016} trained with Proxy Attention on the Tsinghua Dogs Dataset \cite{zouNewDatasetDog2020}}
+    \end{subfigure}
+    
+    \caption{Comparing Accuracies of models trained with Proxy Attention for different Proxy Thresholds}
     \label{fig:proxy_threshold}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{results/proxy_threshold_results_tsing.pdf}
-    \caption{Comparing Accuracies of Resnet18 \cite{heDeepResidualLearning2016} trained with Proxy Attention on the Tsinghua Dogs Dataset \cite{zouNewDatasetDog2020} for different Proxy Thresholds}
-    \label{fig:proxy_threshold2}
 \end{figure}
 
 \subsection{Results Grouped By Proxy Image Weight}
 This section explores the validation accuracy obtained for different Proxy image weights. The results are shown in Figure \ref{fig:proxy_weight}. 
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{results/proxy_weight_results.pdf}
-    \caption{Comparing Accuracies of EfficientNetB0 \cite{tanEfficientnetRethinkingModel2019} trained with Proxy Attention on the Stanford Dogs dataset\cite{khoslaNovelDatasetFineGrained} for different Proxy Image Weights}
-    \label{fig:proxy_weight}
-\end{figure}
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=1\textwidth]{results/proxy_weight_results.pdf}
+%     \caption{Comparing Accuracies of EfficientNetB0 \cite{tanEfficientnetRethinkingModel2019} trained with Proxy Attention on the Stanford Dogs dataset\cite{khoslaNovelDatasetFineGrained} for different Proxy Image Weights}
+%     \label{fig:proxy_weight}
+% \end{figure}
+
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=1\textwidth]{results/proxy_weight_results_tsing.pdf}
+%     \caption{Comparing Accuracies of Resnet18 \cite{heDeepResidualLearning2016} trained with Proxy Attention on the Tsinghua Dogs Dataset \cite{zouNewDatasetDog2020} for different Proxy Image Weights}
+%     \label{fig:proxy_weight2}
+% \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{results/proxy_weight_results_tsing.pdf}
-    \caption{Comparing Accuracies of Resnet18 \cite{heDeepResidualLearning2016} trained with Proxy Attention on the Tsinghua Dogs Dataset \cite{zouNewDatasetDog2020} for different Proxy Image Weights}
-    \label{fig:proxy_weight2}
+    \begin{subfigure}[h]{.5\textwidth}
+        \includegraphics[width=\linewidth, right]{results/proxy_weight_results.pdf}
+        \caption{EfficientNetB0 \cite{tanEfficientnetRethinkingModel2019} trained with Proxy Attention on the Stanford Dogs dataset\cite{khoslaNovelDatasetFineGrained}}
+    \end{subfigure}
+    % \hfill
+    \begin{subfigure}[h]{.5\textwidth}
+        \includegraphics[width=\linewidth, left]{results/proxy_weight_results_tsing.pdf}
+        \caption{Resnet18 \cite{heDeepResidualLearning2016} trained with Proxy Attention on the Tsinghua Dogs Dataset \cite{zouNewDatasetDog2020}}
+    \end{subfigure}
+    
+    \caption{Comparing Accuracies of models trained with Proxy Attention for different Proxy Image Weights}
+    \label{fig:proxy_weight}
 \end{figure}
 
 \subsection{Results Grouped By Proxy Image Subset}
 This section explores the validation accuracy obtained for different Proxy image subsets. The results are shown in Figure \ref{fig:proxy_subset}.
 
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=1\textwidth]{results/proxy_subset_attention_results.pdf}
+%     \caption{Comparing Accuracies of EfficientNetB0 \cite{tanEfficientnetRethinkingModel2019} trained with Proxy Attention on the Stanford Dogs dataset\cite{khoslaNovelDatasetFineGrained} for different Proxy Image Subsets}
+%     \label{fig:proxy_subset}
+% \end{figure}
+
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=1\textwidth]{results/proxy_subset_results_tsing.pdf}
+%     \caption{Comparing Accuracies of Resnet18 \cite{heDeepResidualLearning2016} trained with Proxy Attention on the Tsinghua Dogs Dataset \cite{zouNewDatasetDog2020} for different Proxy Image Subsets}
+%     \label{fig:proxy_subset2}
+% \end{figure}
+
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{results/proxy_subset_attention_results.pdf}
-    \caption{Comparing Accuracies of EfficientNetB0 \cite{tanEfficientnetRethinkingModel2019} trained with Proxy Attention on the Stanford Dogs dataset\cite{khoslaNovelDatasetFineGrained} for different Proxy Image Subsets}
+    \begin{subfigure}[h]{.5\textwidth}
+        \includegraphics[width=\linewidth, right]{results/proxy_subset_attention_results.pdf}
+        \caption{EfficientNetB0 \cite{tanEfficientnetRethinkingModel2019} trained with Proxy Attention on the Stanford Dogs dataset\cite{khoslaNovelDatasetFineGrained}}
+    \end{subfigure}
+    % \hfill
+    \begin{subfigure}[h]{.5\textwidth}
+        \includegraphics[width=\linewidth, left]{results/proxy_subset_results_tsing.pdf}
+        \caption{Resnet18 \cite{heDeepResidualLearning2016} trained with Proxy Attention on the Tsinghua Dogs Dataset \cite{zouNewDatasetDog2020}}
+    \end{subfigure}
+    
+    \caption{Comparing Accuracies of models trained with Proxy Attention for different Proxy Image Subsets}
     \label{fig:proxy_subset}
 \end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{results/proxy_subset_results_tsing.pdf}
-    \caption{Comparing Accuracies of Resnet18 \cite{heDeepResidualLearning2016} trained with Proxy Attention on the Tsinghua Dogs Dataset \cite{zouNewDatasetDog2020} for different Proxy Image Subsets}
-    \label{fig:proxy_subset2}
-\end{figure}
-
 
 \section{Explanability}
 This section explores the explainability of the models for different hyperparameters and datasets by using a trained model to generate attention maps for a given input image. The attention maps are compared between the same network (with the same hyperparameters) trained with and without Proxy Attention.
 
 \subsection{CIFAR 100, ResNet18, EigenGradCAM}
-\input{resnet18_cifar100_eval.tex}
+\begin{figure}[H]
+    \begin{subfigure}[b]{1\textwidth}
+        \includegraphics[width=\linewidth]{images/cifar100_resnet18_noproxy_0.pdf}
+        \caption{Without Proxy Attention}
+    \end{subfigure}
+    \begin{subfigure}[b]{1\textwidth}
+        \includegraphics[width=\linewidth]{images/cifar100_resnet18_proxy_0.pdf}
+        \caption{With Proxy Attention}
+    \end{subfigure}
+    
+    \caption{Comparison of attention maps generated by resnet18 trained with and without Proxy Attention on the cifar100 dataset}
+    \label{fig:resnet18_cifar100}
+\end{figure}
+
 
 \subsection{CIFAR 100, EfficientNetB0, EigenGradCAM}
-\input{efficientnet_b0_cifar100_eval.tex}
+\begin{figure}[H]
+    \begin{subfigure}[b]{1\textwidth}
+        \includegraphics[width=\linewidth]{images/cifar100_efficientnet_b0_noproxy_0.pdf}
+        \caption{Without Proxy Attention}
+    \end{subfigure}
+    \begin{subfigure}[b]{1\textwidth}
+        \includegraphics[width=\linewidth]{images/cifar100_efficientnet_b0_proxy_0.pdf}
+        \caption{With Proxy Attention}
+    \end{subfigure}
+
+    \caption{Comparison of attention maps generated by efficientnet\_b0 trained with and without Proxy Attention on the cifar100 dataset}
+    \label{fig:efficientnet_b0_cifar100}
+\end{figure}
+    
+
 
 \subsection{CIFAR 100, ViT , EigenGradCAM}
-\input{vit_base_patch16_224_cifar100_eval.tex}
+% \input{results/vit_base_patch16_224_cifar100_eval.tex}
+    \begin{figure}[H]
+        \begin{subfigure}[b]{1\textwidth}
+            \includegraphics[width=\linewidth]{images/gpp_cifar100_vit_base_patch16_224_noproxy_0.pdf}
+            \caption{Without Proxy Attention}
+        \end{subfigure}
+        \begin{subfigure}[b]{1\textwidth}
+            \includegraphics[width=\linewidth]{images/gpp_cifar100_vit_base_patch16_224_proxy_0.pdf}
+            \caption{With Proxy Attention}
+        \end{subfigure}
+        \caption{Comparison of attention maps generated by vit\_base\_patch16\_224 trained with and without Proxy Attention on the cifar100 dataset}
+    \end{figure}
+    
+
 
 \subsection{CIFAR 100, ViT , GradCamPlusPlus}
-\input{gpp_vit_base_patch16_224_cifar100_eval.tex}
+% \input{results/gpp_vit_base_patch16_224_cifar100_eval.tex}
+\begin{figure}[H]
+        \begin{subfigure}[b]{1\textwidth}
+            \includegraphics[width=\linewidth]{images/cifar100_vit_base_patch16_224_noproxy_0.pdf}
+            \caption{Without Proxy Attention}
+        \end{subfigure}
+        \begin{subfigure}[b]{1\textwidth}
+            \includegraphics[width=\linewidth]{images/cifar100_vit_base_patch16_224_proxy_0.pdf}
+            \caption{With Proxy Attention}
+        \end{subfigure}
+        \caption{Comparison of attention maps generated by vit\_base\_patch16\_224 trained with and without Proxy Attention on the cifar100 dataset}
+    \end{figure}
+    
+
 
 \subsection{Tsinghua Dogs, ResNet50 , GradCamPlusPlus}
-\input{gpp_resnet50_tsing_eval.tex}
+% \input{results/gpp_resnet50_tsing_eval.tex}
+    \begin{figure}[H]
+        \begin{subfigure}[b]{1\textwidth}
+            \includegraphics[width=\linewidth]{images/gpp_tsing_resnet50_noproxy_0.pdf}
+            \caption{Without Proxy Attention}
+        \end{subfigure}
+        \begin{subfigure}[b]{1\textwidth}
+            \includegraphics[width=\linewidth]{images/gpp_tsing_resnet50_proxy_0.pdf}
+            \caption{With Proxy Attention}
+        \end{subfigure}
+        \caption{Comparison of attention maps generated by resnet50 trained with and without Proxy Attention on the tsing dataset}
+    \end{figure}
+
 
 \subsection{Tsinghua Dogs, ResNet18, EigenGradCAM}
-\input{resnet18_tsing_eval.tex}
+    \begin{figure}[H]
+        \begin{subfigure}[b]{1\textwidth}
+            \includegraphics[width=\linewidth]{images/tsing_resnet18_noproxy_0.pdf}
+            \caption{Without Proxy Attention}
+        \end{subfigure}
+        \begin{subfigure}[b]{1\textwidth}
+            \includegraphics[width=\linewidth]{images/tsing_resnet18_proxy_0.pdf}
+            \caption{With Proxy Attention}
+        \end{subfigure}
+        \caption{Comparison of attention maps generated by resnet18 trained with and without Proxy Attention on the tsing dataset}
+    \end{figure}
+    
+
+
