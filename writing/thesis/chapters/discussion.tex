@@ -16,6 +16,18 @@ Although this does not impact the final performance, some possible reasons of th
 
 
 \section{Discussion of Results}
+The following observations were made based on the results of both the explainability, and the accuracy obtained for different models trained with and without proxy attention on a multitude of datasets.
+\begin{itemize}
+ \item In general, using proxy attention to training model improves performance, regardless of the dataset and model used.
+ \item Applying the proxy attention step multiple times in the training process does seem to improve performance, depending on how many times it was applied. But the rate of change of performance is not linear, and of course applying the proxy step multiple times does increase amount of compute required.
+ \item The proxy attention step also seems to improve the results of the vision transformer and helps it learn to focus on the right regions of the image faster.
+ \item From the results, we can see that it is not always beneficial to apply the proxy attention step to every image that the model predicted wrong. One of the hyper parameters was the subset of images that were passed to proxy attention. It was observed that if a network already has learnt a good representation of the data, giving it too many images might negatively affect performance. But if optimal performance has not been reached yet, then varying the Proxy Image subset parameter seems to be beneficial.
+ \item Tuning Proxy Weight and Proxy Threshold is not really necessary but can help slightly improve performance. Using the values we suggested is enough in most cases.
+ \item For easier datasets, using Proxy Attention sometimes degrades the performance and explainability of the network. For harder tasks and networks that do not initially learn well though, applying the method boosts accuracy.
+ \item In most cases results indicate that models trained with Proxy Attention have improved explainability, for both CNNs and the Vision Transformer.
+\end{itemize}
+
+
 
 \section{Limitations of Proxy Attention}
 \begin{itemize}

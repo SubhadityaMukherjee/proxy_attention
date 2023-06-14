@@ -30,86 +30,86 @@
 \contentsline {subsection}{\numberline {3.2.3}Gradient Method}{29}{subsection.3.2.3}%
 \contentsline {subsection}{\numberline {3.2.4}Gradient Threshold (Proxy Image Threshold)}{29}{subsection.3.2.4}%
 \contentsline {subsection}{\numberline {3.2.5}Multiply Weight (Proxy Image Weight)}{29}{subsection.3.2.5}%
-\contentsline {subsection}{\numberline {3.2.6}Proxy Step Schedule}{30}{subsection.3.2.6}%
+\contentsline {subsection}{\numberline {3.2.6}Proxy Step Schedule}{29}{subsection.3.2.6}%
 \contentsline {subsection}{\numberline {3.2.7}Subset Of Wrongly Classified}{30}{subsection.3.2.7}%
 \contentsline {section}{\numberline {3.3}Overview of the Codebase}{31}{section.3.3}%
-\contentsline {section}{\numberline {3.4}Datasets}{32}{section.3.4}%
+\contentsline {section}{\numberline {3.4}Datasets}{31}{section.3.4}%
 \contentsline {subsection}{\numberline {3.4.1}CIFAR 100}{32}{subsection.3.4.1}%
 \contentsline {subsection}{\numberline {3.4.2}Stanford dogs}{32}{subsection.3.4.2}%
-\contentsline {subsection}{\numberline {3.4.3}ASL Alphabet}{33}{subsection.3.4.3}%
-\contentsline {subsection}{\numberline {3.4.4}Plant Disease}{34}{subsection.3.4.4}%
-\contentsline {subsection}{\numberline {3.4.5}Caltech101}{35}{subsection.3.4.5}%
+\contentsline {subsection}{\numberline {3.4.3}ASL Alphabet}{32}{subsection.3.4.3}%
+\contentsline {subsection}{\numberline {3.4.4}Plant Disease}{33}{subsection.3.4.4}%
+\contentsline {subsection}{\numberline {3.4.5}Caltech101}{34}{subsection.3.4.5}%
 \contentsline {subsection}{\numberline {3.4.6}Places Dataset}{35}{subsection.3.4.6}%
-\contentsline {subsection}{\numberline {3.4.7}Tsinghua Dogs}{36}{subsection.3.4.7}%
-\contentsline {section}{\numberline {3.5}Data Loading and Pre-Processing}{37}{section.3.5}%
-\contentsline {subsection}{\numberline {3.5.1}Data Directory structure}{37}{subsection.3.5.1}%
-\contentsline {subsection}{\numberline {3.5.2}Custom Data Loading}{38}{subsection.3.5.2}%
-\contentsline {subsection}{\numberline {3.5.3}Label function}{38}{subsection.3.5.3}%
-\contentsline {subsection}{\numberline {3.5.4}Clearing proxy images}{39}{subsection.3.5.4}%
-\contentsline {subsection}{\numberline {3.5.5}Augmentations}{39}{subsection.3.5.5}%
-\contentsline {section}{\numberline {3.6}Architectures}{39}{section.3.6}%
-\contentsline {subsection}{\numberline {3.6.1}TIMM}{39}{subsection.3.6.1}%
-\contentsline {subsection}{\numberline {3.6.2}VGG16}{40}{subsection.3.6.2}%
-\contentsline {subsection}{\numberline {3.6.3}ResNet}{40}{subsection.3.6.3}%
-\contentsline {subsection}{\numberline {3.6.4}EfficientNetB0}{40}{subsection.3.6.4}%
-\contentsline {subsection}{\numberline {3.6.5}ViT Base Patch $16 \times 224$}{42}{subsection.3.6.5}%
-\contentsline {section}{\numberline {3.7}Grid Search}{42}{section.3.7}%
-\contentsline {section}{\numberline {3.8}Training Resumption}{42}{section.3.8}%
-\contentsline {subsection}{\numberline {3.8.1}Checkpoints}{43}{subsection.3.8.1}%
-\contentsline {subsection}{\numberline {3.8.2}Broken Trials}{43}{subsection.3.8.2}%
-\contentsline {section}{\numberline {3.9}Optimizations}{43}{section.3.9}%
-\contentsline {subsection}{\numberline {3.9.1}Proxy Step specific optimizations}{43}{subsection.3.9.1}%
-\contentsline {subsection}{\numberline {3.9.2}Grid Search}{44}{subsection.3.9.2}%
-\contentsline {subsection}{\numberline {3.9.3}Workers}{44}{subsection.3.9.3}%
-\contentsline {subsection}{\numberline {3.9.4}Mixed Precision}{44}{subsection.3.9.4}%
-\contentsline {subsection}{\numberline {3.9.5}No grad}{44}{subsection.3.9.5}%
-\contentsline {subsection}{\numberline {3.9.6}Pillow SIMD}{45}{subsection.3.9.6}%
-\contentsline {section}{\numberline {3.10}Tensorboard}{45}{section.3.10}%
-\contentsline {section}{\numberline {3.11}Optimizer}{45}{section.3.11}%
-\contentsline {section}{\numberline {3.12}LR scheduler}{45}{section.3.12}%
-\contentsline {section}{\numberline {3.13}Loss function}{46}{section.3.13}%
-\contentsline {section}{\numberline {3.14}Batch Size Finder}{46}{section.3.14}%
-\contentsline {section}{\numberline {3.15}Result Aggregation}{47}{section.3.15}%
-\contentsline {section}{\numberline {3.16}Inference}{47}{section.3.16}%
-\contentsline {chapter}{\numberline {4}Results}{49}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Accuracy}{49}{section.4.1}%
-\contentsline {subsection}{\numberline {4.1.1}Results Per Dataset}{49}{subsection.4.1.1}%
-\contentsline {subsection}{\numberline {4.1.2}Tsinghua Dogs and Places256 Results}{49}{subsection.4.1.2}%
-\contentsline {subsection}{\numberline {4.1.3}Stanford Dogs and Cifar100 Results}{50}{subsection.4.1.3}%
-\contentsline {subsection}{\numberline {4.1.4}Caltech101 and Asl Results}{50}{subsection.4.1.4}%
-\contentsline {subsection}{\numberline {4.1.5}Plantdisease Results}{50}{subsection.4.1.5}%
-\contentsline {subsection}{\numberline {4.1.6}Results Grouped By Schedule}{51}{subsection.4.1.6}%
-\contentsline {subsection}{\numberline {4.1.7}Results Grouped By Proxy Threshold}{51}{subsection.4.1.7}%
-\contentsline {subsection}{\numberline {4.1.8}Results Grouped By Proxy Image Weight}{52}{subsection.4.1.8}%
-\contentsline {subsection}{\numberline {4.1.9}Results Grouped By Proxy Image Subset}{52}{subsection.4.1.9}%
+\contentsline {subsection}{\numberline {3.4.7}Tsinghua Dogs}{35}{subsection.3.4.7}%
+\contentsline {section}{\numberline {3.5}Data Loading and Pre-Processing}{35}{section.3.5}%
+\contentsline {subsection}{\numberline {3.5.1}Data Directory structure}{36}{subsection.3.5.1}%
+\contentsline {subsection}{\numberline {3.5.2}Custom Data Loading}{36}{subsection.3.5.2}%
+\contentsline {subsection}{\numberline {3.5.3}Label function}{37}{subsection.3.5.3}%
+\contentsline {subsection}{\numberline {3.5.4}Clearing proxy images}{37}{subsection.3.5.4}%
+\contentsline {subsection}{\numberline {3.5.5}Augmentations}{38}{subsection.3.5.5}%
+\contentsline {section}{\numberline {3.6}Architectures}{38}{section.3.6}%
+\contentsline {subsection}{\numberline {3.6.1}TIMM}{38}{subsection.3.6.1}%
+\contentsline {subsection}{\numberline {3.6.2}VGG16}{38}{subsection.3.6.2}%
+\contentsline {subsection}{\numberline {3.6.3}ResNet}{38}{subsection.3.6.3}%
+\contentsline {subsection}{\numberline {3.6.4}EfficientNetB0}{39}{subsection.3.6.4}%
+\contentsline {subsection}{\numberline {3.6.5}ViT Base Patch $16 \times 224$}{39}{subsection.3.6.5}%
+\contentsline {section}{\numberline {3.7}Grid Search}{40}{section.3.7}%
+\contentsline {section}{\numberline {3.8}Training Resumption}{41}{section.3.8}%
+\contentsline {subsection}{\numberline {3.8.1}Checkpoints}{41}{subsection.3.8.1}%
+\contentsline {subsection}{\numberline {3.8.2}Broken Trials}{41}{subsection.3.8.2}%
+\contentsline {section}{\numberline {3.9}Optimizations}{41}{section.3.9}%
+\contentsline {subsection}{\numberline {3.9.1}Proxy Step specific optimizations}{41}{subsection.3.9.1}%
+\contentsline {subsection}{\numberline {3.9.2}Grid Search}{42}{subsection.3.9.2}%
+\contentsline {subsection}{\numberline {3.9.3}Workers}{42}{subsection.3.9.3}%
+\contentsline {subsection}{\numberline {3.9.4}Mixed Precision}{42}{subsection.3.9.4}%
+\contentsline {subsection}{\numberline {3.9.5}No grad}{43}{subsection.3.9.5}%
+\contentsline {subsection}{\numberline {3.9.6}Pillow SIMD}{43}{subsection.3.9.6}%
+\contentsline {section}{\numberline {3.10}Tensorboard}{43}{section.3.10}%
+\contentsline {section}{\numberline {3.11}Optimizer}{43}{section.3.11}%
+\contentsline {section}{\numberline {3.12}LR scheduler}{44}{section.3.12}%
+\contentsline {section}{\numberline {3.13}Loss function}{44}{section.3.13}%
+\contentsline {section}{\numberline {3.14}Batch Size Finder}{44}{section.3.14}%
+\contentsline {section}{\numberline {3.15}Result Aggregation}{45}{section.3.15}%
+\contentsline {section}{\numberline {3.16}Inference}{45}{section.3.16}%
+\contentsline {chapter}{\numberline {4}Results}{47}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Accuracy}{47}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Results Per Dataset}{47}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Tsinghua Dogs and Places256 Results}{47}{subsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.1.3}Stanford Dogs and CIFAR100 Results}{47}{subsection.4.1.3}%
+\contentsline {subsection}{\numberline {4.1.4}Caltech101 and ASL Results}{48}{subsection.4.1.4}%
+\contentsline {subsection}{\numberline {4.1.5}Plant Disease Results}{49}{subsection.4.1.5}%
+\contentsline {subsection}{\numberline {4.1.6}Results Grouped By Schedule}{50}{subsection.4.1.6}%
+\contentsline {subsection}{\numberline {4.1.7}Results Grouped By Proxy Threshold}{50}{subsection.4.1.7}%
+\contentsline {subsection}{\numberline {4.1.8}Results Grouped By Proxy Image Weight}{51}{subsection.4.1.8}%
+\contentsline {subsection}{\numberline {4.1.9}Results Grouped By Proxy Image Subset}{51}{subsection.4.1.9}%
 \contentsline {section}{\numberline {4.2}Explanability}{53}{section.4.2}%
 \contentsline {subsection}{\numberline {4.2.1}CIFAR 100, ResNet18, EigenGradCAM}{53}{subsection.4.2.1}%
-\contentsline {subsection}{\numberline {4.2.2}CIFAR 100, EfficientNetB0, EigenGradCAM}{54}{subsection.4.2.2}%
-\contentsline {subsection}{\numberline {4.2.3}CIFAR 100, ViT , EigenGradCAM}{55}{subsection.4.2.3}%
-\contentsline {subsection}{\numberline {4.2.4}CIFAR 100, ViT , GradCamPlusPlus}{56}{subsection.4.2.4}%
-\contentsline {subsection}{\numberline {4.2.5}Tsinghua Dogs, ResNet50 , GradCamPlusPlus}{57}{subsection.4.2.5}%
-\contentsline {subsection}{\numberline {4.2.6}Tsinghua Dogs, ResNet18, EigenGradCAM}{58}{subsection.4.2.6}%
-\contentsline {chapter}{\numberline {5}Discussion}{59}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Research Questions}{59}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Discussion of Results}{60}{section.5.2}%
-\contentsline {section}{\numberline {5.3}Limitations of Proxy Attention}{60}{section.5.3}%
-\contentsline {section}{\numberline {5.4}General Discussion}{61}{section.5.4}%
-\contentsline {subsection}{\numberline {5.4.1}Data Augmentation}{61}{subsection.5.4.1}%
-\contentsline {subsection}{\numberline {5.4.2}Other Domains}{61}{subsection.5.4.2}%
+\contentsline {subsection}{\numberline {4.2.2}CIFAR 100, EfficientNetB0, EigenGradCAM}{53}{subsection.4.2.2}%
+\contentsline {subsection}{\numberline {4.2.3}CIFAR 100, ViT , EigenGradCAM}{54}{subsection.4.2.3}%
+\contentsline {subsection}{\numberline {4.2.4}CIFAR 100, ViT , GradCamPlusPlus}{54}{subsection.4.2.4}%
+\contentsline {subsection}{\numberline {4.2.5}Tsinghua Dogs, ResNet50 , GradCamPlusPlus}{55}{subsection.4.2.5}%
+\contentsline {subsection}{\numberline {4.2.6}Tsinghua Dogs, ResNet18, EigenGradCAM}{56}{subsection.4.2.6}%
+\contentsline {chapter}{\numberline {5}Discussion}{58}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Research Questions}{58}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Discussion of Results}{59}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Limitations of Proxy Attention}{59}{section.5.3}%
+\contentsline {section}{\numberline {5.4}General Discussion}{60}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}Data Augmentation}{60}{subsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.4.2}Other Domains}{60}{subsection.5.4.2}%
 \contentsline {subsection}{\numberline {5.4.3}Model Architecture and Attention Modules}{61}{subsection.5.4.3}%
 \contentsline {subsection}{\numberline {5.4.4}Gradient Based Techniques}{61}{subsection.5.4.4}%
-\contentsline {subsection}{\numberline {5.4.5}Hyperparameters}{62}{subsection.5.4.5}%
+\contentsline {subsection}{\numberline {5.4.5}Hyperparameters}{61}{subsection.5.4.5}%
 \contentsline {subsection}{\numberline {5.4.6}Stability and Training Effects}{62}{subsection.5.4.6}%
 \contentsline {subsection}{\numberline {5.4.7}Challenges with External Libraries}{62}{subsection.5.4.7}%
-\contentsline {chapter}{\numberline {6}Conclusion}{64}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Contributions}{64}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Lessons Learned}{64}{section.6.2}%
-\contentsline {section}{\numberline {6.3}Future Work}{65}{section.6.3}%
-\contentsline {chapter}{\numberline {7}Appendix}{66}{chapter.7}%
-\contentsline {section}{\numberline {7.1}Explanability Results}{66}{section.7.1}%
-\contentsline {subsection}{\numberline {7.1.1}CIFAR 100, ResNet18, EigenGradCAM}{66}{subsection.7.1.1}%
-\contentsline {subsection}{\numberline {7.1.2}CIFAR 100, EfficientNetB0, EigenGradCAM}{68}{subsection.7.1.2}%
-\contentsline {subsection}{\numberline {7.1.3}CIFAR 100, ViT , EigenGradCAM}{69}{subsection.7.1.3}%
-\contentsline {subsection}{\numberline {7.1.4}CIFAR 100, ViT , GradCamPlusPlus}{71}{subsection.7.1.4}%
-\contentsline {subsection}{\numberline {7.1.5}Tsinghua Dogs, ResNet50 , GradCamPlusPlus}{72}{subsection.7.1.5}%
-\contentsline {subsection}{\numberline {7.1.6}Tsinghua Dogs, ResNet18, EigenGradCAM}{74}{subsection.7.1.6}%
+\contentsline {chapter}{\numberline {6}Conclusion}{63}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Contributions}{63}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Lessons Learned}{63}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Future Work}{64}{section.6.3}%
+\contentsline {chapter}{\numberline {7}Appendix}{65}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Explanability Results}{65}{section.7.1}%
+\contentsline {subsection}{\numberline {7.1.1}CIFAR 100, ResNet18, EigenGradCAM}{65}{subsection.7.1.1}%
+\contentsline {subsection}{\numberline {7.1.2}CIFAR 100, EfficientNetB0, EigenGradCAM}{65}{subsection.7.1.2}%
+\contentsline {subsection}{\numberline {7.1.3}CIFAR 100, ViT , EigenGradCAM}{65}{subsection.7.1.3}%
+\contentsline {subsection}{\numberline {7.1.4}CIFAR 100, ViT , GradCamPlusPlus}{65}{subsection.7.1.4}%
+\contentsline {subsection}{\numberline {7.1.5}Tsinghua Dogs, ResNet50 , GradCamPlusPlus}{65}{subsection.7.1.5}%
+\contentsline {subsection}{\numberline {7.1.6}Tsinghua Dogs, ResNet18, EigenGradCAM}{65}{subsection.7.1.6}%

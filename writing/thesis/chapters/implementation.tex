@@ -106,7 +106,7 @@ A visualization of the different thresholds tested is shown in Figure \ref{fig:t
 \subsection{Multiply Weight (Proxy Image Weight)}
 The Multiply Weight hyperparameter is used to control how strongly the attention map is applied to the image. The values are in the range $[0,1]$. A higher value would mean that the image is more strongly affected by the attention map, while a lower value would mean that the image is less affected. This is a balancing act as choosing too high of a value would mean that the image is affected too much, and important features might be lost from the image. Choosing too low of a value would mean that the image is not affected enough, rendering the Proxy step useless. The optimal value of this hyperparameter is found based on the results of the experiments conducted. A visualization of the different multiply weights tested is shown in Figure \ref{fig:thresholds_and_mults}.
 
-\begin{figure}[H]
+\begin{figure}[!htb]
     \begin{subfigure}[b]{0.5\textwidth}
         \includegraphics[width=\linewidth, right]{images/grad_threshold.pdf}
         \caption{A visualization of the different thresholds and their effect on the image}
@@ -138,7 +138,7 @@ This section provides an overview of the code structure and the datasets used in
 A separate directory is used for each dataset, with each dataset being split into training and testing subdirectories. The results directory contains the aggregated runs, which are used directly in the report. The figures and tables are generated from the aggregated runs using the \textit{log\_viewer.ipynb} file. The runs directory contains the runs of the model. Each run has a folder with the run number, which contains the tensorboard logs and the checkpoints. 
 The \textit{src} directory contains the source code for this project. The \textit{main.py} file is the entry point for the code and is used to configure the runtime hyperparameters. The \textit{proxyattention} folder contains the code for the model and the \textit{meta\_utils.py} file contains utilities that are reused across the codebase while the \textit{training.py} file contains all the code required for Proxy Attention and training the models.
 
-% \begin{figure}[H]
+% \begin{figure}[!htb]
 %     % resize to textwidth
 %     \centering
 %     \begin{forest}
@@ -194,7 +194,7 @@ The \textit{src} directory contains the source code for this project. The \texti
 %     \label{fig:overview_code}
 % \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[!htb]
     \centering
     \includegraphics[width=.3\linewidth]{images/dirstruct.png}
     \caption{Code Directory Structure}
@@ -211,7 +211,7 @@ The images provided by the datasets are of varying sizes, but are resized to a s
 The CIFAR 100 dataset, introduced by \cite{krizhevskyLearningMultipleLayers}, is an image dataset with 60000 colour images with dimensions 32x32 pixels. As the name suggests, the dataset has 100 unique classes. Each of these classes has 500 training images. Some classes are - \textbf{airplane, bird, truck, ship, deer and dog}. This dataset is used as a coarse-grained classification dataset in this project.\\
 The dataset and complete class information can be found \href{https://www.kaggle.com/datasets/fedesoriano/cifar100}{here}.
 
-\begin{figure}[H]
+\begin{figure}[!htb]
     \centering
     \includegraphics[width=1\textwidth]{images/cifar100.pdf}
     \caption{A batch of images from the CIFAR100 dataset}
@@ -222,7 +222,7 @@ The dataset and complete class information can be found \href{https://www.kaggle
 The Stanford Dogs dataset \cite{khoslaNovelDatasetFineGrained} is a popular fine-grained image classification dataset. There are more than 20k images in this dataset categorized into  120 classes of dog breeds like the \textbf{Afghan Hound , Appenzeller} etc. Being a fine-grained dataset, the images are very similar to each other and the classification task is much harder.\\
 This dataset was chosen to further evaluate the explainability of Proxy Attention.\\
 The dataset and complete class information can be found \href{http://vision.stanford.edu/aditya86/ImageNetDogs/}{here}.
-\begin{figure}[H]
+\begin{figure}[!htb]
     \centering
     \includegraphics[width=1\textwidth]{images/dogs.pdf}
     \caption{A batch of images from the Stanford Dogs dataset}
@@ -234,7 +234,7 @@ The ASL dataset is a collection of hand pose images from the American Sign Langu
 The dataset chosen to evaluate Proxy Attention is the ASL Alphabet dataset, a more specific subset that has all the letters of the English alphabet along with the special characters \textbf{del, space and nothing}. The background is mostly the same, with minor changes. The data is also recorded from people with a similar skin tone, which makes the task easier.\\
 This is an easy to classify dataset and was used as an initial test of the Proxy Attention mechanism. The results of the same are left in for future reference. \\
 The dataset and complete class information can be found \href{https://www.kaggle.com/datasets/grassknoted/asl-alphabet}{here}.
-\begin{figure}[H]
+\begin{figure}[!htb]
     \centering
     \includegraphics[width=1\textwidth]{images/asl.pdf}
     \caption{A batch of images from the ASL Alphabet dataset}
@@ -245,7 +245,7 @@ The dataset and complete class information can be found \href{https://www.kaggle
 \subsection{Plant Disease}
 This dataset consists of images of plant diseases across a variety of plants. The dataset is also a fine-grained classification dataset with 39 classes. Other than a few diseases, most of them are quite similar to each other, making the classification task harder. Some examples of the classes are \textbf{apple scab, blueberry healthy, cherry powdery mildew} etc.\\
 The dataset and complete class information can be found \href{https://www.kaggle.com/datasets/rajibdpi/plant-disease-dataset}{here}.
-\begin{figure}[H]
+\begin{figure}[!htb]
     \centering
     \includegraphics[width=1\textwidth]{images/plantdisease.pdf}
     \caption{A batch of images from the Plant Disease dataset}
@@ -257,7 +257,7 @@ The dataset and complete class information can be found \href{https://www.kaggle
 The Caltech101 \cite{liCaltech101} dataset was created to tackle the absence of a uniform baseline comparison for vision classification tasks. The dataset has 101 categories of images, with a total of 9146 images. A background category is also included, which has images that do not belong to any of the 101 categories. An advantage of this dataset is that the images are of uniform size and have low clutter and occlusion, making it easier to classify. The caveat is that some categories have fewer samples than others.\\
 The dataset and complete class information can be found \href{https://www.kaggle.com/datasets/862ae86edba271c39f76d0b530edeb55076b4b82b971160637210900747c44b1}{here}.
 
-\begin{figure}[H]
+\begin{figure}[!htb]
     \centering
     \includegraphics[width=1\textwidth]{images/caltech101.pdf}
     \caption{A batch of images from the Caltech101 dataset}
@@ -271,7 +271,7 @@ The dataset and complete class information can be found \href{https://www.kaggle
 % - eg: engine room, excavation, kitchen
 The Places dataset \cite{zhouPlaces10Million2018} contains 2.5 million images of different scenes. These scenes contain both indoor and outdoor scenes and have been categorized into 205 classes, including engine room, excavation, and kitchen. This dataset used for this research is a subset of the MIT places dataset, which comprises a total of 10\% out of the original 10 million images. The large-scale nature of the dataset allows for extensive exploration of scene recognition and understanding tasks but here it is used as a coarse-grained image classification dataset.\\
 The dataset and complete class information can be found \href{https://www.kaggle.com/datasets/mittalshubham/images256}{here}.
-\begin{figure}[H]
+\begin{figure}[!htb]
     \centering
     \includegraphics[width=1\textwidth]{images/places256.pdf}
     \caption{A batch of images from the Places dataset}
@@ -286,7 +286,7 @@ The dataset and complete class information can be found \href{https://www.kaggle
 The Tsinghua Dogs dataset \cite{zouNewDatasetDog2020} is a comprehensive fine-grained classification dataset specifically designed for dog breeds. It contains a substantial collection of images, with over 65\% of them collected from real-life sources. Each breed is represented by a minimum of 200 images and a maximum of 7,449 images. According to the authors, these values are somewhat proportionate to their relative population in China. This approach ensures increased diversity for each breed compared to existing datasets. The Tsinghua Dogs dataset also provides annotated bounding boxes for each dog's whole body and head in the images, for object detection tasks, but this information is not used for this project. With a wide range of breeds included, such as Great Danes and Norwich Terriers, the dataset exhibits significant variations in appearance. While some breeds are quite similar to each other, others are rather different, which further adds to the complexity of the image classification task. 
 The dataset and complete class information can be found \href{https://cg.cs.tsinghua.edu.cn/ThuDogs/}{here}.
 
-\begin{figure}[H]
+\begin{figure}[!htb]
     \centering
     \includegraphics[width=1\textwidth]{images/tsing.pdf}
     \caption{A batch of images from the Tsinghua Dogs dataset}
@@ -300,7 +300,7 @@ Since many datasets were used in the project, it was important to ensure that th
 \subsection{Data Directory structure}
 The data was stored in a specific directory structure similar to the ImageNet \cite{dengImageNetLargeScaleHierarchical2009} dataset to maintain consistency across the different experiments. Every dataset is divided into training and validation folders. Most of the datasets used in the project come with this split, but a validation split is created manually for those that do not. (Note that the test split is created from the training split while training the model and is not hardcoded.) For every class in the dataset, a subfolder within the parent folder is created with the name of the class.
 All the datasets used are stored in the same folder on an SSD for ease of access and performance. The directory structure is shown in Figure ~\ref{fig:dataset_structure}.
-\begin{figure}[H]
+\begin{figure}[!htb]
     \centering
     \begin{forest}
         for tree={
@@ -389,7 +389,7 @@ The VGG architecture was one of the first deep networks that proposed an increas
 
 The architecture of VGG16 is shown in Figure \ref{fig:vgg16}.
 
-\begin{figure}[htbp]
+\begin{figure}[!htb]
     \centering
     \includegraphics[width=.6\linewidth]{images/vggarch.png}
     \caption{VGG16 architecture}
@@ -400,7 +400,7 @@ The architecture of VGG16 is shown in Figure \ref{fig:vgg16}.
 The ResNet architecture \cite{heDeepResidualLearning2016} introduced by He et al. changed the way deep learning models were created by stabilising the flow of gradients across the network and enabling the creation of much deeper models. He et al. addressed the problem of deeper networks failing to achieve better performance compared to their shallower counterparts by using the concept of a residual connection that enables propagating the input along with the learned features across the deeper network. The ResNet architecture directly tackled the vanishing gradient issue faced by its predecessors and paved the way for better models. The number after the ResNet (eg. ResNet 18) denotes how many layers deep the network is.
 
 The architecture of ResNet18 is shown in Figure \ref{fig:resnet18}.
-\begin{figure}[htbp]
+\begin{figure}[!htb]
     \centering
     \includegraphics[width=.6\linewidth]{images/resnetarch.png}
     \caption{ResNet18 architecture}
@@ -411,7 +411,7 @@ The architecture of ResNet18 is shown in Figure \ref{fig:resnet18}.
 EfficientNet is one of the newer architectures on this list and was proposed by Tan et al. as a means of running larger architectures with lower computational resources. The research on EfficientNet proposed a compound uniform scaling method that combined the scaling of depth, width and resolution. Using this scaling approach enables EfficientNet to scale between performance and efficiency as required. The number after the EfficientNet (eg. EfficientNet B0) denotes the scaling factor. The larger the number, the larger the number of layers and the wider the network is. This paper uses the base (B0) configuration.
 
 The architecture of EfficientNetB0 is shown in Figure \ref{fig:efficientnetb0}.
-\begin{figure}[htbp]
+\begin{figure}[!htb]
     \centering
     \includegraphics[width=.6\linewidth]{images/effnetarch.png}
     \caption{EfficientNetB0 architecture}
@@ -423,7 +423,7 @@ The architecture of EfficientNetB0 is shown in Figure \ref{fig:efficientnetb0}.
 Transformers have been all the rage in NLP for years now, but it was not possible to use them directly in CV tasks until Dosovitskiy et al. proposed the Vision Transformer (ViT) \cite{dosovitskiyImageWorth16x162021}. The ViT considers an image as a sequence of $x \times y$ patches that enables it to use transformer architectures to images. Using a sequential representation allows capturing long-range dependences and since transformers learn "attention", using them allows the model to also learn contextual information better than regular CNNs. The ViT proved to be a landmark in CV and now approaches that use transformers dominate the SOTA in almost every niche. $x$ in this case represents the size of the patch, and in this paper a size of 16 is used. $y$ represents the size of the input image, and in this paper an image size of 224 is used. 
 
 The architecture of ViT Base Patch $16 \times 224$ is shown in Figure \ref{fig:vit}.
-\begin{figure}[htbp]
+\begin{figure}[!htb]
     \centering
     \includegraphics[width=.6\linewidth]{images/vitarch.png}
     \caption{ViT Base Patch $16 \times 224$ architecture}
@@ -514,7 +514,7 @@ The batch size finder algorithm is rather simple. It starts by testing for a sma
 A random batch of data with the size that is to be tested is generated and passed through the required model. If the GPU fails to accommodate the current batch of data, the loop terminates, and the required batch size is obtained. The rest of the steps required to train a network are also performed on this randomly generated data.
 This algorithm remains the same for any model, data type, or other further optimizations applied (such as mixed precision training \cite{micikeviciusMixedPrecisionTraining2017}) and is robust to multiple GPUs being used for training.
 
-\begin{figure}[H]
+\begin{figure}[!htb]
     \centering
     \includegraphics[width=0.6\linewidth]{images/batchsizefinder.pdf}
     \caption{Diagramatic representation of the Batch Size Finder Algorithm}
