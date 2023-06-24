@@ -1,13 +1,13 @@
 # Fdb version 4
-["biber main"] 1687343743 "main.bcf" "main.bbl" "main" 1687343887 0
+["biber main"] 1687343743 "main.bcf" "main.bbl" "main" 1687618550 0
   "My Library.bib" 1687343742 563733 14d8638f6cbdaae1730973b84daaf2d3 ""
-  "main.bcf" 1687343887 123444 e1a0a054e588698c072cbeb9f637d70f "pdflatex"
+  "main.bcf" 1687618550 123444 e1a0a054e588698c072cbeb9f637d70f "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1687343884 "/Users/eragon/Documents/CODE/Github/proxy_attention/writing/thesis/main.tex" "main.pdf" "main" 1687343887 0
-  "/Users/eragon/Documents/CODE/Github/proxy_attention/writing/thesis/main.tex" 1687342963 8824 d8e9c1ea41b27db6c92318d2ede3942a ""
+["pdflatex"] 1687618546 "/Users/eragon/Documents/CODE/Github/proxy_attention/writing/thesis/main.tex" "main.pdf" "main" 1687618550 0
+  "/Users/eragon/Documents/CODE/Github/proxy_attention/writing/thesis/main.tex" 1687618546 8827 751e4a9936253db533cb0364d4cabbaf ""
   "/usr/local/texlive/2022basic/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2022basic/texmf-dist/fonts/tfm/adobe/helvetic/phvr7t.tfm" 1136768653 2520 53e01eef820ca829e42c1333c3fd02b9 ""
   "/usr/local/texlive/2022basic/texmf-dist/fonts/tfm/adobe/helvetic/phvr8r.tfm" 1136768653 4712 9ef4d7d106579d4b136e1529e1a4533c ""
@@ -362,14 +362,14 @@
   "images/tsing_resnet18_proxy_3.pdf" 1686300485 635513 08638315d5f6b983e3a6eb23cfdb2e67 ""
   "images/vggarch.png" 1686569532 46325 dfe4eaaa4450e2b58b38c5fe82f918c0 ""
   "images/vitarch.png" 1686569571 328422 02620e5e734cb18084f1e74f326ff1cf ""
-  "main.aux" 1687343887 55863 e6c89de1747ed3da0d4f28e6190a533d "pdflatex"
+  "main.aux" 1687618550 55863 e6c89de1747ed3da0d4f28e6190a533d "pdflatex"
   "main.bbl" 1687343785 243974 8e5e9221748e09c65afe1be29bf06cfb "biber main"
-  "main.lof" 1687343887 9140 bc14171ae33ecdbe4f572c7f2bf4e996 "pdflatex"
-  "main.lot" 1687343887 170 5172fc40d96ddf0ade05c2687a3253b9 "pdflatex"
-  "main.out" 1687343887 12740 dbe97534fa794674078b6b996ef5520f "pdflatex"
-  "main.run.xml" 1687343887 2305 45a15ab55dcc23c59be4eaa4484b97a2 "pdflatex"
-  "main.tex" 1687342963 8824 d8e9c1ea41b27db6c92318d2ede3942a ""
-  "main.toc" 1687343887 7456 f718f59f9f3e871b4a403fed3aff7f4b "pdflatex"
+  "main.lof" 1687618550 9140 bc14171ae33ecdbe4f572c7f2bf4e996 "pdflatex"
+  "main.lot" 1687618550 170 5172fc40d96ddf0ade05c2687a3253b9 "pdflatex"
+  "main.out" 1687618550 12740 dbe97534fa794674078b6b996ef5520f "pdflatex"
+  "main.run.xml" 1687618550 2305 45a15ab55dcc23c59be4eaa4484b97a2 "pdflatex"
+  "main.tex" 1687618546 8827 751e4a9936253db533cb0364d4cabbaf ""
+  "main.toc" 1687618550 7456 f718f59f9f3e871b4a403fed3aff7f4b "pdflatex"
   "results/asl_results.pdf" 1686238734 13577 e898250a109842be46316a3d5a43372c ""
   "results/caltech101_results.pdf" 1686238734 13921 e28e1a3f789581155a3d1eef3f183d12 ""
   "results/cifar100_results.pdf" 1686238734 14524 3cee3008d4ba985244f6895f2baa8de5 ""

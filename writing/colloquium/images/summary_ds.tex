@@ -1,0 +1,46 @@
+\begin{table}[H]
+\centering
+\resizebox{0.8\columnwidth}{!}{%
+\begin{tabular}{lllr}
+\toprule
+    &                 &       &   accuracy \\
+ds\_name & model & step\_schedule &            \\
+\midrule
+plantdisease & resnet18 & Proxy &  99.067500 \\
+    & efficientnet\_b0 & Proxy &  98.971539 \\
+    & resnet18 & No Proxy &  98.949997 \\
+    & resnet50 & No Proxy &  98.949997 \\
+    & efficientnet\_b0 & No Proxy &  98.900002 \\
+    & resnet50 & Proxy &  98.845833 \\
+dogs & resnet50 & Proxy &  95.495939 \\
+    & efficientnet\_b0 & Proxy &  94.328558 \\
+    & resnet50 & No Proxy &  92.011574 \\
+    & resnet18 & Proxy &  85.764118 \\
+    & efficientnet\_b0 & No Proxy &  85.627503 \\
+    & vit\_base\_patch16\_224 & Proxy &  82.925952 \\
+    & resnet18 & No Proxy &  71.414997 \\
+    & vit\_base\_patch16\_224 & No Proxy &  66.071427 \\
+cifar100 & resnet50 & Proxy &  82.852500 \\
+    & efficientnet\_b0 & Proxy &  80.914286 \\
+    & resnet50 & No Proxy &  78.699997 \\
+    & resnet18 & Proxy &  76.496922 \\
+    & vit\_base\_patch16\_224 & Proxy &  75.651538 \\
+    & efficientnet\_b0 & No Proxy &  75.220001 \\
+    & resnet18 & No Proxy &  71.000000 \\
+    & vit\_base\_patch16\_224 & No Proxy &  54.910000 \\
+caltech101 & efficientnet\_b0 & Proxy &  97.504748 \\
+    & resnet50 & Proxy &  96.978605 \\
+    &                 & No Proxy &  95.581802 \\
+    & efficientnet\_b0 & No Proxy &  94.313210 \\
+asl & resnet50 & No Proxy &  99.989998 \\
+    & efficientnet\_b0 & No Proxy &  99.949997 \\
+    & resnet50 & Proxy &  99.941667 \\
+    & resnet18 & Proxy &  99.917500 \\
+    &                 & No Proxy &  99.910004 \\
+    & efficientnet\_b0 & Proxy &  99.859165 \\
+\bottomrule
+\end{tabular}
+}
+\caption{Summary of results on different datasets}
+\label{tab:summary_ds}
+\end{table}

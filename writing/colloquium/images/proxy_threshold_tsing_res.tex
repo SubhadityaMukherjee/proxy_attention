@@ -1,0 +1,22 @@
+\begin{table}[H]
+\centering
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lllr}
+\toprule
+ &  &  & accuracy \\
+ds_name & proxy_threshold & model &  \\
+\midrule
+\multirow[t]{4}{*}{tsing} & 0.100000 & resnet18 & 77.485834 \\
+\cline{2-4}
+ & 0.850000 & resnet18 & 77.447407 \\
+\cline{2-4}
+ & 0.400000 & resnet18 & 77.324595 \\
+\cline{2-4}
+ & 0.800000 & resnet18 & 77.171633 \\
+\cline{1-4} \cline{2-4}
+\bottomrule
+\end{tabular}
+}
+\caption{Accuracy grouped by Proxy Threshold for ResNet18 on the Tsinghua Dogs Dataset}
+\label{tab:proxy_threshold}
+\end{table}

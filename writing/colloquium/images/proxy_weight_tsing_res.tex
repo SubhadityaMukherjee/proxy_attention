@@ -1,0 +1,22 @@
+\begin{table}[H]
+\centering
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lllr}
+\toprule
+ &  &  & accuracy \\
+ds_name & proxy_image_weight & model &  \\
+\midrule
+\multirow[t]{4}{*}{tsing} & 0.4 & resnet18 & 77.411389 \\
+\cline{2-4}
+ & 0.8 & resnet18 & 77.405834 \\
+\cline{2-4}
+ & 0.1 & resnet18 & 77.352985 \\
+\cline{2-4}
+ & 0.95 & resnet18 & 77.243244 \\
+\cline{1-4} \cline{2-4}
+\bottomrule
+\end{tabular}
+}
+\caption{Accuracy grouped by Proxy Image Weights for ResNet18 on the Tsinghua Dogs Dataset}
+\label{tab:proxy_weight2}
+\end{table}

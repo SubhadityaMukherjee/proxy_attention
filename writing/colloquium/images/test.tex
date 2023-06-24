@@ -1,0 +1,26 @@
+\begin{table}[H]
+\centering
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{lllr}
+\toprule
+    &               &          &   accuracy \\
+ds\_name & step\_schedule & model &            \\
+\midrule
+plantdisease & [5, 'p', 9, 'p', 9, 'p', 9, 'p', 4] & resnet18 &  99.147778 \\
+    & [40] & resnet18 &  98.949997 \\
+    & [20, 'p', 19] & resnet18 &  98.826668 \\
+dogs & [5, 'p', 9, 'p', 9, 'p', 9, 'p', 4] & resnet18 &  86.897858 \\
+    & [20, 'p', 19] & resnet18 &  80.473335 \\
+    & [40] & resnet18 &  71.414997 \\
+cifar100 & [5, 'p', 9, 'p', 9, 'p', 9, 'p', 4] & resnet18 &  76.778000 \\
+    & [20, 'p', 19] & resnet18 &  75.559998 \\
+    & [40] & resnet18 &  71.000000 \\
+asl & [5, 'p', 9, 'p', 9, 'p', 9, 'p', 4] & resnet18 &  99.929999 \\
+    & [40] & resnet18 &  99.910004 \\
+    & [20, 'p', 19] & resnet18 &  99.880000 \\
+\bottomrule
+\end{tabular}
+}
+\caption{Test}
+\label{test}
+\end{table}
