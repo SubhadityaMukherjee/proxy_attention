@@ -17,7 +17,16 @@ where $\lambda$ is the Proxy Image Weight and $\tau$ is the Proxy Threshold. The
 
 The proxy attention step generates a proxy image $I_{o}$ from the source image $I_{s}$ where the thresholded salient regions of $I_{s}$ is weighted by $\lambda$ and combined with $I_{s}$ to produce $I_{o}$.
 
+The pipeline for Proxy Attention is shown in Figure ~\ref{fig:proxy_flow}.
+
 The following sections describe each of the steps in detail and provide a visual representation of the proxy attention step.
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=.8\textwidth]{images/proxy_flow.png}
+    \caption{Proxy Attention Visualized}
+    \label{fig:proxy_flow}
+\end{figure}
 
 \section{Implementation}
 This section describes the implementation of Proxy Attention in detail. 
