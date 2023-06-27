@@ -131,8 +131,8 @@ search_space = {
     # "model": ["resnet18", "efficientnet_b0"],
     # "model": ["efficientnet_b0", "resnet50", "vgg16", "resnet18"],
     # "model": ["resnet18"],
-    "model": ["vit_base_patch16_224"],
-    # "model": ["efficientnet_b0"],
+    # "model": ["vit_base_patch16_224"],
+    "model": ["efficientnet_b0"],
     # "proxy_image_weight" : [0.1, 0.4, 0.8, 0.95],
     # "proxy_image_weight": [0.2, 0.95],
     # "proxy_image_weight": [0.1,0.8],
@@ -150,8 +150,9 @@ search_space = {
     # "ds_name": ["cifar100", "asl", "plantdisease", "caltech101"],
     # "ds_name": ["dogs"],
     # "ds_name": ["tsing", "places256"],
-    "ds_name": ["tsing", "places256", "caltech101", "asl", "plantdisease"],
+    # "ds_name": ["tsing", "places256", "caltech101", "asl", "plantdisease"],
     # "ds_name": ["tsing"],
+    "ds_name": ["fer"],
     # "ds_name": ["dogs", "caltech101", "asl", "imagenette", "plantdisease"],
     # "clear_every_step": [True, False],
     "clear_every_step": [False],
@@ -159,7 +160,7 @@ search_space = {
     # "proxy_steps": [[40], [20,"p", 19]],
     # "proxy_steps": [[100], [25,"p", 24, "p", 24, "p", 24], [50, "p", 49]],
     # "proxy_steps": [[40], [5,"p", 9, "p", 9, "p", 9, "p", 4], [20, "p", 19]],
-    "proxy_steps": [[5,"p", 9, "p", 9, "p", 9, "p", 4]],
+    "proxy_steps": [[5,"p", 9, "p", 9, "p", 9, "p", 4], [40]],
     # "proxy_steps": [[5,"p", 9, "p", 9, "p", 9, "p", 4]],
     # "proxy_steps": [[20,"p", 19]],
     # "proxy_steps": [[10,"p", 20, "p", 8], ["p", 39], [39, "p"]],
@@ -267,6 +268,12 @@ dataset_info = {
         "name_fn": proxyattention.meta_utils.get_parent_name,
         "num_classes": 130,
     },
+    "fer": {
+        "path": Path(f"{main_ds_dir}/fer/train/"),
+        "name_fn": proxyattention.meta_utils.get_parent_name,
+        "num_classes": 8,
+    },
+
 }
 
 
