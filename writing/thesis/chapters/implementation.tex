@@ -95,7 +95,6 @@ Potential solutions include:
 \end{enumerate}
 
 \textbf{Learning Bias}
-\cred{Write the thing}
 \begin{enumerate}
     \item Testing multiple schedules of when to apply the Proxy Attention step. This would help in understanding which part of the training process would benefit from the Proxy Attention step the most, reducing the computational overhead in the long run.
     \item Not reusing previously masked images for the Proxy Step. Doing so ensures that the artefacts are not propagated further into the training process.
@@ -504,13 +503,6 @@ The batch size finder algorithm is rather simple. It starts by testing for a sma
 A random batch of data with the size that is to be tested is generated and passed through the required model. If the GPU fails to accommodate the current batch of data, the loop terminates, and the required batch size is obtained. The rest of the steps required to train a network are also performed on this randomly generated data.
 This algorithm remains the same for any model, data type, or other further optimizations applied (such as mixed precision training \cite{micikeviciusMixedPrecisionTraining2017}) and is robust to multiple GPUs being used for training.
 
-\begin{figure}[!htb]
-    \centering
-    \includegraphics[width=0.6\linewidth]{images/batchsizefinder.pdf}
-    \caption{Diagramatic representation of the Batch Size Finder Algorithm}
-    \label{fig:bsfinder}
-\end{figure}
-
 \subsection{Result Aggregation} \label{sec:result_aggregation}
 The biggest caveat of using Tensorboard is that the logs it generates cannot be directly queried in the interface itself. To overcome this, a custom script was written to query the logs and generate a DataFrame that combines all the logs into a single pandas DataFrame. This makes it possible to not only query the logs but also to perform any kind of analysis on them. This script can easily answer specific queries such as "What is the best accuracy across all the networks for 'gradcam++', 'dogs dataset' and 'proxy\_threshold = 0.5'?". This makes it possible to easily compare the performance of different models and .
 
@@ -520,4 +512,4 @@ Since the script for aggregating logs is rather useful, it was made publicly ava
 Inference refers to using a trained model to make predictions on new data. In this project, a large number of models were trained. A separate script was created to use any of the previously trained models for inference.\\
 This script follows from the result aggregation and can use queries over the dataframe generated in the previous step. Since the generated dataframe also contains the path to the saved model, this script can use that information along with the names of the architecture, dataset and other hyper-parameters to load the required models easily.
 The inference script also contains functions for comparing both the accuracies and the explainability of two pre-trained models given a validation dataset or a list of images.\\
-For a batch of images and given a set of hyperparameters, the script loads two models - one trained with Proxy Attention and one trained without. The same dataloader is passed through both models to obtain predictions. Only EigenGradCAM is used for this evaluation phase to ensure a fair comparison, and since GradCAM++ was used for training, it would not be fair to use it for evaluation as well. \textcolor{red}{modify this a bit}
+For a batch of images and given a set of hyperparameters, the script loads two models - one trained with Proxy Attention and one trained without. The same dataloader is passed through both models to obtain predictions. EigenGradCAM is used for parts of this evaluation phase to ensure a fair comparison, and since GradCAM++ was used for training, it would not be fair to use it for evaluation as well. 

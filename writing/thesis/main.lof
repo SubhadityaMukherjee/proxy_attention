@@ -3,56 +3,56 @@
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {2.1}{\ignorespaces Taxonomy of Data Augmentation (sourced from \blx@tocontentsinit {0}\cite {yangImageDataAugmentation2022})\relax }}{21}{figure.caption.5}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces Proxy Attention Visualized\relax }}{27}{figure.caption.6}%
-\contentsline {figure}{\numberline {3.2}{\ignorespaces A comparison of different methods to replace the pixels in the original image\relax }}{28}{figure.caption.7}%
-\contentsline {figure}{\numberline {3.3}{\ignorespaces A visualization of the different thresholds and their effect on the image\relax }}{30}{figure.caption.8}%
-\contentsline {figure}{\numberline {3.4}{\ignorespaces Code Directory Structure\relax }}{32}{figure.caption.9}%
-\contentsline {figure}{\numberline {3.5}{\ignorespaces A batch of images from the CIFAR100 dataset\relax }}{33}{figure.caption.10}%
-\contentsline {figure}{\numberline {3.6}{\ignorespaces A batch of images from the Stanford Dogs dataset\relax }}{33}{figure.caption.11}%
-\contentsline {figure}{\numberline {3.7}{\ignorespaces A batch of images from the ASL Alphabet dataset\relax }}{34}{figure.caption.12}%
-\contentsline {figure}{\numberline {3.8}{\ignorespaces A batch of images from the Plant Disease dataset\relax }}{34}{figure.caption.13}%
-\contentsline {figure}{\numberline {3.9}{\ignorespaces A batch of images from the Caltech101 dataset\relax }}{35}{figure.caption.14}%
-\contentsline {figure}{\numberline {3.10}{\ignorespaces A batch of images from the Places dataset\relax }}{35}{figure.caption.15}%
-\contentsline {figure}{\numberline {3.11}{\ignorespaces A batch of images from the Tsinghua Dogs dataset\relax }}{36}{figure.caption.16}%
-\contentsline {figure}{\numberline {3.12}{\ignorespaces The structure of the Dataset Directory\relax }}{37}{figure.caption.17}%
-\contentsline {figure}{\numberline {3.13}{\ignorespaces VGG16 architecture\relax }}{39}{figure.caption.18}%
-\contentsline {figure}{\numberline {3.14}{\ignorespaces ResNet18 architecture\relax }}{39}{figure.caption.19}%
-\contentsline {figure}{\numberline {3.15}{\ignorespaces EfficientNetB0 architecture\relax }}{40}{figure.caption.20}%
-\contentsline {figure}{\numberline {3.16}{\ignorespaces ViT Base Patch $16 \times 224$ architecture\relax }}{40}{figure.caption.21}%
-\contentsline {figure}{\numberline {3.17}{\ignorespaces Diagramatic representation of the Batch Size Finder Algorithm\relax }}{45}{figure.caption.22}%
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Proxy Attention Visualized\relax }}{28}{figure.caption.6}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces A comparison of different methods to replace the pixels in the original image\relax }}{29}{figure.caption.7}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces A visualization of the different thresholds and their effect on the image\relax }}{31}{figure.caption.8}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Code Directory Structure\relax }}{33}{figure.caption.9}%
+\contentsline {figure}{\numberline {3.5}{\ignorespaces A batch of images from the CIFAR100 dataset\relax }}{34}{figure.caption.10}%
+\contentsline {figure}{\numberline {3.6}{\ignorespaces A batch of images from the Stanford Dogs dataset\relax }}{34}{figure.caption.11}%
+\contentsline {figure}{\numberline {3.7}{\ignorespaces A batch of images from the ASL Alphabet dataset\relax }}{35}{figure.caption.12}%
+\contentsline {figure}{\numberline {3.8}{\ignorespaces A batch of images from the Plant Disease dataset\relax }}{35}{figure.caption.13}%
+\contentsline {figure}{\numberline {3.9}{\ignorespaces A batch of images from the Caltech101 dataset\relax }}{36}{figure.caption.14}%
+\contentsline {figure}{\numberline {3.10}{\ignorespaces A batch of images from the Places dataset\relax }}{37}{figure.caption.15}%
+\contentsline {figure}{\numberline {3.11}{\ignorespaces A batch of images from the Tsinghua Dogs dataset\relax }}{37}{figure.caption.16}%
+\contentsline {figure}{\numberline {3.12}{\ignorespaces The structure of the Dataset Directory\relax }}{38}{figure.caption.17}%
+\contentsline {figure}{\numberline {3.13}{\ignorespaces VGG16 architecture\relax }}{40}{figure.caption.18}%
+\contentsline {figure}{\numberline {3.14}{\ignorespaces ResNet18 architecture\relax }}{41}{figure.caption.19}%
+\contentsline {figure}{\numberline {3.15}{\ignorespaces EfficientNetB0 architecture\relax }}{41}{figure.caption.20}%
+\contentsline {figure}{\numberline {3.16}{\ignorespaces ViT Base Patch $16 \times 224$ architecture\relax }}{42}{figure.caption.21}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {4.1}{\ignorespaces Comparing Accuracies of Models trained with and without Proxy Attention on the Tsinghua Dogs and Places256 datasets\relax }}{48}{figure.caption.23}%
-\contentsline {figure}{\numberline {4.2}{\ignorespaces Comparing Accuracies of models trained with and without Proxy Attention on the Stanford Dogs and CIFAR100 datasets\relax }}{48}{figure.caption.24}%
-\contentsline {figure}{\numberline {4.3}{\ignorespaces Comparing Accuracies of models trained with and without Proxy Attention on the Caltech101 and Asl datasets\relax }}{49}{figure.caption.25}%
-\contentsline {figure}{\numberline {4.4}{\ignorespaces Comparing Accuracies of models trained with and without Proxy Attention on the Plant Disease dataset\relax }}{49}{figure.caption.26}%
-\contentsline {figure}{\numberline {4.5}{\ignorespaces Comparing Accuracies of models trained with and without Proxy Attention on the ResNet50 \blx@tocontentsinit {0}\cite {heDeepResidualLearning2016} architecture for different step schedules\relax }}{50}{figure.caption.27}%
-\contentsline {figure}{\numberline {4.6}{\ignorespaces Comparing Accuracies of models trained with Proxy Attention for Different Proxy Thresholds\relax }}{51}{figure.caption.28}%
-\contentsline {figure}{\numberline {4.7}{\ignorespaces Comparing Accuracies of models trained with Proxy Attention for Different Proxy Image Weights\relax }}{52}{figure.caption.29}%
-\contentsline {figure}{\numberline {4.8}{\ignorespaces Comparing Accuracies of models trained with Proxy Attention for different Proxy Image Subsets\relax }}{52}{figure.caption.30}%
-\contentsline {figure}{\numberline {4.9}{\ignorespaces Comparison of attention maps generated by resnet18 trained with and without Proxy Attention on the cifar100 dataset\relax }}{53}{figure.caption.31}%
-\contentsline {figure}{\numberline {4.10}{\ignorespaces Comparison of attention maps generated by efficientnet\_b0 trained with and without Proxy Attention on the cifar100 dataset\relax }}{54}{figure.caption.32}%
-\contentsline {figure}{\numberline {4.11}{\ignorespaces Comparison of attention maps generated by vit\_base\_patch16\_224 trained with and without Proxy Attention on the cifar100 dataset\relax }}{55}{figure.caption.33}%
-\contentsline {figure}{\numberline {4.12}{\ignorespaces Comparison of attention maps generated by vit\_base\_patch16\_224 trained with and without Proxy Attention on the cifar100 dataset\relax }}{55}{figure.caption.34}%
-\contentsline {figure}{\numberline {4.13}{\ignorespaces Comparison of attention maps generated by resnet50 trained with and without Proxy Attention on the tsing dataset\relax }}{56}{figure.caption.35}%
-\contentsline {figure}{\numberline {4.14}{\ignorespaces Comparison of attention maps generated by resnet18 trained with and without Proxy Attention on the tsing dataset\relax }}{57}{figure.caption.36}%
-\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Comparing Accuracies of Models trained with and without Proxy Attention on the Tsinghua Dogs and Places256 datasets\relax }}{48}{figure.caption.22}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Comparing Accuracies of models trained with and without Proxy Attention on the Stanford Dogs and CIFAR100 datasets\relax }}{48}{figure.caption.23}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Comparing Accuracies of models trained with and without Proxy Attention on the Caltech101 and Asl datasets\relax }}{49}{figure.caption.24}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Comparing Accuracies of models trained with and without Proxy Attention on the Plant Disease dataset\relax }}{49}{figure.caption.25}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Comparing Accuracies of models trained with and without Proxy Attention on the ResNet50 \blx@tocontentsinit {0}\cite {heDeepResidualLearning2016} architecture for different step schedules\relax }}{50}{figure.caption.26}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Comparing Accuracies of models trained with Proxy Attention for Different Proxy Thresholds\relax }}{51}{figure.caption.27}%
+\contentsline {figure}{\numberline {4.7}{\ignorespaces Comparing Accuracies of models trained with Proxy Attention for Different Proxy Image Weights\relax }}{52}{figure.caption.28}%
+\contentsline {figure}{\numberline {4.8}{\ignorespaces Comparing Accuracies of models trained with Proxy Attention for different Proxy Image Subsets\relax }}{52}{figure.caption.29}%
+\contentsline {figure}{\numberline {4.9}{\ignorespaces Comparison of attention maps generated by resnet18 trained with and without Proxy Attention on the cifar100 dataset\relax }}{53}{figure.caption.30}%
+\contentsline {figure}{\numberline {4.10}{\ignorespaces Comparison of attention maps generated by efficientnet\_b0 trained with and without Proxy Attention on the cifar100 dataset\relax }}{54}{figure.caption.31}%
+\contentsline {figure}{\numberline {4.11}{\ignorespaces Comparison of attention maps generated by vit\_base\_patch16\_224 trained with and without Proxy Attention on the cifar100 dataset\relax }}{55}{figure.caption.32}%
+\contentsline {figure}{\numberline {4.12}{\ignorespaces Comparison of attention maps generated by vit\_base\_patch16\_224 trained with and without Proxy Attention on the cifar100 dataset\relax }}{55}{figure.caption.33}%
+\contentsline {figure}{\numberline {4.13}{\ignorespaces Comparison of attention maps generated by resnet50 trained with and without Proxy Attention on the Tsinghua Dogs dataset\relax }}{56}{figure.caption.34}%
+\contentsline {figure}{\numberline {4.14}{\ignorespaces Comparison of attention maps generated by resnet18 trained with and without Proxy Attention on the Tsinghua Dogs dataset\relax }}{57}{figure.caption.35}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {7.1}{\ignorespaces Comparison of attention maps generated by resnet18 trained with and without Proxy Attention on the cifar100 dataset\relax }}{65}{figure.caption.37}%
-\contentsline {figure}{\numberline {7.2}{\ignorespaces Comparison of attention maps generated by resnet18 trained with and without Proxy Attention on the cifar100 dataset\relax }}{66}{figure.caption.38}%
-\contentsline {figure}{\numberline {7.3}{\ignorespaces Comparison of attention maps generated by resnet18 trained with and without Proxy Attention on the cifar100 dataset\relax }}{66}{figure.caption.39}%
-\contentsline {figure}{\numberline {7.4}{\ignorespaces Comparison of attention maps generated by efficientnet\_b0 trained with and without Proxy Attention on the cifar100 dataset\relax }}{67}{figure.caption.40}%
-\contentsline {figure}{\numberline {7.5}{\ignorespaces Comparison of attention maps generated by efficientnet\_b0 trained with and without Proxy Attention on the cifar100 dataset\relax }}{67}{figure.caption.41}%
-\contentsline {figure}{\numberline {7.6}{\ignorespaces Comparison of attention maps generated by efficientnet\_b0 trained with and without Proxy Attention on the cifar100 dataset\relax }}{68}{figure.caption.42}%
-\contentsline {figure}{\numberline {7.7}{\ignorespaces Comparison of attention maps generated by vit\_base\_patch16\_224 trained with and without Proxy Attention on the cifar100 dataset\relax }}{68}{figure.caption.43}%
-\contentsline {figure}{\numberline {7.8}{\ignorespaces Comparison of attention maps generated by vit\_base\_patch16\_224 trained with and without Proxy Attention on the cifar100 dataset\relax }}{69}{figure.caption.44}%
-\contentsline {figure}{\numberline {7.9}{\ignorespaces Comparison of attention maps generated by vit\_base\_patch16\_224 trained with and without Proxy Attention on the cifar100 dataset\relax }}{69}{figure.caption.45}%
-\contentsline {figure}{\numberline {7.10}{\ignorespaces Comparison of attention maps generated by vit\_base\_patch16\_224 trained with and without Proxy Attention on the cifar100 dataset\relax }}{70}{figure.caption.46}%
-\contentsline {figure}{\numberline {7.11}{\ignorespaces Comparison of attention maps generated by vit\_base\_patch16\_224 trained with and without Proxy Attention on the cifar100 dataset\relax }}{70}{figure.caption.47}%
-\contentsline {figure}{\numberline {7.12}{\ignorespaces Comparison of attention maps generated by vit\_base\_patch16\_224 trained with and without Proxy Attention on the cifar100 dataset\relax }}{71}{figure.caption.48}%
-\contentsline {figure}{\numberline {7.13}{\ignorespaces Comparison of attention maps generated by resnet50 trained with and without Proxy Attention on the tsing dataset\relax }}{71}{figure.caption.49}%
-\contentsline {figure}{\numberline {7.14}{\ignorespaces Comparison of attention maps generated by resnet50 trained with and without Proxy Attention on the tsing dataset\relax }}{72}{figure.caption.50}%
-\contentsline {figure}{\numberline {7.15}{\ignorespaces Comparison of attention maps generated by resnet50 trained with and without Proxy Attention on the tsing dataset\relax }}{72}{figure.caption.51}%
-\contentsline {figure}{\numberline {7.16}{\ignorespaces Comparison of attention maps generated by resnet18 trained with and without Proxy Attention on the tsing dataset\relax }}{73}{figure.caption.52}%
-\contentsline {figure}{\numberline {7.17}{\ignorespaces Comparison of attention maps generated by resnet18 trained with and without Proxy Attention on the tsing dataset\relax }}{73}{figure.caption.53}%
-\contentsline {figure}{\numberline {7.18}{\ignorespaces Comparison of attention maps generated by resnet18 trained with and without Proxy Attention on the tsing dataset\relax }}{74}{figure.caption.54}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {7.1}{\ignorespaces Diagramatic representation of the Batch Size Finder Algorithm\relax }}{65}{figure.caption.36}%
+\contentsline {figure}{\numberline {7.2}{\ignorespaces Comparison of attention maps generated by resnet18 trained with and without Proxy Attention on the cifar100 dataset using EigenGradCAM\relax }}{66}{figure.caption.37}%
+\contentsline {figure}{\numberline {7.3}{\ignorespaces Comparison of attention maps generated by resnet18 trained with and without Proxy Attention on the cifar100 dataset using EigenGradCAM\relax }}{66}{figure.caption.38}%
+\contentsline {figure}{\numberline {7.4}{\ignorespaces Comparison of attention maps generated by resnet18 trained with and without Proxy Attention on the cifar100 dataset using EigenGradCAM\relax }}{67}{figure.caption.39}%
+\contentsline {figure}{\numberline {7.5}{\ignorespaces Comparison of attention maps generated by efficientnet\_b0 trained with and without Proxy Attention on the cifar100 dataset using EigenGradCAM\relax }}{67}{figure.caption.40}%
+\contentsline {figure}{\numberline {7.6}{\ignorespaces Comparison of attention maps generated by efficientnet\_b0 trained with and without Proxy Attention on the cifar100 dataset using EigenGradCAM\relax }}{68}{figure.caption.41}%
+\contentsline {figure}{\numberline {7.7}{\ignorespaces Comparison of attention maps generated by efficientnet\_b0 trained with and without Proxy Attention on the cifar100 dataset using EigenGradCAM\relax }}{68}{figure.caption.42}%
+\contentsline {figure}{\numberline {7.8}{\ignorespaces Comparison of attention maps generated by vit\_base\_patch16\_224 trained with and without Proxy Attention on the cifar100 dataset using EigenGradCAM\relax }}{69}{figure.caption.43}%
+\contentsline {figure}{\numberline {7.9}{\ignorespaces Comparison of attention maps generated by vit\_base\_patch16\_224 trained with and without Proxy Attention on the cifar100 dataset using EigenGradCAM\relax }}{69}{figure.caption.44}%
+\contentsline {figure}{\numberline {7.10}{\ignorespaces Comparison of attention maps generated by vit\_base\_patch16\_224 trained with and without Proxy Attention on the cifar100 dataset using EigenGradCAM\relax }}{70}{figure.caption.45}%
+\contentsline {figure}{\numberline {7.11}{\ignorespaces Comparison of attention maps generated by vit\_base\_patch16\_224 trained with and without Proxy Attention on the cifar100 dataset using GradCAM++\relax }}{70}{figure.caption.46}%
+\contentsline {figure}{\numberline {7.12}{\ignorespaces Comparison of attention maps generated by vit\_base\_patch16\_224 trained with and without Proxy Attention on the cifar100 dataset using GradCAM++\relax }}{71}{figure.caption.47}%
+\contentsline {figure}{\numberline {7.13}{\ignorespaces Comparison of attention maps generated by vit\_base\_patch16\_224 trained with and without Proxy Attention on the cifar100 dataset using GradCAM++\relax }}{71}{figure.caption.48}%
+\contentsline {figure}{\numberline {7.14}{\ignorespaces Comparison of attention maps generated by resnet50 trained with and without Proxy Attention on the Tsinghua Dogs dataset using GradCAM++\relax }}{72}{figure.caption.49}%
+\contentsline {figure}{\numberline {7.15}{\ignorespaces Comparison of attention maps generated by resnet50 trained with and without Proxy Attention on the Tsinghua Dogs dataset using GradCAM++\relax }}{72}{figure.caption.50}%
+\contentsline {figure}{\numberline {7.16}{\ignorespaces Comparison of attention maps generated by resnet50 trained with and without Proxy Attention on the Tsinghua Dogs dataset using GradCAM++\relax }}{73}{figure.caption.51}%
+\contentsline {figure}{\numberline {7.17}{\ignorespaces Comparison of attention maps generated by resnet18 trained with and without Proxy Attention on the Tsinghua Dogs dataset using using EigenGradCAM\relax }}{73}{figure.caption.52}%
+\contentsline {figure}{\numberline {7.18}{\ignorespaces Comparison of attention maps generated by resnet18 trained with and without Proxy Attention on the Tsinghua Dogs dataset using EigenGradCAM\relax }}{74}{figure.caption.53}%
+\contentsline {figure}{\numberline {7.19}{\ignorespaces Comparison of attention maps generated by resnet18 trained with and without Proxy Attention on the Tsinghua Dogs dataset using EigenGradCAM\relax }}{74}{figure.caption.54}%
