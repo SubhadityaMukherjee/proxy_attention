@@ -196,11 +196,15 @@ def proxy_callback(config, input_wrong_full, label_wrong_full, cam):
                     # input_wrong,
                     config["global_run_count"],
                 )
-
+            start_time = time.time()
             thresholded_ims = proxy_one_batch(config, input_wrong.to(config["device"]), cam)
+            end_time = time.time()
             processed_thresholds.extend(thresholded_ims.detach().cpu())
             processed_labels.extend(label_wrong)
-
+            # Log how long it took to run the proxy step
+            writer.add_scalar(
+                "Time_Proxy", end_time - start_time, config["global_run_count"]
+            )
 
             logging.info("[INFO] Ran proxy step")
             if i == 0:
@@ -276,34 +280,12 @@ def one_epoch(config, pbar, model, optimizer, dataloaders, target_layers, schedu
                 if phase == "train":
                     scaler.scale(loss).backward()
                     scaler.step(optimizer)
-                    # scaler.step(scheduler)
                     scaler.update()
-            # else:
-            #     # Disable fp16 for ViT
-            #     if phase == "train":
-            #         outputs = model(inputs)
-            #     else:
-            #         with torch.no_grad():
-            #             outputs = model(inputs)
-            #     _, preds = torch.max(outputs.data.detach(), 1)
-            #     loss = criterion(outputs, labels)
-
-            #     running_loss += loss.item()
-            #     running_corrects += (preds == labels).sum().item()
-
-            #     if phase == "train":
-            #         loss.backward()
-            #         optimizer.step()
-
-
+            
             if config["proxy_step"] == True and phase == "train":
-                # logging.info("[INFO] : Proxy")
                 wrong_indices = (labels != preds).nonzero()
-                # input_wrong = input_wrong.stack(inputs[wrong_indices])
                 input_wrong.extend(inputs[wrong_indices].detach().cpu())
                 label_wrong.extend(labels[wrong_indices].detach().cpu())
-                # input_wrong = torch.cat((input_wrong, inputs[wrong_indices]))
-                # label_wrong = torch.cat((label_wrong, labels[wrong_indices]))
             
                 
         if config["proxy_step"] == True and phase == 'train':
@@ -322,7 +304,6 @@ def one_epoch(config, pbar, model, optimizer, dataloaders, target_layers, schedu
                 {
                     "Phase": "running",
                     "Loss": epoch_loss
-                    # 'Acc' : running_corrects.double() / dataset_sizes[phase],
                 }
             )
         if phase == "train":
@@ -354,7 +335,6 @@ def one_epoch(config, pbar, model, optimizer, dataloaders, target_layers, schedu
                     save_path,
                 )
 
-            # trial.report(epoch_acc, config["global_run_count"])
             config["final_acc"] = epoch_acc
         writer.add_scalar(
             "global_run_count", config["global_run_count"], config["global_run_count"]
@@ -388,17 +368,11 @@ def setup_train_round(
     # model = torch.compile(model, mode= "reduce-overhead")
     optimizer = optim.AdamW(model.parameters(), lr=1e-3, weight_decay=1e-5)
     
-    # Save config info to tensorboard
-        # since = time.time()
-
     if load_check == True:
         chk = torch.load(config["save_path"], map_location = config["device"])
         model.load_state_dict(chk["model_state_dict"])
         optimizer.load_state_dict(chk["optimizer_state_dict"])
-    
-    # model = torch.compile(model)
-
-
+   
     target_layers = find_target_layer(config, model)
 
     pbar = tqdm(
@@ -415,19 +389,11 @@ def setup_train_round(
     for key, value in config.items():
         config["writer"].add_text(key, str(value))
 
-
-
     config["writer"].close()
 
-    # Clean up after training
-    # del model
-    # torch.cuda.empty_cache()
-    # gc.collect()
     print("GPU freed")
 
 def train_proxy_steps( config):
-    # assert torch.cuda.is_available()
-    # torch.cuda.empty_cache()
 
     fname_start = f'{config["main_run_dir"]}{config["experiment_name"]}_{datetime.now().strftime("%d%m%Y_%H%M%S")}'
     config["fname_start"] = fname_start
@@ -435,28 +401,14 @@ def train_proxy_steps( config):
 
     config["ds_path"] = config["dataset_info"][config["ds_name"]]["path"]
     config["name_fn"] = config["dataset_info"][config["ds_name"]]["name_fn"]
-    # config["num_classes"] = config["dataset_info"][config["ds_name"]]["num_classes"]
 
     config["batch_size"] = set_batch_size_dict[config["model"]]
-    # config["num_accum"] = 4 #gradient accum
 
     clear_proxy_images(config=config)
-    # config["fname_start"] = fname_start
     config["global_run_count"] = 0
-    # backup_model = choose_network(config)
-    # backup_model = torch.compile(backup_model)
-
-    # prof = torch.profiler.profile(
-    #     schedule=torch.profiler.schedule(wait=1, warmup=1, active=3, repeat=1),
-    #     on_trace_ready=torch.profiler.tensorboard_trace_handler(config["fname_start"]),
-    #     record_shapes=True,
-    #     with_stack=True)
-    # prof.start()
-    
+   
 
     for i, step in enumerate(config["proxy_steps"]):
-        # model = copy.deepcopy(backup_model).to(config["device"])
-        # model.train()
         load_check = i > 0
         if step == "p":
             config["load_proxy_data"] = True
@@ -479,21 +431,11 @@ def train_proxy_steps( config):
 
         if config["clear_every_step"] == True:
             clear_proxy_images(config=config)  # Clean directory
-        # prof.step()
 
     if config["clear_every_step"] == False:
         clear_proxy_images(config=config)  # Clean directory
-    # prof.stop()
-
-    # for name, size in sorted(((name, sys.getsizeof(value)) for name, value in list(locals().items())), key= lambda x: -x[1])[:20]:
-    #     print("{:>30}: {:>8}".format(name, sizeof_fmt(size)))
-
     return config["final_acc"]
 
-# ags = ap.ArgumentParser()
-# ags.add_argument("-c")
-# aps = ags.parse_args()
-# train_proxy_steps(ast.literal_eval(aps.c))
 def train_single_round(config):
     return train_proxy_steps(config)
 

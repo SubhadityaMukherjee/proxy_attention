@@ -66,7 +66,7 @@ print("Done imports")
 config = {
     # "experiment_name": "proxy_run",
     # "experiment_name": "transform",
-    "experiment_name": "hypers",
+    "experiment_name": "paper_run",
     # "experiment_name": "baseline_run",
     # "experiment_name": "ignore",
     "image_size": 224,
