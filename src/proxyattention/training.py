@@ -9,6 +9,7 @@ import time
 from pathlib import Path
 
 import matplotlib
+from sklearn.metrics import confusion_matrix, precision_score, recall_score, classification_report
 
 matplotlib.use("Agg")  # no UI backend
 import pickle
@@ -232,6 +233,31 @@ def proxy_callback(config, input_wrong_full, label_wrong_full, cam):
     except RuntimeError:
         pass
 
+def plot_confusion_matrix(config, model, dataloaders):
+    writer = config["writer"]
+    logging.info("Plotting confusion matrix")
+    model.eval()
+    y_pred = []
+    y_true = []
+    with torch.no_grad():
+        for i, inps in tqdm(
+            enumerate(dataloaders["val"]), total=len(dataloaders["val"]), leave=False
+        ):
+            inputs = inps["x"].to(config["device"], non_blocking=True)
+            labels = inps["y"].to(config["device"], non_blocking=True)
+            outputs = model(inputs)
+            _, preds = torch.max(outputs, 1)
+            y_pred.extend(preds.cpu().numpy())
+            y_true.extend(labels.cpu().numpy())
+    cm = confusion_matrix(y_true, y_pred)
+    # save to tensorboard
+    fig = plt.figure()
+    plt.imshow(cm)
+    plt.show()
+    writer.add_figure("Confusion Matrix", fig, config["global_run_count"])
+
+    classreport = classification_report(y_true, y_pred, target_names=config["label_map"].values())
+    writer.add_text("Classification Report", classreport, config["global_run_count"])
 
 def one_epoch(config, pbar, model, optimizer, dataloaders, target_layers, scheduler = None):
     writer = config["writer"]
@@ -250,6 +276,8 @@ def one_epoch(config, pbar, model, optimizer, dataloaders, target_layers, schedu
             model.eval()  # Set model to evaluate mode
         running_loss = 0.0
         running_corrects = 0
+        running_presicion = 0
+        running_recall = 0
 
         scaler = torch.cuda.amp.GradScaler()
         for i, inps in tqdm(
@@ -273,9 +301,12 @@ def one_epoch(config, pbar, model, optimizer, dataloaders, target_layers, schedu
                             outputs = model(inputs)
                     _, preds = torch.max(outputs.data.detach(), 1)
                     loss = criterion(outputs, labels)
+                    # precision, recall = precision_score(labels, outputs.data.detach(), average="macro"), recall_score(labels, outputs.data.detach(), average="macro")
                 
                 running_loss += loss.item()
                 running_corrects += (preds == labels).sum().item()
+                # running_presicion += precision
+                # running_recall += recall
 
                 if phase == "train":
                     scaler.scale(loss).backward()
@@ -300,6 +331,8 @@ def one_epoch(config, pbar, model, optimizer, dataloaders, target_layers, schedu
         
         epoch_loss = running_loss / len(dataloaders[phase].dataset)
         epoch_acc = 100. * running_corrects/len(dataloaders[phase].dataset)
+        # epoch_precision = running_presicion / len(dataloaders[phase].dataset)
+        # epoch_recall = running_recall / len(dataloaders[phase].dataset)
         pbar.set_postfix(
                 {
                     "Phase": "running",
@@ -313,12 +346,38 @@ def one_epoch(config, pbar, model, optimizer, dataloaders, target_layers, schedu
             writer.add_scalar(
                 "Acc/Train", epoch_acc, config["global_run_count"]
             )
+            # writer.add_scalar(
+            #     "Precision/Train", epoch_precision, config["global_run_count"]
+            # )
+            # writer.add_scalar(
+            #     "Recall/Train", epoch_recall, config["global_run_count"]
+            # )
+
         if phase == "val":
             writer.add_scalar(
                 "Loss/Val", epoch_loss, config["global_run_count"]
             )
             writer.add_scalar(
                 "Acc/Val", epoch_acc, config["global_run_count"]
+            )
+
+            # writer.add_scalar(
+            #     "Precision/Val", epoch_precision, config["global_run_count"]
+            # )
+            # writer.add_scalar(
+            #     "Recall/Val", epoch_recall, config["global_run_count"]
+            # )
+            # save confusion matrix
+            # writer.add_figure(
+            #     "Confusion matrix",
+            #     plot_confusion_matrix(
+            #         config = config, model = model, dataloaders = dataloaders
+            #     ),
+            #     config["global_run_count"],
+            # )
+
+            plot_confusion_matrix(
+                config = config, model = model, dataloaders = dataloaders
             )
 
             save_path = Path(config["fname_start"]) / "checkpoint"

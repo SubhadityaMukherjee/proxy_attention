@@ -66,7 +66,7 @@ print("Done imports")
 config = {
     # "experiment_name": "proxy_run",
     # "experiment_name": "transform",
-    "experiment_name": "paper_run",
+    "experiment_name": "paper_extras",
     # "experiment_name": "baseline_run",
     # "experiment_name": "ignore",
     "image_size": 224,
@@ -152,7 +152,7 @@ search_space = {
     # "ds_name": ["tsing", "places256"],
     # "ds_name": ["tsing", "places256", "caltech101", "asl", "plantdisease"],
     # "ds_name": ["tsing"],
-    "ds_name": ["fer"],
+    "ds_name": ["places256"],
     # "ds_name": ["dogs", "caltech101", "asl", "imagenette", "plantdisease"],
     # "clear_every_step": [True, False],
     "clear_every_step": [False],
@@ -320,12 +320,6 @@ if __name__ == "__main__":
         )
         params = dict(zip(search_space.keys(), combination))
         config = {**config, **params}
-        # if config["ds_name"] == "caltech-101":
-        #     config["ds_name"] = "caltech101"
-        # if config["model"] == "vit_base_path16_224":
-        #     config["model"] = "vit_base_patch16_224"
-        
-        # if config["model"] != "vgg16":
 
         proxyattention.meta_utils.save_pickle(config, fname=f"current_config.pkl")
         subprocess.run(["python", "runner.py"], check=True)
