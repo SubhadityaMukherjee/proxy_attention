@@ -234,8 +234,7 @@ def create_dls(train, val, config):
     #         p=1.0,
     #     ),
     # }
-    data_transforms_train = transforms.Compose(
-        [
+    basic_augs = [
             transforms.Resize((config["image_size"], config["image_size"])),
             # transforms.ColorJitter(hue=0.05, saturation=0.05),
             transforms.RandomHorizontalFlip(),
@@ -243,7 +242,8 @@ def create_dls(train, val, config):
             transforms.ToTensor(),  # use ToTensor() last to get everything between 0 & 1
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ]
-    )
+    # transforms.GaussianBlur(kernel_size=3, sigma=(0.1, 2.0))
+    data_transforms_train = transforms.Compose(basic_augs)
 
     data_transforms_val = transforms.Compose(
         [

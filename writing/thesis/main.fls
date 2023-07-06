@@ -1577,10 +1577,6 @@ INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/vf/adobe/times/zpzccmry.vf
 INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/tfm/public/cm/cmsy10.tfm
 INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/tfm/adobe/zapfchan/pzcmi8r.tfm
 OUTPUT main.lof
-INPUT ./main.lot
-INPUT main.lot
-INPUT main.lot
-OUTPUT main.lot
 INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/tfm/adobe/helvetic/phvr7t.tfm
 INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/tfm/adobe/times/ptmr7t.tfm
 INPUT /usr/local/texlive/2022basic/texmf-dist/fonts/tfm/adobe/times/ptmr8t.tfm
@@ -1865,6 +1861,11 @@ INPUT ./images/tsing_resnet18_proxy_0.pdf
 INPUT images/tsing_resnet18_proxy_0.pdf
 INPUT ./images/tsing_resnet18_proxy_0.pdf
 INPUT ./images/tsing_resnet18_proxy_0.pdf
+INPUT ./images/clutter.png
+INPUT ./images/clutter.png
+INPUT images/clutter.png
+INPUT ./images/clutter.png
+INPUT ./images/clutter.png
 INPUT ./images/batchsizefinder.pdf
 INPUT ./images/batchsizefinder.pdf
 INPUT images/batchsizefinder.pdf
